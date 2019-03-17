@@ -1,3 +1,8 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#pragma GCC diagnostic ignored "-Wshift-negative-value"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 #include "stb_image.h"
 
 #ifndef STBI_HEADER_FILE_ONLY
@@ -6559,3 +6564,6 @@ return stbi_info_main(&s, x, y, comp);
              on 'test' only check type, not whether we support this variant
       0.50   first released version
 */
+
+
+#pragma GCC diagnostic pop

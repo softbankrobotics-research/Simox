@@ -1,19 +1,19 @@
 PROJECT ( BulletDebugViewer )
 
-INCLUDE(${Simox_DIR}/CMakeModules/SimoxMacros.cmake)
+INCLUDE(${Simox_SOURCE_DIR}/CMakeModules/SimoxMacros.cmake)
 
 IF (SimDynamics_USE_BULLET_USE_GLUT)
 	include_directories(${GLUT_INCLUDE_DIR})
 	message("GLUT_INCLUDE_DIR:${GLUT_INCLUDE_DIR}")
 	# create the executable
 	SimoxApplication(${PROJECT_NAME} "BulletDebugViewerGlut.cpp" "")
-        TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE SimDynamics BulletOpenGLSupport ${Simox_EXTERNAL_LIBRARIES})
+        TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE SimDynamics BulletOpenGLSupport)
 ELSE(SimDynamics_USE_BULLET_USE_GLUT)
 
 	IF(WIN32)
 		SET (SRC
 			"BulletDebugViewerWin32.cpp"
-			"${Simox_DIR}/SimDynamics/DynamicsEngine/BulletEngine/BulletOpenGL/Win32AppMain.cpp"
+			"${Simox_SOURCE_DIR}/SimDynamics/DynamicsEngine/BulletEngine/BulletOpenGL/Win32AppMain.cpp"
 		)
 		#"Win32BasicDemo.cpp"
 		SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /subsystem:windows")
@@ -34,8 +34,8 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simo
 install(TARGETS ${PROJECT_NAME}
   # IMPORTANT: Add the library to the "export-set"
   EXPORT SimoxTargets
-  RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
+  RUNTIME DESTINATION bin COMPONENT bin
   COMPONENT dev)
 
 MESSAGE( STATUS " ** Simox application ${PROJECT_NAME} will be placed into " ${Simox_BIN_DIR})
-MESSAGE( STATUS " ** Simox application ${PROJECT_NAME} will be installed into " ${INSTALL_BIN_DIR})
+MESSAGE( STATUS " ** Simox application ${PROJECT_NAME} will be installed into " bin)

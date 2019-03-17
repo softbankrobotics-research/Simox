@@ -19,7 +19,7 @@ namespace SimDynamics
 
 
     BulletCoinQtViewer::BulletCoinQtViewer(DynamicsWorldPtr world)
-        : warned_norealtime(false), simModeFixedTimeStep(false)
+        : simModeFixedTimeStep(false), warned_norealtime(false)
     {
         bulletTimeStepMsec = 16; // 60FPS
         bulletMaxSubSteps = 1;
@@ -91,7 +91,7 @@ namespace SimDynamics
         bulletViewer->scheduleRedraw();
     }
 
-    void BulletCoinQtViewer::timerCB(void* data, SoSensor* sensor)
+    void BulletCoinQtViewer::timerCB(void* data, SoSensor* /*sensor*/)
     {
         BulletCoinQtViewer* bulletViewer = static_cast<BulletCoinQtViewer*>(data);
         VR_ASSERT(bulletViewer);

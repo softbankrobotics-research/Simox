@@ -13,7 +13,8 @@
 
 #include <Eigen/Geometry>
 
-#define MIN_TO_ZERO 1e-6
+#define MIN_TO_ZERO (1e-6f)
+#define M_PIf (static_cast<float>(M_PI))
 
 namespace VirtualRobot
 {
@@ -92,22 +93,22 @@ namespace VirtualRobot
 
         { // Matrix To Roll-Pitch-Yaw conversion
             double alpha, beta, gamma;
-            beta = atan2(-res(3, 1), sqrt(res(1, 1) * res(1, 1) + res(2, 1) * res(2, 1)));
+            beta = std::atan2(-res(3, 1), sqrt(res(1, 1) * res(1, 1) + res(2, 1) * res(2, 1)));
 
-            if (fabs(beta - M_PI_2) < 1e-4)
+            if (std::abs(beta - M_PIf_2) < 1e-4)
             {
                 alpha = 0;
-                gamma = atan2(res(1, 2), res(2, 2));
+                gamma = std::atan2(res(1, 2), res(2, 2));
             }
-            else if (fabs(beta - (-M_PI_2)) < 1e-4)
+            else if (std::abs(beta - (-M_PIf_2)) < 1e-4)
             {
                 alpha = 0;
                 gamma = -atan2(res(1, 2), res(2, 2));
             }
             else
             {
-                alpha = atan2(res(2, 1) / cos(beta), res(1, 1) / cos(beta));
-                gamma = atan2(res(3, 2) / cos(beta), res(3, 3) / cos(beta));
+                alpha = std::atan2(res(2, 1) / cos(beta), res(1, 1) / cos(beta));
+                gamma = std::atan2(res(3, 2) / cos(beta), res(3, 3) / cos(beta));
             }
 
             PosRPY[0] = PosEulerZXZ[0];
@@ -135,19 +136,19 @@ namespace VirtualRobot
         {
             if (A[2][2]>-1.0)
             {
-                storeResult[3] = atan2(A[0][2], -A[1][2]);
+                storeResult[3] = std::atan2(A[0][2], -A[1][2]);
                 storeResult[4] = acos(A[2][2]);
-                storeResult[5] = atan2(A[2][0], A[2][1]);
+                storeResult[5] = std::atan2(A[2][0], A[2][1]);
             } else
             {
                 storeResult[3] = -atan2(-A[0][1], A[0][0]);
-                storeResult[4] = (float)M_PI;
+                storeResult[4] = (float)M_PIf;
                 storeResult[5] = 0;
             }
         } else
         {
             storeResult[3] = 0;
-            storeResult[4] = atan2(-A[0][1], A[0][0]);
+            storeResult[4] = std::atan2(-A[0][1], A[0][0]);
             storeResult[5] = 0;
         }
     }
@@ -198,23 +199,23 @@ namespace VirtualRobot
     {
         //Eigen::Matrix4f A = mat.transpose();
         float alpha, beta, gamma;
-        beta = atan2(-m(2, 0),  sqrtf(m(0, 0) * m(0, 0) + m(1, 0) * m(1, 0)));
+        beta = std::atan2(-m(2, 0), sqrtf(m(0, 0) * m(0, 0) + m(1, 0) * m(1, 0)));
 
-        if (fabs(beta - (float)M_PI * 0.5f) < 1e-10)
+        if (std::abs(beta - M_PIf * 0.5f) < 1e-10f)
         {
             alpha = 0;
-            gamma = atan2(m(0, 1), m(1, 1));
+            gamma = std::atan2(m(0, 1), m(1, 1));
         }
-        else if (fabs(beta + (float)M_PI * 0.5f) < 1e-10)
+        else if (std::abs(beta + M_PIf * 0.5f) < 1e-10f)
         {
             alpha = 0;
-            gamma = -atan2(m(0, 1), m(1, 1));
+            gamma = - std::atan2(m(0, 1), m(1, 1));
         }
         else
         {
             float cb = 1.0f / cosf(beta);
-            alpha = atan2(m(1, 0) * cb, m(0, 0) * cb);
-            gamma = atan2(m(2, 1) * cb, m(2, 2) * cb);
+            alpha = std::atan2(m(1, 0) * cb, m(0, 0) * cb);
+            gamma = std::atan2(m(2, 1) * cb, m(2, 2) * cb);
         }
 
         x[0] = m(0, 3);
@@ -266,19 +267,19 @@ namespace VirtualRobot
         salpha = sinf(y);
         calpha = cosf(y);
 
-        m(0, 0) = (float)(calpha * cbeta);
-        m(0, 1) = (float)(calpha * sbeta * sgamma - salpha * cgamma);
-        m(0, 2) = (float)(calpha * sbeta * cgamma + salpha * sgamma);
+        m(0, 0) = calpha * cbeta;
+        m(0, 1) = calpha * sbeta * sgamma - salpha * cgamma;
+        m(0, 2) = calpha * sbeta * cgamma + salpha * sgamma;
         m(0, 3) = 0; //x
 
-        m(1, 0) = (float)(salpha * cbeta);
-        m(1, 1) = (float)(salpha * sbeta * sgamma + calpha * cgamma);
-        m(1, 2) = (float)(salpha * sbeta * cgamma - calpha * sgamma);
+        m(1, 0) = salpha * cbeta;
+        m(1, 1) = salpha * sbeta * sgamma + calpha * cgamma;
+        m(1, 2) = salpha * sbeta * cgamma - calpha * sgamma;
         m(1, 3) = 0; //y
 
-        m(2, 0) = (float) - sbeta;
-        m(2, 1) = (float)(cbeta * sgamma);
-        m(2, 2) = (float)(cbeta * cgamma);
+        m(2, 0) = - sbeta;
+        m(2, 1) = cbeta * sgamma;
+        m(2, 2) = cbeta * cgamma;
         m(2, 3) = 0; //z
 
         m(3, 0) = 0;
@@ -306,17 +307,17 @@ namespace VirtualRobot
         salpha = sinf(y);
         calpha = cosf(y);
 
-        m(0, 0) = (float)(calpha * cbeta);
-        m(0, 1) = (float)(calpha * sbeta * sgamma - salpha * cgamma);
-        m(0, 2) = (float)(calpha * sbeta * cgamma + salpha * sgamma);
+        m(0, 0) = calpha * cbeta;
+        m(0, 1) = calpha * sbeta * sgamma - salpha * cgamma;
+        m(0, 2) = calpha * sbeta * cgamma + salpha * sgamma;
 
-        m(1, 0) = (float)(salpha * cbeta);
-        m(1, 1) = (float)(salpha * sbeta * sgamma + calpha * cgamma);
-        m(1, 2) = (float)(salpha * sbeta * cgamma - calpha * sgamma);
+        m(1, 0) = salpha * cbeta;
+        m(1, 1) = salpha * sbeta * sgamma + calpha * cgamma;
+        m(1, 2) = salpha * sbeta * cgamma - calpha * sgamma;
 
-        m(2, 0) = (float) - sbeta;
-        m(2, 1) = (float)(cbeta * sgamma);
-        m(2, 2) = (float)(cbeta * cgamma);
+        m(2, 0) = - sbeta;
+        m(2, 1) = cbeta * sgamma;
+        m(2, 2) = cbeta * cgamma;
 
         return m;
     }
@@ -656,12 +657,12 @@ namespace VirtualRobot
         {
             // not parallel
             crossvec.normalize();
-            // The fabs() wrapping is to avoid problems when d overflows
-            crossvec *= (float)sqrt(0.5f * fabs(1.0f - d));
+            // The abs() wrapping is to avoid problems when d overflows
+            crossvec *= std::sqrt(0.5f * std::abs(1.0f - d));
             quat.x = crossvec[0];
             quat.y = crossvec[1];
             quat.z = crossvec[2];
-            quat.w = (float)sqrt(0.5 * fabs(1.0 + d));
+            quat.w = std::sqrt(0.5f * std::abs(1.f + d));
         }
 
         return quat;
@@ -996,16 +997,16 @@ namespace VirtualRobot
     bool VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::collinear(const Eigen::Vector3f& p1, const Eigen::Vector3f& p2, const Eigen::Vector3f& p3)
     {
         float d = ((p2 - p1).cross((p2 - p3))).norm();
-        return (d < 1e-6);
+        return (d < 1e-6f);
     }
 
     bool VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::containsVector(const Eigen::MatrixXf& m, const Eigen::VectorXf& v)
     {
         VR_ASSERT(m.rows() == v.rows());
 
-        for (int i = 0; i < (int)m.cols(); i++)
+        for (int i = 0; i < static_cast<int>(m.cols()); i++)
         {
-            if ((m.block(0, i, m.rows(), 1) - v).norm() < 1e-8)
+            if ((m.block(0, i, m.rows(), 1) - v).norm() < 1e-8f)
             {
                 return true;
             }
@@ -1026,20 +1027,21 @@ namespace VirtualRobot
             VR_ASSERT_MESSAGE(static_cast<std::size_t>(basis[i].rows()) == dim, "Length of basis vectors is wrong");
         }
 
-        int rows = basis[0].rows();
+        int rows = static_cast<int>(basis[0].rows());
         Eigen::MatrixXf mBasis(rows, dim);
 
-        for (int i = 0; i < (int)basis.size(); i++)
+        for (unsigned int i = 0; i < basis.size(); i++)
         {
             mBasis.block(0, i, rows, 1) = basis[i];
         }
 
         Eigen::FullPivLU<Eigen::MatrixXf> lu_decomp(mBasis);
         Eigen::MatrixXf basisVectors = lu_decomp.image(mBasis);
-        int startWithDet = (int)(basisVectors.cols());
+        
+        assert(0 <= basisVectors.cols());
+        std::size_t startWithDet = static_cast<std::size_t>(basisVectors.cols());
 
-        assert(0<= startWithDet);
-        if (static_cast<std::size_t>(startWithDet) != dim)
+        if (startWithDet != dim)
         {
             std::vector< Eigen::VectorXf > tmpBasisV;
 
@@ -1127,7 +1129,7 @@ namespace VirtualRobot
 
         // norm the first vector
         basis[0].normalize();
-        int startWith = 0;
+        std::size_t startWith = 0;
 		size_t pos = 1;
 
         while (pos < dim)
@@ -1137,7 +1139,7 @@ namespace VirtualRobot
                 if (basis[i].dot(basis[pos]) != 0)
                 {
                     startWith = pos;
-                    pos = (int)dim + 1; // end loop
+                    pos = dim + 1; // end loop
                     break;
                 }
             }
@@ -1176,21 +1178,22 @@ namespace VirtualRobot
         return true;
     }
 
-    bool VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::randomLinearlyIndependentVector(const std::vector< Eigen::VectorXf > basis, Eigen::VectorXf& storeResult)
+    bool VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::randomLinearlyIndependentVector(
+            const std::vector< Eigen::VectorXf > basis, Eigen::VectorXf& storeResult)
     {
         VR_ASSERT_MESSAGE(basis.size() > 0, "need vectors");
-        int dim = (int)basis[0].rows();
-        VR_ASSERT_MESSAGE((int)basis.size() < dim, "Could not get a linearly independent vector, since basis already covers all dimensions.");
+        int dim = static_cast<int>(basis[0].rows());
+        VR_ASSERT_MESSAGE(static_cast<int>(basis.size()) < dim, "Could not get a linearly independent vector, since basis already covers all dimensions.");
 
-        for (int i = 1; i < (int)basis.size(); i++)
+        for (std::size_t i = 1; i < basis.size(); i++)
         {
-            VR_ASSERT_MESSAGE((int)basis[i].rows() == (int)basis[0].rows(), "Length of basis vectors is wrong");
+            VR_ASSERT_MESSAGE(basis[i].rows() == basis[0].rows(), "Length of basis vectors is wrong");
         }
 
         int loop = 0;
         Eigen::MatrixXf m(dim, basis.size() + 1);
 
-        for (int i = 0; i < (int)basis.size(); i++)
+        for (std::size_t i = 0; i < basis.size(); i++)
         {
             m.block(0, i, dim, 1) = basis[i];
         }
@@ -1199,7 +1202,7 @@ namespace VirtualRobot
         {
             storeResult = Eigen::VectorXf::Random(dim);
 
-            if (storeResult.norm() > 1e-8)
+            if (storeResult.norm() > 1e-8f)
             {
                 storeResult.normalize();
 
@@ -1289,21 +1292,21 @@ namespace VirtualRobot
             // now check if vectors are orthogonal
 
             // z
-            if (fabs(x.dot(z)) > orthoCheck)
+            if (std::abs(x.dot(z)) > orthoCheck)
             {
                 z = x.cross(y);
                 z.normalize();
                 succ = false;
             }
             // y
-            if (fabs(y.dot(z)) > orthoCheck)
+            if (std::abs(y.dot(z)) > orthoCheck)
             {
                 y = z.cross(x);
                 y.normalize();
                 succ = false;
             }
             // x
-            if (fabs(x.dot(y)) > orthoCheck)
+            if (std::abs(x.dot(y)) > orthoCheck)
             {
                 x = y.cross(z);
                 x.normalize();
@@ -1369,8 +1372,8 @@ namespace VirtualRobot
         Eigen::AngleAxisf aa(qe);
         float angle = aa.angle();
         // sometimes angle is >PI?!
-        if (angle > float(M_PI))
-            angle = float(2.0f*M_PI) - angle;
+        if (angle > float(M_PIf))
+            angle = float(2.0f*M_PIf) - angle;
         return angle;
         /*
         float n = sqrtf(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
@@ -1515,7 +1518,7 @@ namespace VirtualRobot
 
         float mag = sqrtf(res.x * res.x + res.y * res.y + res.z * res.z + res.w * res.w);
 
-        if (mag > 0.0001)
+        if (mag > 0.0001f)
         {
             res.x /= mag;
             res.y /= mag;
@@ -1549,7 +1552,7 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(basisSrc.size() == 0, "NULL size");
         THROW_VR_EXCEPTION_IF(basisSrc.size() != basisDst.size(), "Different size of basis vectors");
-        int rows = basisSrc[0].rows();
+        long rows = basisSrc[0].rows();
         THROW_VR_EXCEPTION_IF(rows != basisDst[0].rows(), "Different row size of basis vectors");
         Eigen::MatrixXf mSrc(rows, basisSrc.size());
         Eigen::MatrixXf mDst(rows, basisDst.size());
@@ -1577,7 +1580,7 @@ namespace VirtualRobot
 
     MathTools::Plane VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::getFloorPlane()
     {
-        return Plane(Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 1.0f));
+        return Plane(Eigen::Vector3f::Zero(), Eigen::Vector3f::UnitZ());
     }
 
     MathTools::Line VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::intersectPlanes(const Plane& p1, const Plane& p2)
@@ -1586,7 +1589,7 @@ namespace VirtualRobot
 
         float dotpr = p1.n.dot(p2.n);
 
-        if (fabs(dotpr - 1.0f) < 1.e-6)
+        if (std::abs(dotpr - 1.0f) < 1.e-6f)
         {
             // planes are parallel
             MathTools::Line l(Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0));
@@ -1600,7 +1603,7 @@ namespace VirtualRobot
 
         float det = p1.n.dot(p1.n) * p2.n.dot(p2.n) - p1.n.dot(p2.n) * p1.n.dot(p2.n);
 
-        if (fabs(det) < 1e-9)
+        if (std::abs(det) < 1e-9f)
         {
             return MathTools::Line(Eigen::Vector3f(0, 0, 0), Eigen::Vector3f(0, 0, 0));
         }
@@ -1618,13 +1621,13 @@ namespace VirtualRobot
 
     float VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::rad2deg(float rad)
     {
-        static const float c = (float)(180.0 / M_PI);
+        static const float c = 180.0f / M_PIf;
         return rad * c;
     }
 
     float VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::deg2rad(float deg)
     {
-        static const float c = (float)(M_PI / 180.0);
+        static const float c = M_PIf / 180.0f;
         return deg * c;
     }
 
@@ -1646,7 +1649,7 @@ namespace VirtualRobot
                 VR_WARNING << "oops,calcCartesianPoseDiff: rotdist<0:" << ro << std::endl;
             }
 
-            ro = fabs(ro);
+            ro = std::abs(ro);
         }
 
         if (ro > 180.0f)
@@ -1685,7 +1688,7 @@ namespace VirtualRobot
         float     N = -plane.n.dot(w);//-dot(Pn.n, w);
 
         // check for parallel
-        if (fabs(D) < MIN_TO_ZERO)
+        if (std::abs(D) < MIN_TO_ZERO)
         {
             return eNoIntersection;
             /*if (N == 0)                     // segment lies in plane
@@ -1713,7 +1716,7 @@ namespace VirtualRobot
         Eigen::Vector3f res;
         std::vector<Eigen::Vector3f> intersectionPoints;
 
-        for (int i = 0; i < 12; i++)
+        for (std::size_t i = 0; i < 12; i++)
         {
             if (intersectSegmentPlane(s[i], plane, res) == eIntersection)
             {
@@ -1722,7 +1725,7 @@ namespace VirtualRobot
 
                 for (size_t j = 0; j < intersectionPoints.size(); j++)
                 {
-                    if ((intersectionPoints[j] - res).norm() <= 1e-6)
+                    if ((intersectionPoints[j] - res).norm() <= 1e-6f)
                     {
                         ok = false;
                     }
@@ -1766,9 +1769,9 @@ namespace VirtualRobot
     {
         Eigen::Vector3f res;
 
-        res(0) = sc.r * sin(sc.theta) * cos(sc.phi);
-        res(1) = sc.r * sin(sc.theta) * sin(sc.phi);
-        res(2) = sc.r * cos(sc.theta);
+        res(0) = sc.r * std::sin(sc.theta) * std::cos(sc.phi);
+        res(1) = sc.r * std::sin(sc.theta) * std::sin(sc.phi);
+        res(2) = sc.r * std::cos(sc.theta);
         return res;
     }
 
@@ -1777,15 +1780,15 @@ namespace VirtualRobot
         VirtualRobot::MathTools::SphericalCoord res;
         res.r = pos.norm();
 
-        if (res.r < 1e-8)
+        if (res.r < 1e-8f)
         {
             res.phi = 0;
             res.theta = 0;
             return res;
         }
 
-        res.phi = atan2(pos(1), pos(0));
-        res.theta = acos(pos(2) / res.r);
+        res.phi = std::atan2(pos(1), pos(0));
+        res.theta = std::acos(pos(2) / res.r);
         return res;
     }
 
@@ -1920,13 +1923,13 @@ namespace VirtualRobot
         Eigen::Vector3f resF;
         Eigen::Vector3d res;
 
-        res(2) = 2* atan2((double)q.x, (double)q.w);
+        res(2) = 2* std::atan2((double)q.x, (double)q.w);
 
         double s1 = cos(res(2) * 0.5);
         double s2 = sin(res(2) * 0.5);
         double a0 = 2*acos((double)q.w / s1);
         double b0 = 2*acos((double)q.x / s2);
-        if (fabs(a0-b0) > 1e-8)
+        if (std::abs(a0-b0) > 1e-8)
             std::cout << "0: " << a0 << "!=" << b0 << endl;
         res(0) = a0;
 
@@ -1934,13 +1937,13 @@ namespace VirtualRobot
         double a = acos((double)q.y/s1) - res(2)*0.5;
         double b = asin((double)q.z/s1) - res(2)*0.5;
 
-        if (fabs(a-b) > 1e-8)
+        if (std::abs(a-b) > 1e-8)
         {
             std::cout << "1: " << a << "!=" << b << endl;
             Eigen::Vector3f test1;
             test1 << (float)res(0) , float(a) , float(res(2));
             Quaternion q1 = hopf2quat(test1);
-            if (fabs(q1.w-q.w)<1e-6 && fabs(q1.x-q.x)<1e-6 && fabs(q1.y-q.y)<1e-6 && fabs(q1.z-q.z)<1e-6)
+            if (std::abs(q1.w-q.w)<1e-6 && std::abs(q1.x-q.x)<1e-6 && std::abs(q1.y-q.y)<1e-6 && std::abs(q1.z-q.z)<1e-6)
             {
                 cout << "TEST 1 ok" << endl;
                 res(1) = a;
@@ -1948,7 +1951,7 @@ namespace VirtualRobot
             {
                 test1 << (float)res(0) , float(b), float(res(2));
                 Quaternion q2 = hopf2quat(test1);
-                if (fabs(q2.w-q.w)<1e-6 && fabs(q2.x-q.x)<1e-6 && fabs(q2.y-q.y)<1e-6 && fabs(q2.z-q.z)<1e-6)
+                if (std::abs(q2.w-q.w)<1e-6 && std::abs(q2.x-q.x)<1e-6 && std::abs(q2.y-q.y)<1e-6 && std::abs(q2.z-q.z)<1e-6)
                 {
                     cout << "TEST 2 ok" << endl;
                     res(1) = b;
@@ -1968,26 +1971,26 @@ namespace VirtualRobot
     Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::quat2hopf(const MathTools::Quaternion &q)
     {
         Eigen::Vector3f resF;
-        float a_x4_x3 = atan2(q.z, q.w);
-        float a_x1_x2 = atan2(q.y, q.x);
+        float a_x4_x3 = std::atan2(q.z, q.w);
+        float a_x1_x2 = std::atan2(q.y, q.x);
         resF(0) = a_x1_x2 - a_x4_x3;
         resF(1) = a_x4_x3 + a_x1_x2;
 
         double p = sqrt(double(q.y)*double(q.y) + double(q.x)*double(q.x));
 
-        if (fabs(p-1) < 1e-6)
-            resF(2) = float(M_PI*0.5);
-        else if (fabs(p+1) < 1e-6)
-            resF(2) = float(-M_PI*0.5);
+        if (std::abs(p-1) < 1e-6)
+            resF(2) = M_PIf * 0.5f;
+        else if (std::abs(p+1) < 1e-6)
+            resF(2) = - M_PIf * 0.5f;
         else
-            resF(2) = asin(p);
+            resF(2) = static_cast<float>(std::asin(p));
 
         VR_ASSERT (!boost::math::isnan(resF(2)));
 
         if (resF(0)<0)
-            resF(0) = float(2.0f * M_PI) + resF(0); // -2PI,2PI -> 0,2PI
+            resF(0) = 2.0f * M_PIf + resF(0); // -2PI,2PI -> 0,2PI
         if (resF(1)<0)
-            resF(1) = float(2.0f * M_PI) + resF(1); // -2PI,2PI -> 0,2PI
+            resF(1) = 2.0f * M_PIf + resF(1); // -2PI,2PI -> 0,2PI
 
         return resF;
        /* Eigen::Matrix4f m4 = quat2eigen4f(q);
@@ -2001,15 +2004,15 @@ namespace VirtualRobot
         resF(0) = ea(0)-resF(2);
 
         // from -PI,2PI to -PI,PI
-        if (resF(0)>M_PI)
-            resF(0) -= 2*M_PI;
+        if (resF(0)>M_PIf)
+            resF(0) -= 2*M_PIf;
 
         if (resF(0)<0)
-            resF(0) = 2*M_PI + resF(0); // -PI,PI -> 0,2PI
+            resF(0) = 2*M_PIf + resF(0); // -PI,PI -> 0,2PI
         if (resF(1)<0)
-            resF(1) = 2*M_PI + resF(1); // -PI,PI -> 0,2PI
+            resF(1) = 2*M_PIf + resF(1); // -PI,PI -> 0,2PI
         if (resF(2)<0)
-            resF(2) = 2*M_PI + resF(2); // -PI,PI -> 0,2PI
+            resF(2) = 2*M_PIf + resF(2); // -PI,PI -> 0,2PI
 
         return resF;*/
     }
@@ -2017,10 +2020,10 @@ namespace VirtualRobot
     MathTools::Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT MathTools::hopf2quat(const Eigen::Vector3f &hopf)
     {
         MathTools::Quaternion q;
-        q.x = cos((hopf(0) + hopf(1))*0.5f) * sin(hopf(2));
-        q.y = sin((hopf(0) + hopf(1))*0.5f) * sin(hopf(2));
-        q.w = cos((hopf(1) - hopf(0))*0.5f) * cos(hopf(2)); // q.w needs to get zero if hopf coords are zero
-        q.z = sin((hopf(1) - hopf(0))*0.5f) * cos(hopf(2));
+        q.x = std::cos((hopf(0) + hopf(1))*0.5f) * std::sin(hopf(2));
+        q.y = std::sin((hopf(0) + hopf(1))*0.5f) * std::sin(hopf(2));
+        q.w = std::cos((hopf(1) - hopf(0))*0.5f) * std::cos(hopf(2)); // q.w needs to get zero if hopf coords are zero
+        q.z = std::sin((hopf(1) - hopf(0))*0.5f) * std::cos(hopf(2));
         return q;
 
 
@@ -2030,12 +2033,12 @@ namespace VirtualRobot
         q.z = sin(hopf(0)*0.5f) * sin(hopf(1) + hopf(2)*0.5f);*/
         /*
         Eigen::Vector3f h2 = hopf;
-        if (h2(0)>M_PI)
-            h2(0) = h2(0) - 2*M_PI ; // 0,2PI -> -PI,PI
-        if (h2(1)>M_PI)
-            h2(1) = h2(1) - 2*M_PI ; // 0,2PI -> -PI,PI
-        if (h2(0)>M_PI)
-            h2(2) = h2(2) - 2*M_PI ; // 0,2PI -> -PI,PI
+        if (h2(0)>M_PIf)
+            h2(0) = h2(0) - 2*M_PIf ; // 0,2PI -> -PI,PI
+        if (h2(1)>M_PIf)
+            h2(1) = h2(1) - 2*M_PIf ; // 0,2PI -> -PI,PI
+        if (h2(0)>M_PIf)
+            h2(2) = h2(2) - 2*M_PIf ; // 0,2PI -> -PI,PI
 
         // formular form
         // Open-source code for manifold-based 3D rotation recovery of X-ray scattering patterns
@@ -2074,17 +2077,17 @@ namespace VirtualRobot
 
     float MathTools::angleMod2PI(float value)
     {
-        return fmod(value, 0, 2 * M_PI);
+        return fmod(value, 0, 2 * M_PIf);
     }
 
     float MathTools::angleModPI(float value)
     {
-        return angleMod2PI(value + M_PI) - M_PI;
+        return angleMod2PI(value + M_PIf) - M_PIf;
     }
 
     float MathTools::angleModX(float value, float center)
     {
-        return angleMod2PI(value + M_PI - center) - M_PI + center;
+        return angleMod2PI(value + M_PIf - center) - M_PIf + center;
     }
 
     float MathTools::Lerp(float a, float b, float f)
@@ -2099,7 +2102,7 @@ namespace VirtualRobot
 
     float MathTools::AngleLerp(float a, float b, float f)
     {
-        b = fmod(b, a - M_PI, a + M_PI);
+        b = fmod(b, a - M_PIf, a + M_PIf);
         return Lerp(a, b, f);
     }
 
@@ -2107,13 +2110,29 @@ namespace VirtualRobot
     {
         return angleModPI(angle2 - angle1);
     }
-
-
-
-
-
-
-
+    
+    float MathTools::getTriangleArea(const Eigen::Vector3f& a, const Eigen::Vector3f& b,
+                                     const Eigen::Vector3f& c)
+    {
+        Eigen::Vector3f ab = b - a;
+        Eigen::Vector3f ac = c - a;
+        
+        float abNorm = ab.norm();
+        float acNorm = ac.norm();
+        
+        if (abNorm <= 0 || acNorm <= 0) return 0;  // collapsed triangle
+        
+        // alpha := angle at a, i.e. between ab and ac
+        // => cos(alpha) = ab * ac
+        // => sin(alpha) = sqrt( 1 - cos(alpha)^2 )
+        float cos_alpha = (ab / abNorm).dot(ac / acNorm);
+        float sin_alpha = std::sqrt(1 - cos_alpha * cos_alpha);
+        
+        // area = 1/2 * sin(alpha) * |ab| * |ac|
+        // (where sin(alpha) * |ab| = distance of b to |ac|)
+        float area = 0.5f * sin_alpha * abNorm * acNorm;
+        return area;
+    }
 
 
 } // namespace

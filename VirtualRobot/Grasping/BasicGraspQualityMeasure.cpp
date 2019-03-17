@@ -51,7 +51,7 @@ namespace VirtualRobot
 
     bool BasicGraspQualityMeasure::calculateGraspQuality()
     {
-        graspQuality = (float)contactPoints.size() / (float)maxContacts;
+        graspQuality = static_cast<float>(contactPoints.size()) / static_cast<float>(maxContacts);
 
         if (graspQuality > 1.0f)
         {
@@ -116,7 +116,7 @@ namespace VirtualRobot
             // store force as projected component of approachDirection
             const Eigen::Vector3f nGlob = objPoint.contactPointObstacleGlobal - objPoint.contactPointFingerGlobal;
 
-            if (nGlob.norm() > 1e-10)
+            if (nGlob.norm() > 1e-10f)
             {
                 point.force = nGlob.dot(objPoint.approachDirectionGlobal) / nGlob.norm();
             }
@@ -153,8 +153,8 @@ namespace VirtualRobot
 
         }
 
-        p.p /= (float)contactPoints.size();
-        p.n /= (float)contactPoints.size();
+        p.p /= static_cast<float>(contactPoints.size());
+        p.n /= static_cast<float>(contactPoints.size());
 
         return p;
     }

@@ -89,7 +89,7 @@ void KernelWithDerivatives::swap(float &x, float &y, float &z, int index) const
 GaussianKernel::GaussianKernel(float lengthScale)
     : lengthScale(lengthScale) {}
 
-float GaussianKernel::Kernel(const Eigen::Vector3f& p1, const Eigen::Vector3f& p2, float R) const
+float GaussianKernel::Kernel(const Eigen::Vector3f& p1, const Eigen::Vector3f& p2, float /*R*/) const
 {
     const float tmp = (p1 - p2).squaredNorm() / (2*lengthScale*lengthScale);
     //std::cout << (2*lengthScale*lengthScale) << " " << (p1 - p2).squaredNorm() << " " <<  tmp << std::endl;

@@ -1,19 +1,178 @@
 PROJECT ( VirtualRobot )
 
-MESSAGE (STATUS "\n***** CONFIGURING Simox project VirtualRobot *****")
+add_library(VirtualRobot SHARED VirtualRobot.h) # sources will be added later
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
-CMAKE_POLICY(VERSION 2.6)
+target_include_directories(VirtualRobot PUBLIC
+    $<BUILD_INTERFACE:${Simox_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${Simox_BINARY_DIR}>
+    $<INSTALL_INTERFACE:include>
+)
 
-if(NOT ("${CMAKE_VERSION}" VERSION_LESS 2.8.12))
-    cmake_policy(SET CMP0022 OLD) # avoid INTERFACE_LINK_LIBRARIES warnings
-ENDIF()
-if(POLICY CMP0020)
-    cmake_policy(SET CMP0020 NEW) # qtmain add lib dependency (no effect in our case)
+target_compile_options(VirtualRobot PUBLIC ${Simox_OS_compile_options})
+
+#######################################################################
+# Setup dependencies
+#######################################################################
+### RBDL
+if (Simox_USE_RBDL)
+    FIND_PACKAGE (RBDL)
+    if (RBDL_FOUND)
+        MESSAGE(STATUS "RBDL found at: ${RBDL_INCLUDE_DIR}")
+        target_include_directories(VirtualRobot PUBLIC ${RBDL_INCLUDE_DIR})
+        target_link_libraries(VirtualRobot PUBLIC ${RBDL_LIBRARIES})
+    else ()
+        MESSAGE(STATUS "RBDL not found!")
+    endif ()
 endif()
 
-INCLUDE (Cxx11Test)
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
+#### NLOPT
+if (Simox_USE_NLOPT)
+    FIND_PACKAGE(NLOPT)
+    if (NLOPT_FOUND)
+        MESSAGE(STATUS "NLOPT found at: ${NLOPT_INCLUDE_DIRS}")
+        target_include_directories(VirtualRobot PUBLIC ${NLOPT_INCLUDE_DIRS})
+        target_link_libraries(VirtualRobot PUBLIC ${NLOPT_LIBRARIES})
+    else ()
+        MESSAGE(STATUS "NLOPT not found")
+    endif ()
+endif ()
+
+#### Eigen
+FIND_PACKAGE (Eigen3 REQUIRED)
+target_include_directories(VirtualRobot SYSTEM PUBLIC ${Eigen3_INCLUDE_DIR})
+
+#### BOOST
+FIND_PACKAGE(Boost COMPONENTS filesystem system program_options thread REQUIRED)
+MESSAGE (STATUS "Boost found at: ${Boost_INCLUDE_DIR}")
+
+target_include_directories(VirtualRobot PUBLIC ${Boost_INCLUDE_DIR})
+target_link_libraries(VirtualRobot PUBLIC 
+        Boost::boost
+        Boost::filesystem
+        Boost::system
+        Boost::program_options
+        Boost::thread
+)
+# disable boost auto linking
+if (Boost_USE_STATIC_LIBS)
+    target_compile_definitions(VirtualRobot PUBLIC -DBOOST_ALL_NO_LIB -DBOOST_TEST_MAIN)
+else (Boost_USE_STATIC_LIBS)
+    # enable dynamic linking for specific boost libraries
+    target_compile_definitions(VirtualRobot PUBLIC
+        -DBOOST_ALL_NO_LIB
+        -DBOOST_PROGRAM_OPTIONS_DYN_LINK
+        -DBOOST_FILESYSTEM_DYN_LINK
+        -DBOOST_SYSTEM_DYN_LINK
+        -DBOOST_THREAD_DYN_LINK)
+endif ()
+
+
+##########################################
+#### VISUALIZATION Coin3D+Qt+SoQt / OSG+Qt
+
+
+if (Simox_USE_COIN_VISUALIZATION)
+    MESSAGE(STATUS "Searching Coin3D, Qt and SoQt...")
+
+    ##### Coin3D
+    FIND_PACKAGE(Coin3D REQUIRED)
+    if (COIN3D_FOUND)
+        MESSAGE (STATUS "Found Coin3D: " ${COIN3D_INCLUDE_DIRS})
+        set(Simox_VISUALIZATION  TRUE CACHE BOOL "")
+
+        target_include_directories(VirtualRobot PUBLIC ${COIN3D_INCLUDE_DIRS})
+        target_link_libraries(VirtualRobot PUBLIC ${COIN3D_LIBRARIES})
+        target_compile_definitions(VirtualRobot PUBLIC -DCOIN_DLL)
+    endif ()
+
+
+    if ( Qt5_FOUND )
+        MESSAGE (STATUS "Found Qt5: " ${Qt5Gui_INCLUDE_DIRS}  ${Qt5OpenGL_INCLUDE_DIRS} )        
+        target_link_libraries(VirtualRobot PUBLIC Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Widgets)
+    else ( )
+        MESSAGE (STATUS "Did not find Qt. Disabling Qt/SoQt support.")
+    endif ( )
+
+    if (Qt5_FOUND AND COIN3D_FOUND)
+        #### SoQt
+        # This will set SoQt_INCLUDE_DIRS and SoQt_LIBRARIES
+        FIND_PACKAGE(SoQt)
+        set(SOQT_FOUND  ${SOQT_FOUND} CACHE INTERNAL "")
+
+        if (NOT SOQT_FOUND)
+            MESSAGE (STATUS "Did not find SoQt. Disabling SoQt support.")
+        else ()
+            MESSAGE (STATUS "Found SoQt:" ${SoQt_INCLUDE_DIRS})
+            MESSAGE (STATUS "Enabling Coin3D/Qt/SoQt support")
+
+            set(Simox_VISUALIZATION  TRUE CACHE BOOL "")
+            set(Simox_BUILD_EXAMPLES ON CACHE BOOL "Build example applications")
+
+            target_include_directories(VirtualRobot PUBLIC ${SoQt_INCLUDE_DIRS})
+            target_link_libraries(VirtualRobot PUBLIC ${SoQt_LIBRARIES})
+            target_compile_definitions(VirtualRobot PUBLIC -DSOQT_DLL -DSIMOX_USE_SOQT)
+
+            if (NOT UNIX)
+                target_link_libraries(VirtualRobot PUBLIC opengl32)
+          endif()
+        endif()
+    endif()
+elseif (Simox_USE_OPENSCENEGRAPH_VISUALIZATION)
+    MESSAGE(STATUS "Searching OSG and Qt...")
+    FIND_PACKAGE(OpenSceneGraph REQUIRED osgViewer osgUtil osgDB osgGA)
+
+    if (Qt5_FOUND AND OPENSCENEGRAPH_FOUND)
+        MESSAGE (STATUS "Enabling OSG/Qt support")
+        ### a little hack is needed here since osgQt is not supported in the FindOSG script
+        MESSAGE(STATUS "OPENSCENEGRAPH_LIBRARIES: ${OPENSCENEGRAPH_LIBRARIES}")
+        LIST(GET OPENSCENEGRAPH_LIBRARIES 1 firstOsgLib)
+        MESSAGE(STATUS "firstOsgLib: ${firstOsgLib}")
+        GET_FILENAME_COMPONENT(osgLibPath ${firstOsgLib} PATH)
+        MESSAGE(STATUS "osgLibPath: ${osgLibPath}")
+        if (UNIX)
+            list(APPEND OPENSCENEGRAPH_LIBRARIES ${osgLibPath}/libosgQt.so)
+        else()
+            list(APPEND OPENSCENEGRAPH_LIBRARIES optimized)
+            list(APPEND OPENSCENEGRAPH_LIBRARIES ${osgLibPath}/osgQt.lib)
+            list(APPEND OPENSCENEGRAPH_LIBRARIES debug)
+            list(APPEND OPENSCENEGRAPH_LIBRARIES ${osgLibPath}/osgQtd.lib)
+        endif()
+        MESSAGE(STATUS "OPENSCENEGRAPH_LIBRARIES: ${OPENSCENEGRAPH_LIBRARIES}")
+        set(Simox_VISUALIZATION  TRUE CACHE BOOL "")
+
+
+        target_include_directories(VirtualRobot PUBLIC ${OPENSCENEGRAPH_INCLUDE_DIRS})
+        target_link_libraries(VirtualRobot PUBLIC ${OPENSCENEGRAPH_LIBRARIES})
+    endif()
+else()
+    MESSAGE(STATUS "Visualization disabled")
+endif()
+
+if (Simox_USE_COLLADA)
+    MESSAGE(STATUS "Searching for Collada...")
+    FIND_PACKAGE(COLLADA_DOM REQUIRED 2.4)
+
+    IF(COLLADA_DOM_FOUND)
+        MESSAGE (STATUS "Found Collada")
+        MESSAGE (STATUS "* Collada COLLADA_DOM_ROOT_DIR : ${COLLADA_DOM_ROOT_DIR}")
+        MESSAGE (STATUS "* Collada Include DIRS: ${COLLADA_DOM_INCLUDE_DIRS}")
+        MESSAGE (STATUS "* Collada Libs: ${COLLADA_DOM_LIBRARIES}")
+        MESSAGE (STATUS "* Collada COLLADA_DOM_LIBRARY_DIRS: ${COLLADA_DOM_LIBRARY_DIRS}")
+
+        FIND_LIBRARY(COLLADA_LIBRARY ${COLLADA_DOM_LIBRARIES} ${COLLADA_DOM_LIBRARY_DIRS})
+        MESSAGE (STATUS "Collada Full Collada lib: ${COLLADA_LIBRARY}")
+
+        target_include_directories(VirtualRobot PUBLIC ${COLLADA_DOM_INCLUDE_DIRS})
+        target_link_libraries(VirtualRobot PUBLIC ${COLLADA_LIBRARY})
+        target_compile_definitions(VirtualRobot PUBLIC -DDOM_DYNAMIC )
+    ENDIF()
+endif()
+
+##########################################################################################################
+##########################################################################################################
+##########################################################################################################
+
+MESSAGE (STATUS "\n***** CONFIGURING Simox project VirtualRobot *****")
 
 if (Simox_USE_RBDL)
     FIND_PACKAGE (RBDL)
@@ -21,22 +180,16 @@ endif()
 
 if (Simox_USE_NLOPT)
     FIND_PACKAGE (NLOPT)
-    if (NLOPT_FOUND)
-        ADD_DEFINITIONS(-DUSE_NLOPT)
-    endif()
 endif()
 
 ########################### TESTING #####################################
 MACRO(ADD_VR_TEST TEST_NAME)
-    INCLUDE_DIRECTORIES(SYSTEM ${Simox_EXTERNAL_INCLUDE_DIRS})
-    INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
-    INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/..")
-    ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
-    if (NOT Boost_USE_STATIC_LIBS)
-        ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
-    endif (NOT Boost_USE_STATIC_LIBS)
     ADD_EXECUTABLE(${TEST_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}.cpp)
-    TARGET_LINK_LIBRARIES(${TEST_NAME} PRIVATE VirtualRobot ${Simox_EXTERNAL_LIBRARIES} ${Boost_TEST_LIB})
+    TARGET_LINK_LIBRARIES(${TEST_NAME} PRIVATE VirtualRobot Boost::unit_test_framework)
+    target_include_directories(${TEST_NAME} PRIVATE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/..)
+    if (NOT Boost_USE_STATIC_LIBS)
+        target_compile_definitions(${TEST_NAME} PRIVATE -DBOOST_TEST_DYN_LINK)
+    endif ()
     SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_TEST_DIR})
     SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES FOLDER "VirtualRobot Tests")
     ADD_TEST(NAME VirtualRobot_${TEST_NAME}
@@ -151,42 +304,44 @@ Import/SimoxXMLFactory.cpp
 Import/RobotImporterFactory.cpp
 Import/MeshImport/STLReader.cpp
 Tools/Gravity.cpp
-math/Contact.cpp
-math/ContactList.cpp
-math/Line.cpp
-math/LineStrip.cpp
-math/Bezier.cpp
-math/LinearContinuedBezier.cpp
-math/LineR2.cpp
 math/AbstractFunctionR1R2.cpp
 math/AbstractFunctionR1R3.cpp
 math/AbstractFunctionR1R6.cpp
 math/AbstractFunctionR2R3.cpp
+math/Bezier.cpp
 math/CompositeFunctionR1R6.cpp
-math/TransformedFunctionR1R3.cpp
-math/TransformedFunctionR2R3.cpp
-math/LinearInterpolatedOrientation.cpp
+math/Contact.cpp
+math/ContactList.cpp
+math/DataR3R1.cpp
+math/DataR3R2.cpp
 math/FitPlane.cpp
-math/Plane.cpp
-math/Triangle.cpp
-math/ImplicitPlane.cpp
-math/GaussianObjectModel.cpp
-math/GaussianObjectModelNormals.cpp
-math/ImplicitObjectModel.cpp
-math/Kernels.cpp
 math/GaussianImplicitSurface3D.cpp
 math/GaussianImplicitSurface3DNormals.cpp
 math/GaussianImplicitSurface3DCombined.cpp
-math/DataR3R1.cpp
-math/DataR3R2.cpp
-math/Helpers.cpp
-math/Index3.cpp
-math/MarchingCubes.cpp
-math/Primitive.cpp
-math/WeightedAverage.cpp
+math/GaussianObjectModel.cpp
+math/GaussianObjectModelNormals.cpp
 math/Grid3D.cpp
 math/GridCacheFloat3.cpp
+math/Helpers.cpp
+math/Histogram.cpp
+math/ImplicitPlane.cpp
+math/ImplicitObjectModel.cpp
+math/Index3.cpp
+math/Kernels.cpp
+math/Line.cpp
+math/LinearContinuedBezier.cpp
+math/LinearInterpolatedOrientation.cpp
+math/LineR2.cpp
+math/LineStrip.cpp
+math/MarchingCubes.cpp
+math/TransformedFunctionR1R3.cpp
+math/TransformedFunctionR2R3.cpp
+math/Plane.cpp
+math/Primitive.cpp
+math/Triangle.cpp
+math/WeightedAverage.cpp
 Util/xml/tinyxml2.cpp
+Util/json/eigen_conversion.cpp
 )
 
 SET(INCLUDES
@@ -310,54 +465,57 @@ Import/SimoxXMLFactory.h
 Import/RobotImporterFactory.h
 Import/MeshImport/STLReader.h
 Tools/Gravity.h
-math/MathForwardDefinitions.h
-math/Contact.h
-math/ContactList.h
-math/Line.h
-math/LineStrip.h
-math/LineStripR1RM.h
-math/Bezier.h
-math/LinearContinuedBezier.h
-math/LineR2.h
+math/AbstractFunctionR1Ori.h
 math/AbstractFunctionR1R2.h
 math/AbstractFunctionR1R3.h
 math/AbstractFunctionR1R6.h
-math/AbstractFunctionR1Ori.h
 math/AbstractFunctionR2R3.h
 math/AbstractFunctionR3R1.h
-math/TransformedFunctionR1R3.h
-math/TransformedFunctionR2R3.h
-math/SimpleAbstractFunctionR1R3.h
-math/SimpleAbstractFunctionRNRM.h
-math/SimpleAbstractFunctionR1R6.h
-math/SimpleAbstractFunctionR1Ori.h
-math/SimpleAbstractFunctionR2R3.h
-math/SimpleAbstractFunctionR3R1.h
+math/Array3D.h
+math/Bezier.h
+math/ClampedNormalDistribution.hpp
 math/CompositeFunctionR1R6.h
-math/LinearInterpolatedOrientation.h
-math/FitPlane.h
-math/Plane.h
-math/Triangle.h
-math/ImplicitPlane.h
-math/ImplicitObjectModel.cpp
-math/GaussianObjectModel.h
-math/GaussianObjectModelNormals.h
-math/Kernels.h
-math/GaussianImplicitSurface3D.h
-math/GaussianImplicitSurface3DNormals.h
-math/GaussianImplicitSurface3DCombined.h
+math/Contact.h
+math/ContactList.h
 math/DataR3R1.h
 math/DataR3R2.h
-math/Helpers.h
-math/Index3.h
-math/Array3D.h
-math/MarchingCubes.h
-math/Primitive.h
+math/FitPlane.h
+math/GaussianImplicitSurface3D.h
+math/GaussianImplicitSurface3DCombined.h
+math/GaussianImplicitSurface3DNormals.h
+math/GaussianObjectModel.h
+math/GaussianObjectModelNormals.h
 math/Grid3D.h
 math/GridCacheFloat3.h
+math/Helpers.h
+math/Histogram.h
+math/ImplicitObjectModel.cpp
+math/ImplicitPlane.h
+math/Index3.h
+math/Kernels.h
+math/Line.h
+math/LineR2.h
+math/LineStrip.h
+math/LineStripR1RM.h
+math/LinearContinuedBezier.h
+math/LinearInterpolatedOrientation.h
+math/MarchingCubes.h
+math/MathForwardDefinitions.h
+math/Plane.h
+math/Primitive.h
+math/SimpleAbstractFunctionR1Ori.h
+math/SimpleAbstractFunctionR1R3.h
+math/SimpleAbstractFunctionR1R6.h
+math/SimpleAbstractFunctionR2R3.h
+math/SimpleAbstractFunctionR3R1.h
+math/SimpleAbstractFunctionRNRM.h
+math/TransformedFunctionR1R3.h
+math/TransformedFunctionR2R3.h
+math/Triangle.h
 math/WeightedAverage.h
 Util/xml/tinyxml2.h
 Util/json/json.hpp
+Util/json/eigen_conversion.h
 Util/json/eigen_conversion.hpp
 )
 
@@ -393,8 +551,11 @@ if (Simox_USE_NLOPT AND NLOPT_FOUND)
     )
 endif ()
 
-if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)
-
+MESSAGE (STATUS "Simox_VISUALIZATION                   : ${Simox_VISUALIZATION}")
+MESSAGE (STATUS "Simox_USE_COIN_VISUALIZATION          : ${Simox_USE_COIN_VISUALIZATION}")
+MESSAGE (STATUS "Simox_USE_OPENSCENEGRAPH_VISUALIZATION: ${Simox_USE_OPENSCENEGRAPH_VISUALIZATION}")
+if (Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION)    
+    MESSAGE (STATUS "adding Coin3d visualzation")
     SET(SOURCES
     ${SOURCES}
     Visualization/CoinVisualization/CoinVisualizationFactory.cpp
@@ -444,60 +605,18 @@ elseif (Simox_VISUALIZATION AND Simox_USE_OPENSCENEGRAPH_VISUALIZATION)
     Visualization/OSGVisualization/osgQtWidget/osgViewerWidget.h
     )
 
-    set(GUI_MOC_HDRS
-        Visualization/OSGVisualization/osgQtWidget/osgViewerWidget.h
-    )
-    if (Simox_USE_QT4)
-        qt4_wrap_cpp(SOURCES ${GUI_MOC_HDRS})
-        else()
-        qt5_wrap_cpp(SOURCES ${GUI_MOC_HDRS})
-    endif()
-
     if(BUILD_TESTING)
         ADD_SUBDIRECTORY(Visualization/OSGVisualization/tests)
     endif()
 endif ()
 
-#if (Simox_USE_COLLADA)
-#
-#    SET(SOURCES
-#    ${SOURCES}
-#    Import/SimoxCOLLADAFactory.cpp
-#    COLLADA/ColladaIO.cpp
-#    COLLADA/ColladaParser.cpp
-#    )
-#
-#    SET(INCLUDES
-#    ${INCLUDES}
-#    Import/SimoxCOLLADAFactory.h
-#    COLLADA/ColladaIO.h
-#    COLLADA/ColladaIterators.h
-#    COLLADA/ColladaParser.h
-#    )
-#endif ()
-
-
 #check for URDF
 if (Simox_USE_URDF)
     include(SearchForTinyXML)
     FIND_PACKAGE(urdfdom)
-    #FIND_PACKAGE(PkgConfig)
-    #PKG_CHECK_MODULES(URDFDOM REQUIRED urdfdom>=0.2.9)
-    #PKG_CHECK_MODULES(URDFDOM_HEADERS REQUIRED urdfdom_headers>=0.2.3)
 
     if (tinyxml_library AND URDF_FOUND)
         MESSAGE(STATUS " ** Including URDF importer")
-
-        include_directories(SYSTEM ${tinyxml_include_dirs})
-        link_directories(${tinyxml_library_dirs})
-        add_definitions(${tinyxml_cflags})
-        add_definitions(" -DTIXML_USE_STL ")
-
-        INCLUDE_DIRECTORIES (SYSTEM
-            ${URDFDOM_INCLUDE_DIRS}
-            ${URDFDOM_PARSER_INCLUDE_DIRS}
-            ${URDFDOM_HEADERS_INCLUDE_DIRS}
-        )
 
         SET(SOURCES
           ${SOURCES}
@@ -508,7 +627,7 @@ if (Simox_USE_URDF)
             Import/URDF/SimoxURDFFactory.h
             )
 
-        SET(Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${URDFDOM_LIBRARIES})
+        target_link_libraries(VirtualRobot PUBLIC ${URDFDOM_LIBRARIES})
     else()
         MESSAGE(STATUS " *** urdfDom or TinyXML not found: skipping URDF importer...")
     endif()
@@ -532,35 +651,39 @@ endif()
 # Adding the UI files to the library
 if (Simox_USE_COIN_VISUALIZATION AND SOQT_FOUND)
     MESSAGE (STATUS " ** Adding GraspEditor gui")
-    set(UI
+    
+
+    SET(SOURCES ${SOURCES} Grasping/GraspEditor/GraspEditorWindow.cpp)
+    SET(INCLUDES ${INCLUDES}
+        Grasping/GraspEditor/GraspEditorWindow.h
         Grasping/GraspEditor/GraspEditor.ui
     )
-    
-  if (Simox_USE_QT4)
-        QT4_WRAP_UI(UI_HEADERS ${UI})
-        QT4_WRAP_CPP(MOC_SRC
-            Grasping/GraspEditor/GraspEditorWindow.h
-        )
-    else()
-        QT5_WRAP_UI(UI_HEADERS ${UI})
-        QT5_WRAP_CPP(MOC_SRC
-            Grasping/GraspEditor/GraspEditorWindow.h
-        )
-  endif()
-
-    
-    set(INCLUDES ${INCLUDES} ${UI_HEADERS})
-
-    SET(SOURCES ${SOURCES} ${MOC_SRC} "Grasping/GraspEditor/GraspEditorWindow.cpp")
-    SET(INCLUDES ${INCLUDES} "Grasping/GraspEditor/GraspEditorWindow.h")
 endif()
 
 # Finished adding UI files
 #-----------------------------------------------------------------------------------
+set_target_properties(VirtualRobot PROPERTIES SOURCES "${SOURCES};${INCLUDES}")
 
-ADD_LIBRARY (VirtualRobot SHARED ${SOURCES} ${INCLUDES})
-TARGET_LINK_LIBRARIES(VirtualRobot PUBLIC ColCheckerPQP ${Simox_EXTERNAL_LIBRARIES})
-target_include_directories(VirtualRobot SYSTEM PUBLIC ${Simox_EXTERNAL_INCLUDE_DIRS})
+target_compile_definitions(VirtualRobot PUBLIC
+    "-DVirtualRobot_SRC_DATA_PATH=\"${Simox_DATA_DIR}\""
+    "-DSimox_DATA_PATH=\"${Simox_INSTALL_DATA_DIR}\""
+)
+if (Simox_USE_NLOPT AND NLOPT_FOUND)
+    target_compile_definitions(VirtualRobot PUBLIC -DUSE_NLOPT)
+endif()
+
+
+if (Simox_USE_URDF AND tinyxml_library AND URDF_FOUND)
+        target_include_directories(VirtualRobot SYSTEM PUBLIC ${tinyxml_include_dirs})
+        target_compile_options(VirtualRobot PUBLIC ${tinyxml_library_dirs})
+        target_compile_definitions(VirtualRobot PUBLIC ${tinyxml_cflags} -DTIXML_USE_STL)
+
+        target_include_directories(VirtualRobot SYSTEM PUBLIC
+            ${URDFDOM_INCLUDE_DIRS}
+            ${URDFDOM_PARSER_INCLUDE_DIRS}
+            ${URDFDOM_HEADERS_INCLUDE_DIRS}
+        )
+endif()
 
 # against undefined reference to boost::filesystem::detail::copy_file
 # source: https://stackoverflow.com/a/3500721
@@ -581,17 +704,13 @@ SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${Simo
 ############################ Setup for installation ###################################
 #######################################################################################
 
-#set_target_properties(${PROJECT_NAME} PROPERTIES
-#  PUBLIC_HEADER "${INCLUDES}")
-
 install(TARGETS ${PROJECT_NAME}
     # IMPORTANT: Add the library to the "export-set"
     EXPORT SimoxTargets
-    RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
-    LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT shlib
-    ARCHIVE DESTINATION "${INSTALL_LIB_DIR}" COMPONENT library
+    RUNTIME DESTINATION bin COMPONENT bin
+    LIBRARY DESTINATION lib COMPONENT shlib
+    ARCHIVE DESTINATION lib COMPONENT library
     COMPONENT dev)
-    #  PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/VirtualRobot"
  
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} DESTINATION "${Simox_INSTALL_HEADER_DIR}"
     COMPONENT Headers

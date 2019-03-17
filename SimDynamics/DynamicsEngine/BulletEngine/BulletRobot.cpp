@@ -441,7 +441,13 @@ namespace SimDynamics
         links.push_back(i);
 #ifndef DEBUG_FIXED_OBJECTS
 
-        if (enableJointMotors && (joint->isRotationalJoint() || (joint->isTranslationalJoint()) && !ignoreTranslationalJoints))
+        if (
+            enableJointMotors &&
+            (
+                joint->isRotationalJoint() ||
+                (joint->isTranslationalJoint() && !ignoreTranslationalJoints)
+            )
+        )
         {
             // start standard actuator
             actuateNode(joint, joint->getJointValue());
@@ -1092,6 +1098,7 @@ namespace SimDynamics
 
             return slider->getTargetLinMotorVelocity() * 1000; // / BulletObject::ScaleFactor; m -> mm
         }
+        return 0;
     }
 
     double BulletRobot::getJointSpeed(VirtualRobot::RobotNodePtr rn)

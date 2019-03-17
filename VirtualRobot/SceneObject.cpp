@@ -214,11 +214,11 @@ namespace VirtualRobot
 
         if (visualizationType == "")
         {
-            visualizationFactory = VisualizationFactory::first(NULL);
+            visualizationFactory = VisualizationFactory::first(nullptr);
         }
         else
         {
-            visualizationFactory = VisualizationFactory::fromName(visualizationType, NULL);
+            visualizationFactory = VisualizationFactory::fromName(visualizationType, nullptr);
         }
 
         if (!visualizationFactory)
@@ -258,7 +258,7 @@ namespace VirtualRobot
 
         if (enable)
         {
-            VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
+            VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(nullptr);
 
             if (!visualizationFactory)
             {
@@ -306,7 +306,7 @@ namespace VirtualRobot
             visualizationModel->detachVisualization("__InertiaMatrix");
         }
 
-        VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
+        VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(nullptr);
 
         if (enableCoM && visualizationFactory)
         {
@@ -371,21 +371,24 @@ namespace VirtualRobot
                 cout << "v2:" << v2 << endl;
                 cout << "v3:" << v3 << endl;*/
 
-                float xl = (float)(eigensolver.eigenvalues().rows() > 0 ? eigensolver.eigenvalues()(0) : 1e-6);
-                float yl = (float)(eigensolver.eigenvalues().rows() > 1 ? eigensolver.eigenvalues()(1) : 1e-6);
-                float zl = (float)(eigensolver.eigenvalues().rows() > 2 ? eigensolver.eigenvalues()(2) : 1e-6);
+                float xl = static_cast<float>(eigensolver.eigenvalues().rows() > 0 ?
+                                                  eigensolver.eigenvalues()(0) : 1e-6);
+                float yl = static_cast<float>(eigensolver.eigenvalues().rows() > 1 ?
+                                                  eigensolver.eigenvalues()(1) : 1e-6);
+                float zl = static_cast<float>(eigensolver.eigenvalues().rows() > 2 ?
+                                                  eigensolver.eigenvalues()(2) : 1e-6);
 
-                if (fabs(xl) < 1e-6)
+                if (std::abs(xl) < 1e-6f)
                 {
                     xl = 1e-6f;
                 }
 
-                if (fabs(yl) < 1e-6)
+                if (std::abs(yl) < 1e-6f)
                 {
                     yl = 1e-6f;
                 }
 
-                if (fabs(zl) < 1e-6)
+                if (std::abs(zl) < 1e-6f)
                 {
                     zl = 1e-6f;
                 }
@@ -542,7 +545,7 @@ namespace VirtualRobot
 
     Eigen::Matrix4f SceneObject::toLocalCoordinateSystem(const Eigen::Matrix4f& poseGlobal) const
     {
-        return getGlobalPose().inverse() * poseGlobal;
+        return math::Helpers::InvertedPose(getGlobalPose()) * poseGlobal;
     }
 
 
@@ -553,49 +556,44 @@ namespace VirtualRobot
 
     Eigen::Vector3f SceneObject::toLocalCoordinateSystemVec(const Eigen::Vector3f& positionGlobal) const
     {
-        Eigen::Matrix4f t;
-        t.setIdentity();
-        t.block(0, 3, 3, 1) = positionGlobal;
+        Eigen::Matrix4f t = t.Identity();
+        math::Helpers::Position(t) = positionGlobal;
         t = toLocalCoordinateSystem(t);
-        Eigen::Vector3f result = t.block(0, 3, 3, 1);
-        return result;
+        return math::Helpers::Position(t);
     }
 
 
     Eigen::Vector3f SceneObject::toGlobalCoordinateSystemVec(const Eigen::Vector3f& positionLocal) const
     {
-        Eigen::Matrix4f t;
-        t.setIdentity();
-        t.block(0, 3, 3, 1) = positionLocal;
+        Eigen::Matrix4f t = t.Identity();
+        math::Helpers::Position(t) = positionLocal;
         t = toGlobalCoordinateSystem(t);
-        Eigen::Vector3f result = t.block(0, 3, 3, 1);
-        return result;
+        return math::Helpers::Position(t);
     }
 
     Eigen::Matrix4f SceneObject::getTransformationTo(const SceneObjectPtr otherObject)
     {
-        return getGlobalPose().inverse() * otherObject->getGlobalPose();
+        return math::Helpers::InvertedPose(getGlobalPose()) * otherObject->getGlobalPose();
     }
 
     Eigen::Matrix4f SceneObject::getTransformationFrom(const SceneObjectPtr otherObject)
     {
-        return otherObject->getGlobalPose().inverse() * getGlobalPose();
+        return math::Helpers::InvertedPose(otherObject->getGlobalPose()) * getGlobalPose();
     }
 
-    Eigen::Matrix4f SceneObject::transformTo(const SceneObjectPtr otherObject, const Eigen::Matrix4f& poseInOtherCoordSystem)
+    Eigen::Matrix4f SceneObject::transformTo(const SceneObjectPtr otherObject,
+                                             const Eigen::Matrix4f& poseInOtherCoordSystem)
     {
-        Eigen::Matrix4f m = getTransformationTo(otherObject);
-        return m * poseInOtherCoordSystem;
+        Eigen::Matrix4f mat = getTransformationTo(otherObject);
+        return mat * poseInOtherCoordSystem;
     }
 
-    Eigen::Vector3f SceneObject::transformTo(const SceneObjectPtr otherObject, const Eigen::Vector3f& positionInOtherCoordSystem)
+    Eigen::Vector3f SceneObject::transformTo(const SceneObjectPtr otherObject,
+                                             const Eigen::Vector3f& positionInOtherCoordSystem)
     {
-        Eigen::Matrix4f m = getTransformationTo(otherObject);
-        Eigen::Vector4f tmp4 = Eigen::Vector4f::Zero();
-        tmp4.segment(0, 3) = positionInOtherCoordSystem;
-        Eigen::Vector4f res = m * tmp4;
-        Eigen::Vector3f res3(res[0], res[1], res[2]);
-        return res3;
+        Eigen::Matrix4f mat = getTransformationTo(otherObject);
+        Eigen::Vector4f res = mat * positionInOtherCoordSystem.homogeneous();
+        return res.head<3>();
     }
 
     void SceneObject::setupVisualization(bool showVisualization, bool showAttachedVisualizations)
@@ -899,7 +897,7 @@ namespace VirtualRobot
 
         if (enable)
         {
-            VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(NULL);
+            VisualizationFactoryPtr visualizationFactory = VisualizationFactory::first(nullptr);
 
             if (!visualizationFactory)
             {

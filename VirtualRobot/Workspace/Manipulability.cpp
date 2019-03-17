@@ -754,7 +754,7 @@ namespace VirtualRobot
         std::vector<std::thread> threads(numThreads);
         unsigned int numPosesPerThread = loops / numThreads; // todo
 
-        for (int i = 0; i < numThreads; i++)
+        for (unsigned int i = 0; i < numThreads; i++)
         {
             // each thread gets a cloned robot
             CollisionCheckerPtr cc(new CollisionChecker());
@@ -795,7 +795,7 @@ namespace VirtualRobot
                 PoseQualityMeasurementPtr clonedMeasure  = this->measure->clone(clonedRobot);
 
                 // now sample some configs and add them to the workspace data
-                for (int j = 0; j < numPosesPerThread; j++)
+                for (unsigned int j = 0; j < numPosesPerThread; j++)
                 {
                     float rndValue;
                     float minJ, maxJ;
@@ -806,7 +806,7 @@ namespace VirtualRobot
 
                     for (int k = 0; k < maxLoops; k++)
                     {
-                        for (int l = 0; l < clonedNodeSet->getSize(); l++)
+                        for (unsigned int l = 0; l < clonedNodeSet->getSize(); l++)
                         {
                             rndValue = RandomFloat(); // value from 0 to 1
                             minJ = (*nodeSet)[l]->getJointLimitLo();
@@ -847,7 +847,7 @@ namespace VirtualRobot
         }
 
         // wait for all threads to finish
-        for (int i = 0; i < numThreads; i++)
+        for (unsigned int i = 0; i < numThreads; i++)
         {
             threads[i].join();
         }

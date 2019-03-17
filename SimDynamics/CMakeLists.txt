@@ -1,26 +1,21 @@
 PROJECT ( SimDynamics )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
-CMAKE_POLICY(VERSION 2.6)
-if(POLICY CMP0020)
-  cmake_policy(SET CMP0020 NEW) # qtmain add lib dependency (no effect in our case)
-endif()
-
 MESSAGE (STATUS "***** CONFIGURING Simox project SimDynamics *****")
 
+add_library(SimDynamics SHARED SimDynamics.h) # sources will be added later
+
+target_include_directories(SimDynamics PUBLIC
+    $<BUILD_INTERFACE:${Simox_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${Simox_BINARY_DIR}>
+    $<INSTALL_INTERFACE:include>
+)
 
 GET_FILENAME_COMPONENT (CurrentSimDynamicsPath ${CMAKE_CURRENT_LIST_FILE} PATH)
 SET(SimDynamics_DIR ${CurrentSimDynamicsPath})
 
 
-
-INCLUDE (Cxx11Test)
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
-
 ############################# SETUP PHYSICS ENGINE #############################
-OPTION(SimDynamics_USE_BULLET "Use Bullet Physics Engine" ON)
 SET (SimDynamics_DYNAMICSENGINE FALSE)
-SET (SimDynamics_PHYSICS_LIBRARIES "")
 
 if (SimDynamics_USE_BULLET)
 
@@ -32,97 +27,78 @@ if (SimDynamics_USE_BULLET)
   SET (BULLET_ROOT ${BULLET_ROOT} CACHE PATH "Bullet Path")
   Find_Package(Bullet)
   if (BULLET_FOUND)
-      MESSAGE (STATUS " ** Found Bullet at ${BULLET_INCLUDE_DIRS}")
+    MESSAGE (STATUS " ** Found Bullet at ${BULLET_INCLUDE_DIRS}")
 
+    target_include_directories(SimDynamics PUBLIC ${BULLET_INCLUDE_DIRS})
+    if(EXISTS "${BULLET_INCLUDE_DIRS}/bullet")
+        target_include_directories(SimDynamics PUBLIC ${BULLET_INCLUDE_DIRS}/bullet)
+    endif()
 
-
-      #MESSAGE (STATUS "BULLET_LIBRARIES: ${BULLET_LIBRARIES}")
-      #MESSAGE (STATUS "BULLET_OPENGL_INCLUDE_DIR: ${BULLET_OPENGL_INCLUDE_DIR}")
-      #MESSAGE (STATUS "BULLET_OpenGLSupport_LIBRARY_debug: ${BULLET_OpenGLSupport_LIBRARY_debug}")
-      SET(SIMDYNAMICS_INCLUDE_DIRS "${BULLET_INCLUDE_DIRS}" "${BULLET_INCLUDE_DIRS}/bullet") # "${BULLET_DEMOS_INCLUDE_DIR}" "${BULLET_OPENGL_INCLUDE_DIR}")# PARENT_SCOPE)
-     	
-     	INCLUDE_DIRECTORIES( 
-          ${BULLET_INCLUDE_DIRS}
-          ${BULLET_INCLUDE_DIRS}/bullet
-		  )
-
-      IF (WIN32)
-            OPTION(SimDynamics_USE_BULLET_USE_GLUT "Use Glut"	OFF)
-      else()
-            OPTION(SimDynamics_USE_BULLET_USE_GLUT "Use Glut"	ON)
-      endif()
+    IF (WIN32)
+        OPTION(SimDynamics_USE_BULLET_USE_GLUT "Use Glut"	OFF)
+    else()
+        OPTION(SimDynamics_USE_BULLET_USE_GLUT "Use Glut"	ON)
+    endif()
 
     include(BulletCheckPrecision)
     message(STATUS "BULLET_INCLUDE_DIRS ${BULLET_INCLUDE_DIRS}")
     BulletCheckPrecision()
-      IF( NOT BULLET_USE_SINGLE_PRECISION )
-          ADD_DEFINITIONS( -DBT_USE_DOUBLE_PRECISION)
-          LIST(APPEND SIMDYNAMICS_COMPILE_FLAGS "-DBT_USE_DOUBLE_PRECISION")
-      ENDIF()
-      #MESSAGE(STATUS "BULLET_LIBRARIES:${BULLET_LIBRARIES}")
-      SET (SimDynamics_PHYSICS_LIBRARIES "${BULLET_LIBRARIES}")
-      SET (SimDynamics_DYNAMICSENGINE TRUE)
+    target_link_libraries(SimDynamics PUBLIC ${BULLET_LIBRARIES})
+    SET (SimDynamics_DYNAMICSENGINE TRUE)
       
-	  FIND_PACKAGE(OpenGL)
-	  IF (OPENGL_FOUND)
-	  	MESSAGE (STATUS " ** OPENGL FOUND lib:${OPENGL_gl_LIBRARY}")
-		#check if there was a distuingish between optimized and debug libs:
-      	IF (SimDynamics_PHYSICS_LIBRARIES MATCHES "optimized;")
-			LIST(APPEND SimDynamics_PHYSICS_LIBRARIES optimized ${OPENGL_gl_LIBRARY} debug ${OPENGL_gl_LIBRARY})
-		ELSE()
-			LIST(APPEND SimDynamics_PHYSICS_LIBRARIES ${OPENGL_gl_LIBRARY})
-		ENDIF()
-	  ENDIF()
-	  IF (OPENGL_GLU_FOUND)
-		  MESSAGE (STATUS " ** OPENGL_GLU FOUND lib:${OPENGL_glu_LIBRARY}")
-		  #check if there was a distuingish between optimized and debug libs:
-      	  IF (SimDynamics_PHYSICS_LIBRARIES MATCHES "optimized;")
-		    LIST(APPEND SimDynamics_PHYSICS_LIBRARIES optimized ${OPENGL_glu_LIBRARY} debug ${OPENGL_glu_LIBRARY})
-		  ELSE()
-		    LIST(APPEND SimDynamics_PHYSICS_LIBRARIES ${OPENGL_glu_LIBRARY})
-		  ENDIF()
-	  ENDIF()
+    FIND_PACKAGE(OpenGL)
+    IF (OPENGL_FOUND)
+        MESSAGE (STATUS " ** OPENGL FOUND lib:${OPENGL_gl_LIBRARY}")
+        #check if there was a distuingish between optimized and debug libs:
+        IF (BULLET_LIBRARIES MATCHES "optimized;")
+            target_link_libraries(SimDynamics PUBLIC optimized ${OPENGL_gl_LIBRARY} debug ${OPENGL_gl_LIBRARY})
+        ELSE()
+            target_link_libraries(SimDynamics PUBLIC  ${OPENGL_gl_LIBRARY})
+        ENDIF()
+    ENDIF()
+    IF (OPENGL_GLU_FOUND)
+        MESSAGE (STATUS " ** OPENGL_GLU FOUND lib:${OPENGL_glu_LIBRARY}")
+        #check if there was a distuingish between optimized and debug libs:
+        IF (BULLET_LIBRARIES MATCHES "optimized;")
+            target_link_libraries(SimDynamics PUBLIC optimized ${OPENGL_glu_LIBRARY} debug ${OPENGL_glu_LIBRARY})
+        ELSE()
+            target_link_libraries(SimDynamics PUBLIC ${OPENGL_glu_LIBRARY})
+        ENDIF()
+    ENDIF()
 
-      IF (SimDynamics_USE_BULLET_USE_GLUT)
+    IF (SimDynamics_USE_BULLET_USE_GLUT)
         FIND_PACKAGE(GLUT)
         IF (GLUT_FOUND)
             MESSAGE(STATUS " ** GLUT FOUND: ${GLUT_glut_LIBRARY}")
-		    #check if there was a distuingish between optimized and debug libs:
-      	    IF (SimDynamics_PHYSICS_LIBRARIES MATCHES "optimized;")
-				LIST(APPEND SimDynamics_PHYSICS_LIBRARIES optimized ${GLUT_glut_LIBRARY} debug ${GLUT_glut_LIBRARY})
-			ELSE()
-				LIST(APPEND SimDynamics_PHYSICS_LIBRARIES ${GLUT_glut_LIBRARY} )
-			ENDIF()
+            #check if there was a distuingish between optimized and debug libs:
+            IF (BULLET_LIBRARIES MATCHES "optimized;")
+                target_link_libraries(SimDynamics PUBLIC optimized ${GLUT_glut_LIBRARY} debug ${GLUT_glut_LIBRARY})
+            ELSE()
+                target_link_libraries(SimDynamics PUBLIC ${GLUT_glut_LIBRARY} )
+            ENDIF()
 
-      		IF (WIN32)
-      			INCLUDE_DIRECTORIES(${GLUT_INCLUDE_DIR})
-      			SET(SIMDYNAMICS_INCLUDE_DIRS "${SIMDYNAMICS_INCLUDE_DIRS}" "${GLUT_INCLUDE_DIR}")# PARENT_SCOPE)
-      		ELSE (WIN32)
-      			# This is the lines for linux.  This should always work if everything is installed and working fine.
-      			INCLUDE_DIRECTORIES(/usr/include /usr/local/include ${GLUT_INCLUDE_DIR}) 
-      			SET(SIMDYNAMICS_INCLUDE_DIRS "${SIMDYNAMICS_INCLUDE_DIRS}" "/usr/include" "/usr/local/include" "${GLUT_INCLUDE_DIR}")
-      		ENDIF (WIN32)
-		ELSE (GLUT_FOUND)
-          SET( GLUT_glut_LIBRARY "" CACHE PATH "Glut library." )
-        ENDIF (GLUT_FOUND)
-        
-		#SET (SimDynamics_BULLET_OpenGL TRUE)
-      ENDIF(SimDynamics_USE_BULLET_USE_GLUT)
+            IF (WIN32)
+                target_include_directories(SimDynamics PUBLIC ${GLUT_INCLUDE_DIR})
+            ELSE ()
+                # This is the lines for linux.  This should always work if everything is installed and working fine.
+                target_include_directories(SimDynamics PUBLIC "/usr/include;/usr/local/include;${GLUT_INCLUDE_DIR}")
+            ENDIF ()
+        ELSE ()
+            SET( GLUT_glut_LIBRARY "" CACHE PATH "Glut library." )
+        ENDIF ()
+    ENDIF()
 
-      ADD_SUBDIRECTORY(DynamicsEngine/BulletEngine/BulletOpenGL)
+    ADD_SUBDIRECTORY(DynamicsEngine/BulletEngine/BulletOpenGL)
 
-    else()
-        MESSAGE (STATUS " ** Could not find Bullet")
-    endif()
+else()
+    MESSAGE (STATUS " ** Could not find Bullet")
+endif()
     
 else()
         MESSAGE ("No Physics engine selected...")   	    
 endif()
 
 
-MESSAGE (STATUS " ** SIMDYNAMICS_INCLUDE_DIRS: ${SIMDYNAMICS_INCLUDE_DIRS}")
-
-MESSAGE (STATUS " ** SimDynamics_PHYSICS_LIBRARIES: ${SimDynamics_PHYSICS_LIBRARIES}")
 
 
 #######################################################################
@@ -130,11 +106,11 @@ MESSAGE (STATUS " ** SimDynamics_PHYSICS_LIBRARIES: ${SimDynamics_PHYSICS_LIBRAR
 #######################################################################
 
 MACRO(ADD_SIMDYNAMICS_TEST TEST_NAME)
-  if (NOT Boost_USE_STATIC_LIBS)
-    ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
-  endif (NOT Boost_USE_STATIC_LIBS)
   ADD_EXECUTABLE(${TEST_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}.cpp)
-  TARGET_LINK_LIBRARIES(${TEST_NAME} PRIVATE VirtualRobot Saba GraspStudio SimDynamics ${Simox_EXTERNAL_LIBRARIES} ${SimDynamics_PHYSICS_LIBRARIES} ${Boost_TEST_LIB})
+  if (NOT Boost_USE_STATIC_LIBS)
+      target_compile_definitions(${TEST_NAME} PRIVATE -DBOOST_TEST_DYN_LINK)
+  endif ()
+  TARGET_LINK_LIBRARIES(${TEST_NAME} PRIVATE VirtualRobot Saba GraspStudio SimDynamics Boost::unit_test_framework)
   SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_TEST_DIR})
   SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES FOLDER "SimDynamics Tests")
   ADD_TEST(NAME SimDynamics_${TEST_NAME}
@@ -161,7 +137,6 @@ if (SimDynamics_DYNAMICSENGINE)
     DynamicsEngine/DynamicsRobot.h
     DynamicsEngine/DynamicsUtils.h
   )
- #    ${SimDynamics_SimoxDir}/VirtualRobot/definesVR.h
    
   if (SimDynamics_USE_BULLET)
   	SET(SOURCES
@@ -212,28 +187,23 @@ if (SimDynamics_DYNAMICSENGINE)
         	DynamicsEngine/BulletEngine/BulletCoinQtViewer.h
       	)
       else()
+          MESSAGE (STATUS "SOQT_FOUND                  : ${SOQT_FOUND}")
+          MESSAGE (STATUS "Simox_USE_COIN_VISUALIZATION: ${Simox_USE_COIN_VISUALIZATION}")
           MESSAGE (STATUS " ** Qt/Coin3D disabled: Skipping BulletCoinQtViewer")
       endif()
   endif ()
-    
-  # this var is considered for generating Simox_INCLUDE_DIRS_
-  SET(Simox_SimDynamics_INCLUDE_DIRS "${SIMDYNAMICS_INCLUDE_DIRS}" PARENT_SCOPE)
-  SET(Simox_SimDynamics_EXTERNAL_LIBRARIES "${SimDynamics_PHYSICS_LIBRARIES}" PARENT_SCOPE)
-  SET(Simox_SimDynamics_COMPILE_FLAGS "${SIMDYNAMICS_COMPILE_FLAGS}" PARENT_SCOPE)
-  #INCLUDE_DIRECTORIES(${SimDynamics_SimoxDir})
-  #INCLUDE_DIRECTORIES(${SimDynamics_DIR})
-   
 
-  include_directories(SYSTEM ${Simox_EXTERNAL_INCLUDE_DIRS})
-  ADD_DEFINITIONS(${Simox_EXTERNAL_LIBRARY_FLAGS})
+  set_target_properties(SimDynamics PROPERTIES SOURCES "${SOURCES};${INCLUDES}")
 
-  ADD_LIBRARY (SimDynamics SHARED ${SOURCES} ${INCLUDES})
   if (SimDynamics_BULLET_OpenGL)
     TARGET_LINK_LIBRARIES (SimDynamics PUBLIC BulletOpenGLSupport)
 	SET (SimDynamics_BULLET_OpenGL TRUE PARENT_SCOPE) # inform parent scope about BulletOpenGLSupport
   ENDIF(SimDynamics_BULLET_OpenGL)
-  TARGET_LINK_LIBRARIES (SimDynamics PUBLIC ${Simox_EXTERNAL_LIBRARIES} VirtualRobot ${SimDynamics_PHYSICS_LIBRARIES})
+  TARGET_LINK_LIBRARIES (SimDynamics PUBLIC VirtualRobot)
 
+  if (SimDynamics_USE_BULLET AND NOT BULLET_USE_SINGLE_PRECISION )
+    target_compile_definitions(SimDynamics PUBLIC -DBT_USE_DOUBLE_PRECISION)
+  endif()
   # .DLL path
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_BIN_DIR})
   # .so path
@@ -262,9 +232,9 @@ if (SimDynamics_DYNAMICSENGINE)
   INSTALL(TARGETS ${PROJECT_NAME}
     # IMPORTANT: Add the library to the "export-set"
     EXPORT SimoxTargets
-    RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
-    LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT shlib
-    ARCHIVE DESTINATION "${INSTALL_LIB_DIR}" COMPONENT library
+    RUNTIME DESTINATION bin COMPONENT bin
+    LIBRARY DESTINATION lib COMPONENT shlib
+    ARCHIVE DESTINATION lib COMPONENT library
     COMPONENT dev)
   
   INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR} DESTINATION ${Simox_INSTALL_HEADER_DIR}

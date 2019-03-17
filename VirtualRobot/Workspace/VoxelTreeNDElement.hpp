@@ -465,7 +465,7 @@ namespace VirtualRobot
             {
                 VR_ERROR << "Node do not cover this pos:" << endl;
 
-                for (int i = 0; i < N; i++)
+                for (unsigned int i = 0; i < N; i++)
                 {
                     cout << p[i] << ",";
                 }
@@ -487,7 +487,7 @@ namespace VirtualRobot
             float newPos[N];
 
             //float newExtends[N];
-            for (int i = 0; i < N; i++)
+            for (unsigned int i = 0; i < N; i++)
             {
                 // check left / right
                 if (p[i] > pos[i] + tree->getExtends(level, i) * 0.5f)
@@ -512,7 +512,7 @@ namespace VirtualRobot
             {
                 VR_ERROR << "Node do not cover this pos" << endl;
 
-                for (int i = 0; i < N; i++)
+                for (unsigned int i = 0; i < N; i++)
                 {
                     cout << p[i] << ",";
                 }
@@ -529,7 +529,7 @@ namespace VirtualRobot
 
             int res = 0;
 
-            for (int i = 0; i < N; i++)
+            for (unsigned int i = 0; i < N; i++)
             {
                 if (p[i] > pos[i] + tree->getExtends(level, i) * 0.5f)
                 {
@@ -544,7 +544,7 @@ namespace VirtualRobot
 
         bool covers(float p[N])
         {
-            for (int i = 0; i < N; i++)
+            for (unsigned int i = 0; i < N; i++)
             {
                 if (p[i] < pos[i] || p[i] > pos[i] + tree->getExtends(level, i))
                 {

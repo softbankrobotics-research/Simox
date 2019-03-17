@@ -55,11 +55,11 @@ namespace VirtualRobot
 
         if (visualizationType.empty())
         {
-            visualizationFactory = VisualizationFactory::first(NULL);
+            visualizationFactory = VisualizationFactory::first(nullptr);
         }
         else
         {
-            visualizationFactory = VisualizationFactory::fromName(visualizationType, NULL);
+            visualizationFactory = VisualizationFactory::fromName(visualizationType, nullptr);
         }
 
         if (!visualizationFactory)
@@ -108,11 +108,11 @@ namespace VirtualRobot
 
         if (visualizationType.empty())
         {
-            visualizationFactory = VisualizationFactory::first(NULL);
+            visualizationFactory = VisualizationFactory::first(nullptr);
         }
         else
         {
-            visualizationFactory = VisualizationFactory::fromName(visualizationType, NULL);
+            visualizationFactory = VisualizationFactory::fromName(visualizationType, nullptr);
         }
 
         if (!visualizationFactory)
@@ -160,11 +160,11 @@ namespace VirtualRobot
 
         if (visualizationType.empty())
         {
-            visualizationFactory = VisualizationFactory::first(NULL);
+            visualizationFactory = VisualizationFactory::first(nullptr);
         }
         else
         {
-            visualizationFactory = VisualizationFactory::fromName(visualizationType, NULL);
+            visualizationFactory = VisualizationFactory::fromName(visualizationType, nullptr);
         }
 
         if (!visualizationFactory)
@@ -214,11 +214,11 @@ namespace VirtualRobot
 
         if (visualizationType.empty())
         {
-            visualizationFactory = VisualizationFactory::first(NULL);
+            visualizationFactory = VisualizationFactory::first(nullptr);
         }
         else
         {
-            visualizationFactory = VisualizationFactory::fromName(visualizationType, NULL);
+            visualizationFactory = VisualizationFactory::fromName(visualizationType, nullptr);
         }
 
         if (!visualizationFactory)

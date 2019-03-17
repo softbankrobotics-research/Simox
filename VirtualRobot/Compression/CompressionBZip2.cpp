@@ -1,3 +1,5 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #include "CompressionBZip2.h"
 #include "../VirtualRobotException.h"
 
@@ -6186,3 +6188,4 @@ return_notr:
     }
 
 } // namespace
+#pragma GCC diagnostic pop

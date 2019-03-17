@@ -9,8 +9,6 @@
 #  Simox_VISUALIZATION                      - if visualization is enabled
 #  Simox_USE_COIN_VISUALIZATION             - if Coin3D visualization was selected
 #  Simox_USE_OPENSCENEGRAPH_VISUALIZATION   - if osg visualization was selected
-#  Simox_USE_QT4                            - if qt4 was selected
-#  Simox_USE_QT5                            - if qt5 was selected
 #  Simox_USE_NLOPT                          - if NLopt was selected
 #  SimDynamics_USE_BULLET                   - if SimDynamics is build and BULLET is selected as physics engine
 #  SimDynamics_USE_BULLET_DOUBLE_PRECISION  - if Bullet is build with double precision support
@@ -53,17 +51,14 @@ SET(Simox_USE_COIN_VISUALIZATION "@Simox_USE_COIN_VISUALIZATION@")
 SET(Simox_USE_OPENSCENEGRAPH_VISUALIZATION "@Simox_USE_OPENSCENEGRAPH_VISUALIZATION@")
 SET(Simox_USE_COLLADA "@Simox_USE_COLLADA@")
 SET(Simox_USE_RBDL "@Simox_USE_RBDL@")
-SET(Simox_USE_QT4 "@Simox_USE_QT4@")
-SET(Simox_USE_QT5 "@Simox_USE_QT5@")
+SET(Simox_USE_QT5 "ON") # this variable legacy support (Qt5 is now required)
 SET(Simox_USE_NLOPT "@Simox_USE_NLOPT@")
 SET(SimDynamics_USE_BULLET "@SimDynamics_USE_BULLET@")
 SET(SimDynamics_USE_BULLET_DOUBLE_PRECISION "@SimDynamics_USE_BULLET_DOUBLE_PRECISION@")
 
 
-SET(Simox_EXTERNAL_INCLUDE_DIRS "@Simox_EXTERNAL_INCLUDE_DIRS@")
-SET(Simox_EXTERNAL_LIBRARY_FLAGS "@Simox_EXTERNAL_LIBRARY_FLAGS@")
-SET(Simox_EXTERNAL_LIBRARIES "@Simox_EXTERNAL_LIBRARIES@")
-SET(Simox_EXTERNAL_LIBRARY_DIRS "@Simox_EXTERNAL_LIBRARY_DIRS@")
+FIND_PACKAGE(Qt5 5.5.0 COMPONENTS OpenGL Core Gui Widgets QUIET)
+FIND_PACKAGE(Boost COMPONENTS filesystem system program_options thread QUIET)
 
 
 

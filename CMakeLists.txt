@@ -1,30 +1,160 @@
-PROJECT(Simox)
+cmake_minimum_required(VERSION 3.10)
 
-cmake_minimum_required(VERSION 2.8.12)
-if(POLICY CMP0020)
-  cmake_policy(SET CMP0020 NEW) # qtmain add lib dependency (no effect in our case)
-endif()
+#######################################################################################
+PROJECT(Simox LANGUAGES CXX VERSION 2.3.73.0)
+MESSAGE (STATUS "** Simox version: ${Simox_VERSION}")
+#######################################################################################
+#global config
+# Set up build type
 
+IF(NOT CMAKE_BUILD_TYPE)
+    SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
+        "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+        FORCE)
+ENDIF()
+
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CXX_STANDARD 17)
+
+list(APPEND CMAKE_MODULE_PATH ${Simox_SOURCE_DIR}/CMakeModules)
+MESSAGE (STATUS "** Module path: "  ${CMAKE_MODULE_PATH})
+
+# we want a global automoc
+FIND_PACKAGE(Qt5 5.5.0 COMPONENTS OpenGL Core Gui Widgets)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+
+FIND_PACKAGE(Boost COMPONENTS unit_test_framework REQUIRED)
+
+#flags
+add_compile_options(-Wall)
+add_compile_options(-Wextra)
+add_compile_options(-Wpedantic)
+#turn warnings about dangerous stuff into errors
+add_compile_options(-Werror)
+#######################################################################################
+#options
+OPTION (Simox_USE_RBDL "Use RBDL" OFF)
+OPTION (Simox_USE_URDF "Use URDF" OFF)
+OPTION (Simox_USE_NLOPT "Use NLOPT" ON)
+OPTION(BUILD_qhull "if on builds qhull external library" OFF)
+OPTION(SimDynamics_USE_BULLET "Use Bullet Physics Engine" ON)
+OPTION(Simox_USE_COIN_VISUALIZATION "Use Coin3D for visualization" ON)
+OPTION(Simox_USE_OPENSCENEGRAPH_VISUALIZATION "Use OpenSceneGraph for visualization" OFF)
+OPTION(Simox_COLLISION_CHECKER_PQP "Build and use the PQP Collision Detection library (located in ExternalDependencies)" ON)
+#######################################################################################
 MESSAGE(STATUS "******************** Configuring Simox ************************")
-set (Simox_BUILD_DIRECTORY ${CMAKE_BINARY_DIR} CACHE STRING "Simox build directory")
-#set (Simox_BUILD_VirtualRobot TRUE CACHE BOOL "Build Simox VirtualRobot")
 set (Simox_BUILD_Saba TRUE CACHE BOOL "Build Motion Planning library")
 set (Simox_BUILD_GraspStudio TRUE CACHE BOOL "Build Grasp Planning library")
 set (Simox_BUILD_SimDynamics TRUE CACHE BOOL "Build Dynamic Simulation")
 
-INCLUDE (config.cmake)
+MESSAGE (STATUS "** SIMOX BUILD VirtualRobot: TRUE (can't e turned off)")
+MESSAGE (STATUS "** SIMOX BUILD Saba        : ${Simox_BUILD_Saba}")
+MESSAGE (STATUS "** SIMOX BUILD GraspStudio : ${Simox_BUILD_GraspStudio}")
+MESSAGE (STATUS "** SIMOX BUILD SimDynamics : ${Simox_BUILD_SimDynamics}")
+############################# SETUP PATHS #############################
+if(WIN32 AND NOT CYGWIN)
+    set(INSTALL_CMAKE_DIR CMake             CACHE PATH "Installation directory for CMake files")
+else()
+    set(INSTALL_CMAKE_DIR share/Simox/cmake CACHE PATH "Installation directory for CMake files")
+endif()
 
+SET(Simox_LIB_DIR ${Simox_BINARY_DIR}/lib)
+SET(Simox_BIN_DIR ${Simox_BINARY_DIR}/bin)
+SET(Simox_DATA_DIR ${CurrentSimoxPath}/VirtualRobot/data)
 
-MESSAGE(STATUS "** Simox build directory: ${Simox_BUILD_DIRECTORY}")
+MESSAGE (STATUS "** SIMOX LIB DIR: ${Simox_LIB_DIR}")
+MESSAGE (STATUS "** SIMOX BIN DIR: ${Simox_BIN_DIR}")
+MESSAGE (STATUS "** SIMOX DATA DIR: ${Simox_DATA_DIR}")
+
+SET(Simox_INSTALL_LIB_DIR lib)
+SET(Simox_INSTALL_BIN_DIR bin)
+SET(Simox_INSTALL_DATA_DIR data)
+SET(Simox_INSTALL_HEADER_DIR include)
+MESSAGE (STATUS "** SIMOX INSTALL LIB DIR   : ${Simox_INSTALL_LIB_DIR}")
+MESSAGE (STATUS "** SIMOX INSTALL BIN DIR   : ${Simox_INSTALL_BIN_DIR}")
+MESSAGE (STATUS "** SIMOX INSTALL DATA DIR  : ${Simox_INSTALL_DATA_DIR}")
+MESSAGE (STATUS "** SIMOX INSTALL HEADER DIR: ${Simox_INSTALL_HEADER_DIR}")
+
+MESSAGE(STATUS "** Simox build directory: ${CMAKE_BINARY_DIR}")
+########################### IDE settings ################################
+# use virtual folders for grouping projects in IDEs
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+############################# Set OS specific options #############################
+set(Simox_OS_compile_options)
+IF(UNIX)
+    # We are on Linux
+    SET(Simox_TEST_DIR ${Simox_BIN_DIR}/tests)
+    IF(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+        set(Simox_OS_compile_options ${Simox_OS_compile_options} -fPIC)
+    ENDIF()
+
+    IF(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+        MESSAGE(STATUS "Configuring Debug build")
+        set(Simox_OS_compile_options ${Simox_OS_compile_options} -D_DEBUG)
+    ELSE()
+        MESSAGE(STATUS "Configuring Release build")
+    ENDIF()
+
+    # use, i.e. don't skip the full RPATH for the build tree
+    SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+
+    # when building, don't use the install RPATH already
+    # (but later on when installing)
+    SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+    SET(CMAKE_INSTALL_RPATH "${Simox_INSTALL_LIB_DIR}")
+    # add the automatically determined parts of the RPATH
+    # which point to directories outside the build tree to the install RPATH
+    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+    # the RPATH to be used when installing, but only if it's not a system directory
+    LIST(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${Simox_INSTALL_LIB_DIR}" isSystemDir)
+    IF("${isSystemDir}" STREQUAL "-1")
+        SET(CMAKE_INSTALL_RPATH "${Simox_INSTALL_LIB_DIR}")
+    ENDIF()
+
+ELSE()
+    # We are on Windows
+    SET(Simox_TEST_DIR ${Simox_BIN_DIR})
+    set(Simox_OS_compile_options
+        -D_CRT_SECURE_NO_WARNINGS
+        -DWIN32_LEAN_AND_MEAN # avoid errors with winsock / winsock2 includes
+    )
+
+    # On MSVC we compile with /MP flag (use multiple threads)
+    IF(MSVC)
+        set(Simox_OS_compile_options ${Simox_OS_compile_options} /MP)
+    ENDIF()
+ENDIF()
+#######################################################################
+# Setup for testing
+ENABLE_TESTING()
+INCLUDE(CTest)
+MESSAGE(STATUS "** Test output directory: ${Simox_TEST_DIR}")
+ADD_DEFINITIONS(-DSimox_TEST_DIR=\"${Simox_TEST_DIR}/\")
+
+#######################################################################################
 add_subdirectory(VirtualRobot)
+
+
+#######################################################################################
 set (SIMOX_EXPORT_TARGET_LIST VirtualRobot)
 list (APPEND Simox_LIBRARIES VirtualRobot)
 list(APPEND SIMOX_EXPORT_TARGET_LIST ColCheckerPQP)
+
+
+#######################################################################################
 if (Simox_BUILD_Saba)
     add_subdirectory(MotionPlanning)
     list(APPEND SIMOX_EXPORT_TARGET_LIST Saba)
 list (APPEND Simox_LIBRARIES Saba)
 endif()
+
+#######################################################################################
 if (Simox_BUILD_GraspStudio)
     add_subdirectory(GraspPlanning)
     list(APPEND SIMOX_EXPORT_TARGET_LIST GraspStudio)
@@ -33,6 +163,8 @@ if (Simox_BUILD_GraspStudio)
     endif()
     list (APPEND Simox_LIBRARIES GraspStudio)
 endif()
+
+#######################################################################################
 if (Simox_BUILD_SimDynamics)
     find_package(Bullet QUIET)
     if(BULLET_FOUND)
@@ -43,31 +175,16 @@ if (Simox_BUILD_SimDynamics)
             list(APPEND SIMOX_EXPORT_TARGET_LIST BulletOpenGLSupport)
         endif()
 
-        list (APPEND Simox_EXTERNAL_LIBRARIES ${Simox_SimDynamics_EXTERNAL_LIBRARIES})
-        list (APPEND Simox_EXTERNAL_INCLUDE_DIRS ${Simox_SimDynamics_INCLUDE_DIRS})
-        #MESSAGE ("Simox_EXTERNAL_LIBRARY_FLAGS::: ${Simox_EXTERNAL_LIBRARY_FLAGS} !!!!!!!!!!!!!!!!")
-        #MESSAGE ("Simox_SimDynamics_COMPILE_FLAGS::: ${Simox_SimDynamics_COMPILE_FLAGS} !!!!!!!!!!!!!!!!")
-        #list (APPEND Simox_EXTERNAL_LIBRARY_FLAGS ${Simox_SimDynamics_COMPILE_FLAGS})
-        set (Simox_EXTERNAL_LIBRARY_FLAGS "${Simox_EXTERNAL_LIBRARY_FLAGS} ${Simox_SimDynamics_COMPILE_FLAGS}")
-        #MESSAGE ("Simox_EXTERNAL_LIBRARY_FLAGS::: ${Simox_EXTERNAL_LIBRARY_FLAGS} !!!!!!!!!!!!!!!!")
     else()
         message("NOT building SimDynamics since bullet was not found")
     endif()
 endif()
 
-  MESSAGE(STATUS "** Simox_EXTERNAL_INCLUDE_DIRS:${Simox_EXTERNAL_INCLUDE_DIRS}")
-  MESSAGE(STATUS "** Simox_EXTERNAL_LIBRARY_DIRS:${Simox_EXTERNAL_LIBRARY_DIRS}")
-  MESSAGE(STATUS "** Simox_EXTERNAL_LIBRARIES:${Simox_EXTERNAL_LIBRARIES}")
-  MESSAGE(STATUS "** Simox_EXTERNAL_LIBRARY_FLAGS:${Simox_EXTERNAL_LIBRARY_FLAGS}")
-
 add_subdirectory(doc)
 
 
-#######################################################################
+#######################################################################################
 # Setup for installation
-#######################################################################
-
-############################################
 MESSAGE (STATUS "** Simox: Generating CMake files for build and install setup")
 
 # Add all targets to the build-tree export set
@@ -94,7 +211,7 @@ file(RELATIVE_PATH RELATIVE_INSTALL_DIR
      "${CMAKE_INSTALL_PREFIX}/${INSTALL_CMAKE_DIR}"
      "${CMAKE_INSTALL_PREFIX}")
 
-set(CONF_INCLUDE_DIRS "${INSTALL_INCLUDE_DIR}")
+set(CONF_INCLUDE_DIRS "include")
 set(Simox_DATA_PATH "${Simox_INSTALL_DATA_DIR}")
 set(Simox_MACROS_INCLUDE_DIR "\${Simox_CMAKE_DIR}")
 
@@ -124,7 +241,7 @@ install(EXPORT SimoxTargets DESTINATION
   "${INSTALL_CMAKE_DIR}" COMPONENT dev)
 
 
-#############################################################
+#######################################################################################
 # PACKAGING (DEB)
 
 # git version not used any more!
@@ -185,7 +302,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS "libbullet-dev, libbulletmultithreaded2.82, lib
 SET(CPACK_COMPONENTS_ALL Applications Headers Libraries ApplicationData)
 INCLUDE(CPack)
 
-#############################################################
+#######################################################################################
 # STYLE
 
 FIND_PACKAGE(AStyle QUIET)

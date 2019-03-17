@@ -94,7 +94,7 @@ void    GLDebugDrawer::setDebugMode(int debugMode)
 
 }
 
-void    GLDebugDrawer::draw3dText(const btVector3& location, const char* textString)
+void    GLDebugDrawer::draw3dText(const btVector3& location, const char* /*textString*/)
 {
     glRasterPos3f(location.x(),  location.y(),  location.z());
     //BMF_DrawString(BMF_GetFont(BMF_kHelvetica10),textString);
@@ -105,7 +105,7 @@ void    GLDebugDrawer::reportErrorWarning(const char* warningString)
     printf("%s\n", warningString);
 }
 
-void    GLDebugDrawer::drawContactPoint(const btVector3& pointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color)
+void    GLDebugDrawer::drawContactPoint(const btVector3& pointOnB, const btVector3& normalOnB, btScalar /*distance*/, int /*lifeTime*/, const btVector3& color)
 {
 
     {

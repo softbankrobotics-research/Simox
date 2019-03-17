@@ -89,7 +89,12 @@ namespace math
         template <typename PosDerived, typename OriDerived>
         static Eigen::Matrix4f 
         Pose(const Eigen::MatrixBase<PosDerived>& pos, const Eigen::RotationBase<OriDerived, 3>& ori);
-
+        
+        /// Build a pose matrix from the given position and identity orientation.
+        template <typename PosDerived>
+        static Eigen::Matrix4f 
+        Pose(const Eigen::MatrixBase<PosDerived>& pos);
+        
         
         /// Legacy shortcut for Pose().
         static Eigen::Matrix4f CreatePose(const Eigen::Vector3f& pos, const Eigen::Quaternionf& ori);
@@ -110,8 +115,12 @@ namespace math
         template <typename Derived>
         static Eigen::Matrix4f InvertedPose(const Eigen::MatrixBase<Derived>& pose);
         
-        /// Get a vector from cylinder coordinates.
+        /// Get a cartesian vector from cylinder coordinates.
         static Eigen::Vector3f CreateVectorFromCylinderCoords(float r, float angle, float z);
+        /// Get a cartesian vector from cylinder coordinates.
+        static Eigen::Vector3f CartesianFromCylinder(float radius, float angle, float height);
+        /// Get a cartesian vector from sphere coordinates.
+        static Eigen::Vector3f CartesianFromSphere(float radius, float elevation, float azimuth);
         
         /// Get a rotation matrix rotating source to target.
         static Eigen::Matrix3f GetRotationMatrix(const Eigen::Vector3f& source, const Eigen::Vector3f& target);
@@ -127,20 +136,47 @@ namespace math
         /// Transform the orientation by the transform.
         static Eigen::Matrix3f TransformOrientation(const Eigen::Matrix4f& transform, const Eigen::Matrix3f& ori);
         
+        /// Indicates whether the matrix is orthogonal, i.e. matrix * matrix.transpose = identity.
+        template <typename Derived>
+        static bool IsMatrixOrthogonal(const Eigen::MatrixBase<Derived>& matrix, float precision = 1e-6f);
+        
+        /// Compute the closest orthogonal matrix to the given matrix.
+        /// (Note: All rotation matrices must be orthogonal.)
+        static Eigen::Matrix3f Orthogonalize(const Eigen::Matrix3f& matrix);
+        
+        /// Orthogonolize the given matrix using Householder QR decomposition.
+        static Eigen::Matrix3f OrthogonalizeQR(const Eigen::Matrix3f& matrix);
+        
+        /// Orthogonolize the given matrix using Jacobi SVD decomposition.
+        static Eigen::Matrix3f OrthogonalizeSVD(const Eigen::Matrix3f& matrix);
+        
+        /// Orthogonolize the orientation of the given pose, and sanitize its lower row.
+        static Eigen::Matrix4f Orthogonalize(const Eigen::Matrix4f& pose);
+        
+        
         static float Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor);
 
         static Eigen::VectorXf LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen);
         
         
+        /// Convert a value from radian to degree.
         static float rad2deg(float rad);
+        /// Convert a value from degree to radian.
         static float deg2rad(float deg);
         
+        /// Convert a value from radian to degree.
+        template <typename ValueT>
+        static ValueT rad2deg(const ValueT& rad);
+        
+        /// Convert a value from degree to radian.
+        template <typename ValueT>
+        static ValueT deg2rad(const ValueT& deg);
+
         
     private:
         
     };
 
-    
     
     template <typename Derived>
     Eigen::Block<Derived, 3, 1> Helpers::Position(Eigen::MatrixBase<Derived>& pose)
@@ -191,6 +227,12 @@ namespace math
         return Pose(pos, ori.toRotationMatrix());
     }
     
+    template <typename PosDerived>
+    Eigen::Matrix4f Helpers::Pose(const Eigen::MatrixBase<PosDerived>& pos)
+    {
+        return Pose(pos, Eigen::Matrix3f::Identity());
+    }
+    
     
     template <typename Derived>
     Eigen::Matrix4f Helpers::InvertedPose(const Eigen::MatrixBase<Derived>& pose)
@@ -200,6 +242,24 @@ namespace math
         return inv;
     }
     
+    template<typename Derived>
+    bool Helpers::IsMatrixOrthogonal(const Eigen::MatrixBase<Derived>& matrix, float precision)
+    {
+        return (matrix * matrix.transpose()).isIdentity(precision);
+    }
+    
+    
+    template<typename ValueT>
+    ValueT Helpers::rad2deg(const ValueT& rad)
+    {
+        return rad * (180.0 / M_PI);
+    }
+    
+    template<typename ValueT>
+    ValueT Helpers::deg2rad(const ValueT& deg)
+    {
+        return deg * (M_PI / 180.0);
+    }
 }
 
 

@@ -1,6 +1,6 @@
 PROJECT ( ConstrainedIKDemo )
 
-INCLUDE(${Simox_DIR}/CMakeModules/SimoxMacros.cmake)
+INCLUDE(${Simox_SOURCE_DIR}/CMakeModules/SimoxMacros.cmake)
 
 IF(Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION AND NLOPT_FOUND)
 
@@ -23,10 +23,10 @@ IF(Simox_VISUALIZATION AND Simox_USE_COIN_VISUALIZATION AND NLOPT_FOUND)
     install(TARGETS ${PROJECT_NAME}
         # IMPORTANT: Add the library to the "export-set"
         EXPORT SimoxTargets
-        RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
+        RUNTIME DESTINATION bin COMPONENT bin
         COMPONENT dev
     )
 
   MESSAGE( STATUS " ** Simox application ${PROJECT_NAME} will be placed into " ${Simox_BIN_DIR})
-  MESSAGE( STATUS " ** Simox application ${PROJECT_NAME} will be installed into " ${INSTALL_BIN_DIR})
+  MESSAGE( STATUS " ** Simox application ${PROJECT_NAME} will be installed into " bin)
 ENDIF()

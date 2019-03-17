@@ -59,11 +59,11 @@ public:
     ConstantOrientation(const Eigen::Quaternionf &ori)
         :ori(ori)
     { }
-    Eigen::Quaternionf Get(float t) override
+    Eigen::Quaternionf Get(float /*t*/) override
     {
         return ori;
     }
-    Eigen::Vector3f GetDerivative(float t) override
+    Eigen::Vector3f GetDerivative(float /*t*/) override
     {
         return Eigen::Vector3f::Zero();
     }

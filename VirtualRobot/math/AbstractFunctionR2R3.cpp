@@ -87,7 +87,7 @@ Eigen::Vector3f AbstractFunctionR2R3::ProjectPointOntoFunction(Eigen::Vector3f p
     return GetPoint(u, v);
 }
 
-Eigen::Vector3f AbstractFunctionR2R3::FindClosestPoint(Eigen::Vector3f pos, float epsilon)
+Eigen::Vector3f AbstractFunctionR2R3::FindClosestPoint(Eigen::Vector3f /*pos*/, float /*epsilon*/)
 {
     throw std::runtime_error("FindClosestPoint is not implemented");
 }

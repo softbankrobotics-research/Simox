@@ -48,10 +48,6 @@ namespace VirtualRobot
 {
     const double TimeOptimalTrajectory::eps = 0.000001;
 
-    static double squared(double d) {
-        return d * d;
-    }
-
     TimeOptimalTrajectory::TimeOptimalTrajectory(const Path &path, const VectorXd &maxVelocity, const VectorXd &maxAcceleration, double timeStep) :
         path(path),
         maxVelocity(maxVelocity),
@@ -121,7 +117,6 @@ namespace VirtualRobot
         bool accelerationReachedEnd;
         do {
             accelerationReachedEnd = getNextAccelerationSwitchingPoint(accelerationSwitchingPoint.pathPos, accelerationSwitchingPoint, accelerationBeforeAcceleration, accelerationAfterAcceleration);
-            double test = getVelocityMaxPathVelocity(accelerationSwitchingPoint.pathPos);
         } while(!accelerationReachedEnd && accelerationSwitchingPoint.pathVel > getVelocityMaxPathVelocity(accelerationSwitchingPoint.pathPos));
 
         TimeOptimalTrajectoryStep velocitySwitchingPoint(pathPos, 0.0);
@@ -326,7 +321,7 @@ namespace VirtualRobot
         list<TimeOptimalTrajectoryStep>::iterator start1 = start2;
         start1--;
         list<TimeOptimalTrajectoryStep> trajectory;
-        double slope;
+        double slope = 0;
         assert(start1->pathPos <= pathPos);
 
         while(start1 != startTrajectory.begin() || pathPos >= 0.0)

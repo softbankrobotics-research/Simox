@@ -14,8 +14,8 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME} PRIVATE VirtualRobot)
 install(TARGETS ${PROJECT_NAME}
   # IMPORTANT: Add the library to the "export-set"
   EXPORT SimoxTargets
-  RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
+  RUNTIME DESTINATION bin COMPONENT bin
   COMPONENT dev)
         
 MESSAGE( STATUS " ** Simox application ${PROJECT_NAME} will be placed into " ${Simox_BIN_DIR})
-MESSAGE( STATUS " ** Simox application ${PROJECT_NAME} will be installed into " ${INSTALL_BIN_DIR})
+MESSAGE( STATUS " ** Simox application ${PROJECT_NAME} will be installed into " bin)
