@@ -58,6 +58,7 @@ SET(SimDynamics_USE_BULLET_DOUBLE_PRECISION "@SimDynamics_USE_BULLET_DOUBLE_PREC
 
 
 FIND_PACKAGE(Qt5 5.5.0 COMPONENTS OpenGL Core Gui Widgets QUIET)
+FIND_PACKAGE(Boost COMPONENTS filesystem system program_options thread QUIET)
 
 
 

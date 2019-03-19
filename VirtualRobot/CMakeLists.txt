@@ -46,7 +46,13 @@ FIND_PACKAGE(Boost COMPONENTS filesystem system program_options thread REQUIRED)
 MESSAGE (STATUS "Boost found at: ${Boost_INCLUDE_DIR}")
 
 target_include_directories(VirtualRobot PUBLIC ${Boost_INCLUDE_DIR})
-target_link_libraries(VirtualRobot PUBLIC ${Boost_LIBRARIES})
+target_link_libraries(VirtualRobot PUBLIC 
+        Boost::boost
+        Boost::filesystem
+        Boost::system
+        Boost::program_options
+        Boost::thread
+)
 # disable boost auto linking
 if (Boost_USE_STATIC_LIBS)
     target_compile_definitions(VirtualRobot PUBLIC -DBOOST_ALL_NO_LIB -DBOOST_TEST_MAIN)
@@ -179,7 +185,7 @@ endif()
 ########################### TESTING #####################################
 MACRO(ADD_VR_TEST TEST_NAME)
     ADD_EXECUTABLE(${TEST_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}.cpp)
-    TARGET_LINK_LIBRARIES(${TEST_NAME} PRIVATE VirtualRobot boost_unit_test_framework)
+    TARGET_LINK_LIBRARIES(${TEST_NAME} PRIVATE VirtualRobot Boost::unit_test_framework)
     target_include_directories(${TEST_NAME} PRIVATE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/..)
     if (NOT Boost_USE_STATIC_LIBS)
         target_compile_definitions(${TEST_NAME} PRIVATE -DBOOST_TEST_DYN_LINK)

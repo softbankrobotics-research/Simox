@@ -2,7 +2,7 @@ PROJECT ( Saba )
 
 MESSAGE (STATUS "***** CONFIGURING Simox project Saba *****")
 
-
+find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
 
 ########################### TESTING #####################################
@@ -12,7 +12,7 @@ MACRO(ADD_SABA_TEST TEST_NAME)
     if (NOT Boost_USE_STATIC_LIBS)
         target_compile_definitions(${TEST_NAME} PRIVATE -DBOOST_TEST_DYN_LINK)
     endif ()
-    TARGET_LINK_LIBRARIES(${TEST_NAME} PRIVATE VirtualRobot Saba boost_unit_test_framework)
+    TARGET_LINK_LIBRARIES(${TEST_NAME} PRIVATE VirtualRobot Saba Boost::unit_test_framework)
     SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Simox_TEST_DIR})
     SET_TARGET_PROPERTIES(${TEST_NAME} PROPERTIES FOLDER "Saba Tests")
     ADD_TEST(NAME Saba_${TEST_NAME}
