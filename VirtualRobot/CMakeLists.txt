@@ -323,7 +323,6 @@ math/GaussianObjectModelNormals.cpp
 math/Grid3D.cpp
 math/GridCacheFloat3.cpp
 math/Helpers.cpp
-math/Histogram.cpp
 math/ImplicitPlane.cpp
 math/ImplicitObjectModel.cpp
 math/Index3.cpp
@@ -340,6 +339,9 @@ math/Plane.cpp
 math/Primitive.cpp
 math/Triangle.cpp
 math/WeightedAverage.cpp
+math/statistics/measures.cpp
+math/statistics/BoxPlot.cpp
+math/statistics/Histogram.cpp
 Util/xml/tinyxml2.cpp
 Util/json/eigen_conversion.cpp
 )
@@ -488,7 +490,6 @@ math/GaussianObjectModelNormals.h
 math/Grid3D.h
 math/GridCacheFloat3.h
 math/Helpers.h
-math/Histogram.h
 math/ImplicitObjectModel.cpp
 math/ImplicitPlane.h
 math/Index3.h
@@ -513,6 +514,9 @@ math/TransformedFunctionR1R3.h
 math/TransformedFunctionR2R3.h
 math/Triangle.h
 math/WeightedAverage.h
+math/statistics/measures.h
+math/statistics/BoxPlot.h
+math/statistics/Histogram.h
 Util/xml/tinyxml2.h
 Util/json/json.hpp
 Util/json/eigen_conversion.h
