@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 #######################################################################################
-PROJECT(Simox LANGUAGES CXX VERSION 2.3.73.0)
+PROJECT(Simox LANGUAGES CXX VERSION 2.3.74.0)
 MESSAGE (STATUS "** Simox version: ${Simox_VERSION}")
 #######################################################################################
 #global config
