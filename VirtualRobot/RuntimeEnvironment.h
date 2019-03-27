@@ -85,6 +85,11 @@ namespace VirtualRobot
             Return the corresponding vale to key. If key cannot be found, defaultValue is returned.
         */
         static std::string getValue(const std::string& key, const std::string& defaultValue = "");
+        template<class T>
+        static T getValue(const std::string& key, const T& defaultValue)
+        {
+            return hasValue(key) ? boost::lexical_cast<T>(getValue(key)) : defaultValue;
+        }
         static bool hasValue(const std::string& key);
 
         //! return all key value pairs
