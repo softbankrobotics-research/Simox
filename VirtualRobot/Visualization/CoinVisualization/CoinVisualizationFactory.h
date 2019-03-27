@@ -62,7 +62,7 @@ namespace VirtualRobot
             Initialises SoDB and SoQt.
             Sets the COIN_SEPARATE_DIFFUSE_TRANSPARENCY_OVERRIDE environment variable to enable a Coin3D transparency extension.
         */
-        void init(int &argc, char* argv[], const std::string &appName) override;
+        void init(int& argc, char* argv[], const std::string& appName) override;
 
 
         VisualizationNodePtr getVisualizationFromPrimitives(const std::vector<Primitive::PrimitivePtr>& primitives, bool boundingBox = false, Color color = Color::Gray()) override;
@@ -74,7 +74,7 @@ namespace VirtualRobot
 
 
 
-        virtual VisualizationPtr getVisualization(const std::vector<VisualizationNodePtr> &visus);
+        virtual VisualizationPtr getVisualization(const std::vector<VisualizationNodePtr>& visus);
         virtual VisualizationPtr getVisualization(VisualizationNodePtr visu);
 
 
@@ -135,9 +135,9 @@ namespace VirtualRobot
         static SoSeparator* CreatePointsVisualization(const std::vector<MathTools::ContactPoint>& points, bool showNormals = false);
         static SoSeparator* CreateArrow(const Eigen::Vector3f& n, float length = 50.0f, float width = 2.0f, const Color& color = Color::Gray());
         static SoSeparator* CreateVertexVisualization(const Eigen::Vector3f& position, float radius, float transparency, float colorR = 0.5f, float colorG = 0.5f, float colorB = 0.5f);
-        static SoSeparator* CreateVerticesVisualization(const std::vector<Eigen::Vector3f> &positions, float radius, VisualizationFactory::Color color = VisualizationFactory::Color::Gray());
+        static SoSeparator* CreateVerticesVisualization(const std::vector<Eigen::Vector3f>& positions, float radius, VisualizationFactory::Color color = VisualizationFactory::Color::Gray());
 
-        static void RemoveDuplicateTextures(SoNode* node, const std::string &currentPath);
+        static void RemoveDuplicateTextures(SoNode* node, const std::string& currentPath);
         /*!
             Creates an coordinate axis aligned ellipse
             \param x The extend in x direction must be >= 1e-6
@@ -209,7 +209,7 @@ namespace VirtualRobot
         /*!
             Convenient method to retrieve a coin visualization for a robot
         */
-        static SoNode* getCoinVisualization(RobotPtr robot, SceneObject::VisualizationType visuType, bool selectable=true);
+        static SoNode* getCoinVisualization(RobotPtr robot, SceneObject::VisualizationType visuType, bool selectable = true);
         /*!
             Convenient method to retrieve a coin visualization for a SceneObject/Obstacle/ManipulationObject
         */
@@ -263,16 +263,16 @@ namespace VirtualRobot
             Create a SoMatrixTransform from the given pose
             \param m The pose with translation given in meter.
         */
-        static SoMatrixTransform* getMatrixTransform(Eigen::Matrix4f& m);
+        static SoMatrixTransform* getMatrixTransform(const Eigen::Matrix4f& m);
 
         /*!
             Create a SoMatrixTransform from the given pose
             Converts the pose from MM to M (scales by 0.001)
             \param m The pose with translation given in millimeter.
         */
-        static SoMatrixTransform* getMatrixTransformScaleMM2M(Eigen::Matrix4f& m);
+        static SoMatrixTransform* getMatrixTransformScaleMM2M(const Eigen::Matrix4f& m);
         static SoNode* createCoinLine(const Eigen::Matrix4f& from, const Eigen::Matrix4f& to, float width, float colorR, float colorG, float colorB);
-        static SoNode *createCoinPartCircle(float radius, float circleCompletion, float width, float colorR, float colorG, float colorB, size_t numberOfCircleParts);
+        static SoNode* createCoinPartCircle(float radius, float circleCompletion, float width, float colorR, float colorG, float colorB, size_t numberOfCircleParts);
 
 
         /*!
@@ -310,7 +310,7 @@ namespace VirtualRobot
 
             \see createOffscreenRenderer
         */
-        static bool renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear=10.f, float zFar=100000.f, float fov = M_PI/4);
+        static bool renderOffscreen(SoOffscreenRenderer* renderer, RobotNodePtr camNode, SoNode* scene, unsigned char** buffer, float zNear = 10.f, float zFar = 100000.f, float fov = M_PI / 4);
 
         /*!
          * \brief Renders the given scene from the given cam position and outputs (optionally) the rgb image, depth image and point cloud.
@@ -331,15 +331,15 @@ namespace VirtualRobot
          * \return true on success
          */
         static bool renderOffscreenRgbDepthPointcloud
-            (
-                RobotNodePtr camNode, SoNode* scene,
-                short width, short height,
-                bool renderRgbImage, std::vector<unsigned char>& rgbImage,
-                bool renderDepthImgae, std::vector<float>& depthImage,
-                bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = NAN
+        (
+            RobotNodePtr camNode, SoNode* scene,
+            short width, short height,
+            bool renderRgbImage, std::vector<unsigned char>& rgbImage,
+            bool renderDepthImgae, std::vector<float>& depthImage,
+            bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
+            float zNear = 10.f, float zFar = 100000.f, float vertFov = M_PI / 4, float nanValue = NAN
 
-            );
+        );
 
         /*!
          * \brief Renders the given scene from the given cam position and outputs (optionally) the rgb image, depth image and point cloud.
@@ -361,13 +361,13 @@ namespace VirtualRobot
          * \return true on success
          */
         static bool renderOffscreenRgbDepthPointcloud
-            (SoOffscreenRenderer* renderer,
-                RobotNodePtr camNode, SoNode* scene,
-                short width, short height,
-                bool renderRgbImage, std::vector<unsigned char>& rgbImage,
-                bool renderDepthImage, std::vector<float>& depthImage,
-                bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = NAN);
+        (SoOffscreenRenderer* renderer,
+         RobotNodePtr camNode, SoNode* scene,
+         short width, short height,
+         bool renderRgbImage, std::vector<unsigned char>& rgbImage,
+         bool renderDepthImage, std::vector<float>& depthImage,
+         bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
+         float zNear = 10.f, float zFar = 100000.f, float vertFov = M_PI / 4, float nanValue = NAN);
 
         /*!
          * \brief Renders the given scene from the given cam position and outputs the rgb image, depth image and point cloud.
@@ -388,16 +388,16 @@ namespace VirtualRobot
          * \return true on success
          */
         static bool renderOffscreenRgbDepthPointcloud
-            (
-                RobotNodePtr camNode, SoNode* scene,
-                short width, short height,
-                std::vector<unsigned char>& rgbImage,
-                std::vector<float>& depthImage,
-                std::vector<Eigen::Vector3f>& pointCloud,
-                float zNear=10.f, float zFar=100000.f, float vertFov = M_PI/4, float nanValue = NAN
-            )
+        (
+            RobotNodePtr camNode, SoNode* scene,
+            short width, short height,
+            std::vector<unsigned char>& rgbImage,
+            std::vector<float>& depthImage,
+            std::vector<Eigen::Vector3f>& pointCloud,
+            float zNear = 10.f, float zFar = 100000.f, float vertFov = M_PI / 4, float nanValue = NAN
+        )
         {
-            return renderOffscreenRgbDepthPointcloud(camNode,scene,width,height,true,rgbImage,true,depthImage,true,pointCloud,zNear,zFar,vertFov, nanValue);
+            return renderOffscreenRgbDepthPointcloud(camNode, scene, width, height, true, rgbImage, true, depthImage, true, pointCloud, zNear, zFar, vertFov, nanValue);
         }
 
         /*!

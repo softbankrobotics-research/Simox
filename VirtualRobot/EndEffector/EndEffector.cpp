@@ -38,14 +38,13 @@ namespace VirtualRobot
             gcpNode = tcpNode;
         }
 
-        for (const auto & preshape : preshapes)
+        for (const auto& preshape : preshapes)
         {
             registerPreshape(preshape);
         }
     }
 
-    EndEffector::~EndEffector()
-    = default;
+    EndEffector::~EndEffector() = default;
 
     EndEffectorPtr EndEffector::clone(RobotPtr newRobot)
     {
@@ -178,7 +177,7 @@ namespace VirtualRobot
         SceneObjectSetPtr cms(new SceneObjectSet(name, colChecker));
         cms->addSceneObjects(statics);
 
-        for (auto & actor : actors)
+        for (auto& actor : actors)
         {
             cms->addSceneObjects(actor->getRobotNodes());
         }
@@ -258,14 +257,14 @@ namespace VirtualRobot
 
         cout << " * Static RobotNodes:" << endl;
 
-        for (auto & i : statics)
+        for (auto& i : statics)
         {
             cout << " ** " << i->getName() << endl;
         }
 
         cout << " * Actors:" << endl;
 
-        for (auto & actor : actors)
+        for (auto& actor : actors)
         {
             actor->print();
         }
@@ -384,7 +383,7 @@ namespace VirtualRobot
         VirtualRobot::RobotConfigPtr result(new VirtualRobot::RobotConfig(getRobot(), getName()));
         std::vector< RobotNodePtr > rn = getAllNodes();
 
-        for (auto & i : rn)
+        for (auto& i : rn)
         {
             if (i->isRotationalJoint() || i->isTranslationalJoint())
             {
@@ -413,7 +412,7 @@ namespace VirtualRobot
         {
             std::vector< RobotNodePtr > rn = (*iA)->getRobotNodes();
 
-            for (const auto & i : rn)
+            for (const auto& i : rn)
             {
                 mapR[i] = i;
             }
@@ -489,7 +488,7 @@ namespace VirtualRobot
             return false;
         }
 
-        for (const auto & actor : actors)
+        for (const auto& actor : actors)
         {
             if (!actor->nodesSufficient(nodes))
             {
@@ -504,7 +503,7 @@ namespace VirtualRobot
     {
         float maxActor = 0;
 
-        for (auto & actor : actors)
+        for (auto& actor : actors)
         {
             float al = actor->getApproximatedLength();
 
@@ -517,7 +516,7 @@ namespace VirtualRobot
 
         BoundingBox bb_all;
 
-        for (auto & j : statics)
+        for (auto& j : statics)
         {
             if (j->getCollisionModel())
             {
@@ -606,7 +605,7 @@ namespace VirtualRobot
         {
             ss << tt << "<Static>" << endl;
 
-            for (auto & i : statics)
+            for (auto& i : statics)
             {
                 ss << ttt << "<Node name='" << i->getName() << "'/>" << endl;
             }
@@ -615,7 +614,7 @@ namespace VirtualRobot
         }
 
         // Actors
-        for (auto & actor : actors)
+        for (auto& actor : actors)
         {
             ss << actor->toXML(ident + 1);
         }
@@ -625,22 +624,26 @@ namespace VirtualRobot
         return ss.str();
     }
 
-    int EndEffector::addStaticPartContacts(SceneObjectPtr obstacle, EndEffector::ContactInfoVector &contacts, const Eigen::Vector3f &approachDirGlobal, float maxDistance)
+    int EndEffector::addStaticPartContacts(SceneObjectPtr obstacle, EndEffector::ContactInfoVector& contacts, const Eigen::Vector3f& approachDirGlobal, float maxDistance)
     {
         if (!obstacle)
+        {
             return 0;
+        }
 
         int contactCount = 0;
 
         for (auto n : statics)
         {
             if (!n->getCollisionModel())
+            {
                 continue;
+            }
             int id1, id2;
-            Eigen::Vector3f p1,p2;
-            float dist = this->getCollisionChecker()->calculateDistance(n->getCollisionModel(),obstacle->getCollisionModel(),p1,p2,&id1,&id2);
+            Eigen::Vector3f p1, p2;
+            float dist = this->getCollisionChecker()->calculateDistance(n->getCollisionModel(), obstacle->getCollisionModel(), p1, p2, &id1, &id2);
             //VR_INFO << n->getName() << " - DIST: " << dist << endl;
-            if (dist<=maxDistance)
+            if (dist <= maxDistance)
             {
                 EndEffector::ContactInfo ci;
                 ci.eef = shared_from_this();

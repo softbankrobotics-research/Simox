@@ -98,19 +98,17 @@ namespace VirtualRobot
     boost::mutex CoinVisualizationFactory::globalTextureCacheMutex;
     CoinVisualizationFactory::TextureCacheMap CoinVisualizationFactory::globalTextureCache;
 
-    CoinVisualizationFactory::CoinVisualizationFactory()
-    = default;
+    CoinVisualizationFactory::CoinVisualizationFactory() = default;
 
 
-    CoinVisualizationFactory::~CoinVisualizationFactory()
-    = default;
+    CoinVisualizationFactory::~CoinVisualizationFactory() = default;
 
-    void CoinVisualizationFactory::init(int &argc, char* argv[], const std::string &appName)
+    void CoinVisualizationFactory::init(int& argc, char* argv[], const std::string& appName)
     {
         if (!SoDB::isInitialized())
-		{
+        {
             SoDB::init();
-		}
+        }
 #ifdef SIMOX_USE_SOQT
         SoQt::init(argc, argv, appName.c_str());
 #endif
@@ -222,8 +220,8 @@ namespace VirtualRobot
     * \return instance of VirtualRobot::CoinVisualizationNode upon success and VirtualRobot::VisualizationNode on error.
     */
     VisualizationNodePtr CoinVisualizationFactory::getVisualizationFromFile(
-            const std::string& filename, bool boundingBox,
-            float scaleX, float scaleY, float scaleZ)
+        const std::string& filename, bool boundingBox,
+        float scaleX, float scaleY, float scaleZ)
     {
         // passing an empty string to SoInput and trying to open it aborts the program
         if (filename.empty())
@@ -233,7 +231,7 @@ namespace VirtualRobot
         }
 
         filesystem::path filepath(filename);
-        
+
         // check for STL file (.stl, .stla, .stlb)
         if (filename.length() >= 4)
         {
@@ -301,7 +299,7 @@ namespace VirtualRobot
     {
         VisualizationNodePtr visualizationNode(new VisualizationNode);
 
-        if(scaleX != 1.0f || scaleY != 1.0f || scaleZ != 1.0f)
+        if (scaleX != 1.0f || scaleY != 1.0f || scaleZ != 1.0f)
         {
             VR_WARNING << "Scaling not yet supported" << endl;
         }
@@ -384,7 +382,7 @@ namespace VirtualRobot
 
         // create new CoinVisualizationNode if no error occurred
         visualizationNode.reset(new CoinVisualizationNode(coinVisualization));
-        if(freeDuplicateTextures)
+        if (freeDuplicateTextures)
         {
             boost::filesystem::path p(soInput.getCurFileName());
             boost::filesystem::path dir = p.parent_path();
@@ -394,7 +392,7 @@ namespace VirtualRobot
         coinVisualization->unref();
     }
 
-    VisualizationPtr CoinVisualizationFactory::getVisualization(const std::vector<VisualizationNodePtr> &visus)
+    VisualizationPtr CoinVisualizationFactory::getVisualization(const std::vector<VisualizationNodePtr>& visus)
     {
         boost::shared_ptr<CoinVisualization> v(new CoinVisualization(visus));
         return v;
@@ -572,12 +570,12 @@ namespace VirtualRobot
         {
 
             SbVec3f point;
-            float angle0 = (float)(i)/numberOfCircleParts * 2 * M_PI * circleCompletion + offset;
+            float angle0 = (float)(i) / numberOfCircleParts * 2 * M_PI * circleCompletion + offset;
             float x0 = radius * cos(angle0);
             float y0 = radius * sin(angle0);
 
 
-            point.setValue(x0,y0,0);
+            point.setValue(x0, y0, 0);
             coordinate3->point.set1Value(i, point);
 
 
@@ -860,7 +858,7 @@ namespace VirtualRobot
     {
         SoSeparator* sep = new SoSeparator();
         sep->ref();
-            if(fabs(completion) > 0.01)
+        if (fabs(completion) > 0.01)
         {
             TriMeshModelPtr triMesh = TriMeshModelPtr(new TriMeshModel());
 
@@ -902,9 +900,9 @@ namespace VirtualRobot
                     short lb = (short)(horizontalIt + (verticalIt + 1) * (numVerticesPerRow));
                     short rb = (short)((horizontalIt + 1) + (verticalIt + 1) * (numVerticesPerRow));
                     MathTools::TriangleFace face;
-                    face.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[lt],
-                                                                         triMesh->vertices[rt],
-                                                                         triMesh->vertices[lb]);
+                    face.normal = -completion * TriMeshModel::CreateNormal(triMesh->vertices[lt],
+                                  triMesh->vertices[rt],
+                                  triMesh->vertices[lb]);
                     face.id1 = lt;
                     face.idColor1 = 0;
 
@@ -921,9 +919,9 @@ namespace VirtualRobot
 
 
                     MathTools::TriangleFace face2;
-                    face2.normal = -completion*TriMeshModel::CreateNormal(triMesh->vertices[rt],
-                                                                          triMesh->vertices[rb],
-                                                                          triMesh->vertices[lb]);
+                    face2.normal = -completion * TriMeshModel::CreateNormal(triMesh->vertices[rt],
+                                   triMesh->vertices[rb],
+                                   triMesh->vertices[lb]);
                     face2.id1 = rt;
                     face2.idColor1 = 0;
 
@@ -1047,7 +1045,7 @@ namespace VirtualRobot
     }
 
 
-    SoSeparator* CoinVisualizationFactory::CreateVerticesVisualization(const std::vector<Eigen::Vector3f> &positions, float radius, VisualizationFactory::Color color)
+    SoSeparator* CoinVisualizationFactory::CreateVerticesVisualization(const std::vector<Eigen::Vector3f>& positions, float radius, VisualizationFactory::Color color)
     {
 
         SoSeparator* pclSep = new SoSeparator;
@@ -1092,7 +1090,7 @@ namespace VirtualRobot
         return in.tellg();
     }
 
-    void CoinVisualizationFactory::RemoveDuplicateTextures(SoNode *node, const std::string& currentPath)
+    void CoinVisualizationFactory::RemoveDuplicateTextures(SoNode* node, const std::string& currentPath)
     {
         // internal class to keep track of texture removal
         struct DeleteTextureCallBack : SoDataSensor
@@ -1110,7 +1108,7 @@ namespace VirtualRobot
             }
 
         private:
-            ~DeleteTextureCallBack() override= default;
+            ~DeleteTextureCallBack() override = default;
             std::string nodeName;
             std::string path;
             size_t filesize;
@@ -1122,13 +1120,15 @@ namespace VirtualRobot
         sa.setInterest(SoSearchAction::ALL);
         sa.setSearchingAll(TRUE);
         sa.apply(node);
-        SoPathList & pl = sa.getPaths();
+        SoPathList& pl = sa.getPaths();
 
         boost::mutex::scoped_lock lock(globalTextureCacheMutex);
-        for (int i = 0; i < pl.getLength(); i++) {
-            SoFullPath * p = (SoFullPath*) pl[i];
-            if (p->getTail()->isOfType(SoVRMLImageTexture::getClassTypeId())) {
-                SoVRMLImageTexture * tex = (SoVRMLImageTexture*) p->getTail();
+        for (int i = 0; i < pl.getLength(); i++)
+        {
+            SoFullPath* p = (SoFullPath*) pl[i];
+            if (p->getTail()->isOfType(SoVRMLImageTexture::getClassTypeId()))
+            {
+                SoVRMLImageTexture* tex = (SoVRMLImageTexture*) p->getTail();
                 for (int i = 0; i < tex->url.getNum(); ++i)
                 {
                     SbName name = tex->url[i].getString();
@@ -1136,17 +1136,17 @@ namespace VirtualRobot
                     size_t filesize = getFilesize(texturePath.c_str());
 
                     //              unsigned long key = (unsigned long) ((void*) name.getString());
-                    auto it = globalTextureCache.find(std::make_pair(filesize,texturePath));
+                    auto it = globalTextureCache.find(std::make_pair(filesize, texturePath));
                     if (it == globalTextureCache.end())
                     {
-                        globalTextureCache[std::make_pair(filesize,texturePath)] =  (void*)tex;
+                        globalTextureCache[std::make_pair(filesize, texturePath)] = (void*)tex;
                         tex->addAuditor(new DeleteTextureCallBack(name.getString(), texturePath, filesize), SoNotRec::SENSOR);
-//                        VR_INFO << "Found NOT in cache" << std::endl;
+                        //                        VR_INFO << "Found NOT in cache" << std::endl;
                     }
                     else if (it->second != (void*) tex)
                     {
-//                        VR_INFO << "Found in cache" << std::endl;
-                        SoNode * parent = p->getNodeFromTail(1);
+                        //                        VR_INFO << "Found in cache" << std::endl;
+                        SoNode* parent = p->getNodeFromTail(1);
                         if (parent->isOfType(SoVRMLAppearance::getClassTypeId()))
                         {
                             ((SoVRMLAppearance*)parent)->texture = (SoNode*) it->second;
@@ -1541,7 +1541,7 @@ namespace VirtualRobot
         SoSeparator* res = new SoSeparator;
         res->ref();
 
-        for (auto & contact : contacts)
+        for (auto& contact : contacts)
         {
             res->addChild(getCoinVisualization(contact, frictionConeHeight, frictionConeRadius, scaleAccordingToApproachDir));
         }
@@ -2156,13 +2156,15 @@ namespace VirtualRobot
     SoSeparator* CoinVisualizationFactory::CreateArrow(const Eigen::Vector3f& n, float length, float width, const Color& color)
     {
         Eigen::Vector3f n2 = n;
-        if (n2.norm()<1e-10)
-            n2 << 0,0,1;
+        if (n2.norm() < 1e-10)
+        {
+            n2 << 0, 0, 1;
+        }
         n2.normalize();
         float coneHeight = width * 6.0f;
         float coneBottomRadius = width * 2.5f;
         float baseLength = length - coneHeight;
-        baseLength = std::max(0.0f,baseLength);
+        baseLength = std::max(0.0f, baseLength);
         SoSeparator* res = new SoSeparator;
         res->ref();
         SoUnits* u = new SoUnits();
@@ -2243,11 +2245,11 @@ namespace VirtualRobot
         sc->scaleFactor.setValue(scaleX, scaleY, scaleZ);
         res->addChild(sc);
 
-        if(scaleX * scaleY * scaleZ < 0)
+        if (scaleX * scaleY * scaleZ < 0)
         {
             // Some robot models use negative scaling for flipping parts of the visualization.
             // In this case we need to change the vertex order accordingly.
-            SoShapeHints *sh = new SoShapeHints;
+            SoShapeHints* sh = new SoShapeHints;
             sh->vertexOrdering.setValue(SoShapeHints::CLOCKWISE);
             res->addChild(sh);
         }
@@ -2263,18 +2265,18 @@ namespace VirtualRobot
         return node;
     }
 
-    SoMatrixTransform* CoinVisualizationFactory::getMatrixTransform(Eigen::Matrix4f& m)
+    SoMatrixTransform* CoinVisualizationFactory::getMatrixTransform(const Eigen::Matrix4f& m)
     {
         SoMatrixTransform* mt = new SoMatrixTransform;
-        SbMatrix m_(reinterpret_cast<SbMat*>(m.data()));
+        SbMatrix m_(reinterpret_cast<const SbMat*>(m.data()));
         mt->matrix.setValue(m_);
         return mt;
     }
 
-    SoMatrixTransform* CoinVisualizationFactory::getMatrixTransformScaleMM2M(Eigen::Matrix4f& m)
+    SoMatrixTransform* CoinVisualizationFactory::getMatrixTransformScaleMM2M(const Eigen::Matrix4f& m)
     {
         SoMatrixTransform* mt = new SoMatrixTransform;
-        SbMatrix m_(reinterpret_cast<SbMat*>(m.data()));
+        SbMatrix m_(reinterpret_cast<const SbMat*>(m.data()));
         // mm -> m
         m_[3][0] *= 0.001f;
         m_[3][1] *= 0.001f;
@@ -2292,29 +2294,31 @@ namespace VirtualRobot
     }
 
     VisualizationNodePtr CoinVisualizationFactory::createCircleArrow(
-            float radius,
-            float tubeRadius,
-            float completion,
-            float colorR,
-            float colorG,
-            float colorB,
-            float transparency,
-                                                                     int
-                                                                 #ifndef NDEBUG
-                                                                     sides
-                                                                 #endif
-                                                                     ,
-                                                                     int rings
-                                                                     )
+        float radius,
+        float tubeRadius,
+        float completion,
+        float colorR,
+        float colorG,
+        float colorB,
+        float transparency,
+        int
+#ifndef NDEBUG
+        sides
+#endif
+        ,
+        int rings
+    )
     {
         VR_ASSERT_MESSAGE(rings >= 4, "You need to pass in atleast 4 rings for a torus");
         VR_ASSERT_MESSAGE(sides >= 4, "You need to pass in atleast 4 sides for a torus");
         completion = std::min<float>(1.0f, completion);
         completion = std::max<float>(-1.0f, completion);
-        int sign = completion >=0?1:-1;
-        float torusCompletion = completion - 1.0f/rings*sign;
-        if(torusCompletion * sign < 0)
+        int sign = completion >= 0 ? 1 : -1;
+        float torusCompletion = completion - 1.0f / rings * sign;
+        if (torusCompletion * sign < 0)
+        {
             torusCompletion = 0;
+        }
         auto torusNode = createTorus(radius, tubeRadius, torusCompletion, colorR, colorG, colorB, transparency);
         SoNode* torus = boost::dynamic_pointer_cast<CoinVisualizationNode>(torusNode)->getCoinVisualization();
 
@@ -2332,17 +2336,17 @@ namespace VirtualRobot
 
         s->addChild(torus);
 
-        float angle0 = (float)(rings-2)/rings * 2 * M_PI * completion;
+        float angle0 = (float)(rings - 2) / rings * 2 * M_PI * completion;
         float x0 = radius * cos(angle0);
         float y0 = radius * sin(angle0);
-        float angle1 = (float)(rings-1)/rings * 2 * M_PI * completion;
+        float angle1 = (float)(rings - 1) / rings * 2 * M_PI * completion;
 
         SoSeparator* subSep = new SoSeparator();
         s->addChild(subSep);
         SoTransform* tr = new SoTransform;
         tr->translation.setValue(x0, y0, 0);
 
-        tr->rotation.setValue(SbVec3f(0,0,1), angle1);
+        tr->rotation.setValue(SbVec3f(0, 0, 1), angle1);
         subSep->addChild(tr);
 
         subSep->addChild(CreateArrow(Eigen::Vector3f::UnitY()*sign, 0, tubeRadius, Color(colorR, colorG, colorB)));
@@ -2521,10 +2525,10 @@ namespace VirtualRobot
         res->addChild(m);
 
         Eigen::Vector3f translation(
-            constraint->getTransformation()(0, 3) + constraint->getBounds()(0, 0) + fabs(constraint->getBounds()(0, 0) - constraint->getBounds()(0, 1))/2,
-            constraint->getTransformation()(1, 3) + constraint->getBounds()(1, 0) + fabs(constraint->getBounds()(1, 0) - constraint->getBounds()(1, 1))/2,
-            constraint->getTransformation()(2, 3) + constraint->getBounds()(2, 0) + fabs(constraint->getBounds()(2, 0) - constraint->getBounds()(2, 1))/2
-            );
+            constraint->getTransformation()(0, 3) + constraint->getBounds()(0, 0) + fabs(constraint->getBounds()(0, 0) - constraint->getBounds()(0, 1)) / 2,
+            constraint->getTransformation()(1, 3) + constraint->getBounds()(1, 0) + fabs(constraint->getBounds()(1, 0) - constraint->getBounds()(1, 1)) / 2,
+            constraint->getTransformation()(2, 3) + constraint->getBounds()(2, 0) + fabs(constraint->getBounds()(2, 0) - constraint->getBounds()(2, 1)) / 2
+        );
 
         SoTransform* t = new SoTransform;
         t->translation.setValue(translation.x(), translation.y(), translation.z());
@@ -2963,8 +2967,10 @@ namespace VirtualRobot
                             //voxelPosition = reachSpace->baseNode->toGlobalCoordinateSystemVec(voxelPosition);
                         }
 
-                        if (resPos(2)>maxZGlobal)
+                        if (resPos(2) > maxZGlobal)
+                        {
                             continue;
+                        }
 
                         float angle = std::atan2(voxelPosition(1), voxelPosition(0));
                         if (minAngle > angle || maxAngle < angle)
@@ -3271,11 +3277,13 @@ namespace VirtualRobot
             cube->height = sizeY;
         }
 
-        if (maxEntry==0.0f)
+        if (maxEntry == 0.0f)
         {
             maxEntry = cutXY->entries.maxCoeff();
             if (maxEntry == 0)
+            {
                 maxEntry = 1;
+            }
         }
 
 
@@ -3652,7 +3660,7 @@ namespace VirtualRobot
         cam->nearDistance.setValue(zNear);
         cam->farDistance.setValue(zFar);
         cam->heightAngle.setValue(fov);
-        cam->aspectRatio.setValue(width/height);
+        cam->aspectRatio.setValue(width / height);
 
         bool res = renderOffscreen(renderer, cam, scene, buffer);
         cam->unref();
@@ -3681,15 +3689,15 @@ namespace VirtualRobot
         lightModel->model = SoLightModel::BASE_COLOR;
         root->addChild(lightModel);*/
 
-        const auto camPos =cam->position.getValue();
+        const auto camPos = cam->position.getValue();
         SoPerspectiveCamera* camInMeters = static_cast<SoPerspectiveCamera*>(cam->copy());
         float sc = 0.001f;
         camInMeters->position.setValue(camPos[0]*sc, camPos[1]*sc, camPos[2]*sc);
         camInMeters->orientation.setValue(cam->orientation.getValue()); // perform total transformation
 
         // todo: check these values....
-        camInMeters->nearDistance.setValue(sc*cam->nearDistance.getValue());
-        camInMeters->farDistance.setValue(sc*cam->farDistance.getValue());
+        camInMeters->nearDistance.setValue(sc * cam->nearDistance.getValue());
+        camInMeters->farDistance.setValue(sc * cam->farDistance.getValue());
         camInMeters->heightAngle.setValue(cam->heightAngle.getValue());
         root->addChild(camInMeters);
 
@@ -3701,8 +3709,10 @@ namespace VirtualRobot
 
         // check if rendering is slow (worse than 3 fps)
         float msec = (SbTime::getTimeOfDay() - t).getValue() * 1000;
-        if (msec>300)
+        if (msec > 300)
+        {
             VR_WARNING << "************ offscreen rendering took " << msec << " ms" << endl;
+        }
 
         root->unref();
 
@@ -3723,8 +3733,10 @@ namespace VirtualRobot
         // getBuffer might be slow due to an internal call of glReadPixels
         // glReadPixels is very slow with some gl drivers (experienced with an older ATI crad, glReadpixels took more that 500 ms?!)
         float msec2 = (SbTime::getTimeOfDay() - t2a).getValue() * 1000;
-        if (msec2>300)
+        if (msec2 > 300)
+        {
             VR_WARNING << "************ getBuffer took " << msec2 << " ms" << endl;
+        }
         return true;
     }
 
@@ -3758,37 +3770,37 @@ namespace VirtualRobot
     }
 
     bool CoinVisualizationFactory::renderOffscreenRgbDepthPointcloud
-        (
-            RobotNodePtr camNode, SoNode* scene, //scene
-            short width, short height,//instead of renderer (the render action will be overwritten and can't be restored
-            bool renderRgbImage, std::vector<unsigned char>& rgbImage, // vector -> copy required // cant use unsigned char** buffer since renderer buffer will go out of scope
-            bool renderDepthImage, std::vector<float>& depthImage,
-            bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
-            float zNear, float zFar, float vertFov,//render param
-            float nanValue
-        )
+    (
+        RobotNodePtr camNode, SoNode* scene, //scene
+        short width, short height,//instead of renderer (the render action will be overwritten and can't be restored
+        bool renderRgbImage, std::vector<unsigned char>& rgbImage, // vector -> copy required // cant use unsigned char** buffer since renderer buffer will go out of scope
+        bool renderDepthImage, std::vector<float>& depthImage,
+        bool renderPointcloud, std::vector<Eigen::Vector3f>& pointCloud,
+        float zNear, float zFar, float vertFov,//render param
+        float nanValue
+    )
     {
         SoOffscreenRenderer offscreenRenderer{SbViewportRegion{width, height}};
         offscreenRenderer.setComponents(SoOffscreenRenderer::RGB);
         offscreenRenderer.setBackgroundColor(SbColor(1.0f, 1.0f, 1.0f));
         return renderOffscreenRgbDepthPointcloud(&offscreenRenderer,
-                                          camNode,
-                                          scene,
-                                          width, height,
-                                          renderRgbImage,
-                                          rgbImage,
-                                          renderDepthImage, depthImage,
-                                          renderPointcloud, pointCloud,
-                                          zNear, zFar, vertFov,
-                                          nanValue);
+                camNode,
+                scene,
+                width, height,
+                renderRgbImage,
+                rgbImage,
+                renderDepthImage, depthImage,
+                renderPointcloud, pointCloud,
+                zNear, zFar, vertFov,
+                nanValue);
     }
 
-    bool CoinVisualizationFactory::renderOffscreenRgbDepthPointcloud(SoOffscreenRenderer *offscreenRenderer, RobotNodePtr camNode,
-                                                                     SoNode *scene, short width, short height, bool renderRgbImage, std::vector<unsigned char> &rgbImage,
-                                                                     bool renderDepthImage, std::vector<float> &depthImage, bool renderPointcloud,
-                                                                     std::vector<Eigen::Vector3f> &pointCloud, float zNear, float zFar, float vertFov, float nanValue)
+    bool CoinVisualizationFactory::renderOffscreenRgbDepthPointcloud(SoOffscreenRenderer* offscreenRenderer, RobotNodePtr camNode,
+            SoNode* scene, short width, short height, bool renderRgbImage, std::vector<unsigned char>& rgbImage,
+            bool renderDepthImage, std::vector<float>& depthImage, bool renderPointcloud,
+            std::vector<Eigen::Vector3f>& pointCloud, float zNear, float zFar, float vertFov, float nanValue)
     {
-        if(!offscreenRenderer)
+        if (!offscreenRenderer)
         {
             VR_ERROR << "No renderer..." << endl;
             return false;
@@ -3804,23 +3816,23 @@ namespace VirtualRobot
             VR_ERROR << "No scene to render..." << endl;
             return false;
         }
-        if(width<=0||height<=0)
+        if (width <= 0 || height <= 0)
         {
             VR_ERROR << "Invalid image dimensions..." << endl;
             return false;
         }
         //setup
         const bool calculateDepth = renderDepthImage || renderPointcloud;
-        const unsigned int numPixel=width*height;
+        const unsigned int numPixel = width * height;
         //required to get the zBuffer
         DepthRenderData userdata;
         std::vector<float> zBuffer;
-        if(calculateDepth)
+        if (calculateDepth)
         {
-            if(renderDepthImage)
+            if (renderDepthImage)
             {
                 //we can overwrite the depth image. maybe it already has enough mem
-                std::swap(zBuffer,depthImage);
+                std::swap(zBuffer, depthImage);
             }
             zBuffer.resize(numPixel);
 
@@ -3849,17 +3861,17 @@ namespace VirtualRobot
         SbRotation align2(SbVec3f(0, 0, 1), (float)(-M_PI / 2.0)); // align up vector by rotating with -90 degree around z axis
         SbRotation trans(CoinVisualizationFactory::getSbMatrix(camPose)); // get rotation from global pose
         camInMeters->orientation.setValue(align2 * align * trans); // perform total transformation
-        camInMeters->nearDistance.setValue(sc*zNear);
-        camInMeters->farDistance.setValue(sc*zFar);
+        camInMeters->nearDistance.setValue(sc * zNear);
+        camInMeters->farDistance.setValue(sc * zFar);
         camInMeters->heightAngle.setValue(vertFov);
-        camInMeters->aspectRatio.setValue(static_cast<float>(width)/static_cast<float>(height));
+        camInMeters->aspectRatio.setValue(static_cast<float>(width) / static_cast<float>(height));
 
         root->addChild(camInMeters);
 
         root->addChild(scene);
 
         static bool renderErrorPrinted = false;
-        const bool renderOk=offscreenRenderer->render(root);
+        const bool renderOk = offscreenRenderer->render(root);
 
 
         if (!renderOk)
@@ -3874,32 +3886,32 @@ namespace VirtualRobot
 
         root->unref();
         //rgb
-        if(renderRgbImage)
+        if (renderRgbImage)
         {
             const unsigned char* glBuffer = offscreenRenderer->getBuffer();
-            const unsigned int numValues = numPixel*3;
+            const unsigned int numValues = numPixel * 3;
             rgbImage.resize(numValues);
-            std::copy(glBuffer, glBuffer+ numValues, rgbImage.begin());
+            std::copy(glBuffer, glBuffer + numValues, rgbImage.begin());
         }
         //per pixel
-        if(!calculateDepth)
+        if (!calculateDepth)
         {
             return true;
         }
-        if(renderPointcloud)
+        if (renderPointcloud)
         {
             pointCloud.resize(numPixel);
         }
 
         const float focalLength = static_cast<float>(height) / (2 * std::tan(vertFov / 2));
 
-        assert(0<=height);
-        for(unsigned int y=0;y<static_cast<std::size_t>(height);++y)
+        assert(0 <= height);
+        for (unsigned int y = 0; y < static_cast<std::size_t>(height); ++y)
         {
-            assert(0<=width);
-            for(unsigned int x=0;x<static_cast<std::size_t>(width);++x)
+            assert(0 <= width);
+            for (unsigned int x = 0; x < static_cast<std::size_t>(width); ++x)
             {
-                const unsigned int pixelIndex = x+width*y;
+                const unsigned int pixelIndex = x + width * y;
                 const float bufferVal = zBuffer.at(pixelIndex);
                 /*
                 // projection matrix (https://www.opengl.org/sdk/docs/man2/xhtml/glFrustum.xml)
@@ -3952,14 +3964,14 @@ namespace VirtualRobot
                 assert(std::abs(zEye) > zNear - 1e-6);
 
                 //the cam is at (x,y)=(0,0) => shift x and y to image center
-                const float xShifted = static_cast<float>(x) - static_cast<float>(width ) / 2.f;
+                const float xShifted = static_cast<float>(x) - static_cast<float>(width) / 2.f;
                 const float yShifted = static_cast<float>(y) - static_cast<float>(height) / 2.f;
                 const float xEye = xShifted / focalLength * (zEye);
                 const float yEye = yShifted / focalLength * (zEye);
 
-                if(renderDepthImage)
+                if (renderDepthImage)
                 {
-                    if(-zEye < zFar)
+                    if (-zEye < zFar)
                     {
                         zBuffer.at(pixelIndex) = -zEye;
                     }
@@ -3969,11 +3981,11 @@ namespace VirtualRobot
                     }
                 }
 
-                if(renderPointcloud)
+                if (renderPointcloud)
                 {
                     //the cam looks along -z => rotate aroud y 180°
                     auto& point = pointCloud.at(pixelIndex);
-                    if(-zEye < zFar)
+                    if (-zEye < zFar)
                     {
                         point[0] = -xEye;
                         point[1] =  yEye;
@@ -3989,7 +4001,7 @@ namespace VirtualRobot
             }
         }
 
-        if(renderDepthImage)
+        if (renderDepthImage)
         {
             depthImage = std::move(zBuffer);
         }
@@ -4059,7 +4071,7 @@ namespace VirtualRobot
 
         std::vector<MathTools::Segment> s = oobb.getSegments();
 
-        for (const auto & i : s)
+        for (const auto& i : s)
         {
             sep->addChild(CreateSegmentVisualization(i, colorLine, lineSize));
         }
@@ -4370,7 +4382,7 @@ namespace VirtualRobot
         SoNode* result = n->copy(TRUE);
 
         // reset the changed ones back
-        for (auto & changedImage : changedImages)
+        for (auto& changedImage : changedImages)
         {
             changedImage->setDefault(TRUE);
         }

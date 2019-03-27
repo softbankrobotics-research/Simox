@@ -138,7 +138,7 @@ namespace VirtualRobot
             }
     }
 
-    void SceneObject::copyPoseFrom(const SceneObjectPtr &other)
+    void SceneObject::copyPoseFrom(const SceneObjectPtr& other)
     {
         //if you change code here, you have to update
         //void RobotNode::copyPoseFrom(const RobotNodePtr &other)
@@ -232,7 +232,7 @@ namespace VirtualRobot
         return true;
     }
 
-    void SceneObject::showCoordinateSystem(bool enable, float scaling, std::string* text, const std::string &visualizationType)
+    void SceneObject::showCoordinateSystem(bool enable, float scaling, std::string* text, const std::string& visualizationType)
     {
         if (!enable && !visualizationModel)
         {
@@ -372,11 +372,11 @@ namespace VirtualRobot
                 cout << "v3:" << v3 << endl;*/
 
                 float xl = static_cast<float>(eigensolver.eigenvalues().rows() > 0 ?
-                                                  eigensolver.eigenvalues()(0) : 1e-6);
+                                              eigensolver.eigenvalues()(0) : 1e-6);
                 float yl = static_cast<float>(eigensolver.eigenvalues().rows() > 1 ?
-                                                  eigensolver.eigenvalues()(1) : 1e-6);
+                                              eigensolver.eigenvalues()(1) : 1e-6);
                 float zl = static_cast<float>(eigensolver.eigenvalues().rows() > 2 ?
-                                                  eigensolver.eigenvalues()(2) : 1e-6);
+                                              eigensolver.eigenvalues()(2) : 1e-6);
 
                 if (std::abs(xl) < 1e-6f)
                 {
@@ -496,7 +496,7 @@ namespace VirtualRobot
             visualizationModel->setUpdateVisualization(enable);
         }
 
-        if(enable) // only activate but not deactivate update of collision model with this function
+        if (enable) // only activate but not deactivate update of collision model with this function
         {
             updateCollisionModel = enable;
             if (collisionModel)
@@ -582,14 +582,14 @@ namespace VirtualRobot
     }
 
     Eigen::Matrix4f SceneObject::transformTo(const SceneObjectPtr otherObject,
-                                             const Eigen::Matrix4f& poseInOtherCoordSystem)
+            const Eigen::Matrix4f& poseInOtherCoordSystem)
     {
         Eigen::Matrix4f mat = getTransformationTo(otherObject);
         return mat * poseInOtherCoordSystem;
     }
 
     Eigen::Vector3f SceneObject::transformTo(const SceneObjectPtr otherObject,
-                                             const Eigen::Vector3f& positionInOtherCoordSystem)
+            const Eigen::Vector3f& positionInOtherCoordSystem)
     {
         Eigen::Matrix4f mat = getTransformationTo(otherObject);
         Eigen::Vector4f res = mat * positionInOtherCoordSystem.homogeneous();
@@ -646,17 +646,17 @@ namespace VirtualRobot
         return getGlobalPose().block<3, 3>(0, 0);
     }
 
-    Eigen::Matrix4f SceneObject::getGlobalPose(const Eigen::Matrix4f &localPose) const
+    Eigen::Matrix4f SceneObject::getGlobalPose(const Eigen::Matrix4f& localPose) const
     {
         return getGlobalPose() * localPose;
     }
 
-    Eigen::Vector3f SceneObject::getGlobalPosition(const Eigen::Vector3f &localPosition) const
+    Eigen::Vector3f SceneObject::getGlobalPosition(const Eigen::Vector3f& localPosition) const
     {
         return math::Helpers::TransformPosition(getGlobalPose(), localPosition);
     }
 
-    Eigen::Vector3f SceneObject::getGlobalDirection(const Eigen::Vector3f &localDircetion) const
+    Eigen::Vector3f SceneObject::getGlobalDirection(const Eigen::Vector3f& localDircetion) const
     {
         return math::Helpers::TransformDirection(getGlobalPose(), localDircetion);
     }
@@ -671,7 +671,7 @@ namespace VirtualRobot
         return physics.localCoM;
     }
 
-    void SceneObject::setCoMLocal(const Eigen::Vector3f &comLocal)
+    void SceneObject::setCoMLocal(const Eigen::Vector3f& comLocal)
     {
         physics.localCoM = comLocal;
     }
@@ -984,22 +984,22 @@ namespace VirtualRobot
         return physics.inertiaMatrix;
     }
 
-    Eigen::Matrix3f SceneObject::getInertiaMatrix(const Eigen::Vector3f &shift)
+    Eigen::Matrix3f SceneObject::getInertiaMatrix(const Eigen::Vector3f& shift)
     {
         Eigen::Matrix3f skew;
-        skew << 0        , -shift(2), +shift(1),
-                +shift(2), 0        , -shift(0),
-                -shift(1), +shift(0),0;
-        return getInertiaMatrix() + getMass() * skew.transpose()*skew;
+        skew << 0, -shift(2), +shift(1),
+             +shift(2), 0, -shift(0),
+             -shift(1), +shift(0), 0;
+        return getInertiaMatrix() + getMass() * skew.transpose() * skew;
     }
 
     Eigen::Matrix3f SceneObject::getInertiaMatrix(const Eigen::Vector3f& shift, const Eigen::Matrix3f& rotation)
     {
-        return rotation*getInertiaMatrix(shift)*rotation.transpose();
+        return rotation * getInertiaMatrix(shift) * rotation.transpose();
     }
     Eigen::Matrix3f SceneObject::getInertiaMatrix(const Eigen::Matrix4f& transform)
     {
-        return getInertiaMatrix(transform.block<3,1>(0,3), transform.block<3,3>(0,0));
+        return getInertiaMatrix(transform.block<3, 1>(0, 3), transform.block<3, 3>(0, 0));
     }
 
     std::string SceneObject::getSceneObjectXMLString(const std::string& basePath, int tabs)
@@ -1063,8 +1063,10 @@ namespace VirtualRobot
 
     void SceneObject::setSimulationType(SceneObject::Physics::SimulationType s)
     {
-        if (physics.massKg<=0 && s==SceneObject::Physics::eDynamic)
+        if (physics.massKg <= 0 && s == SceneObject::Physics::eDynamic)
+        {
             VR_WARNING << "Setting simulation type to dynamic, but mass==0, object might be handled as static object by physics engine." << endl;
+        }
         physics.simType = s;
     }
 
@@ -1195,7 +1197,7 @@ namespace VirtualRobot
     {
         VR_ASSERT(parent);
         SceneObjectPtr p = getParent();
-        THROW_VR_EXCEPTION_IF(p && p != parent , "SceneObject already attached to a different parent");
+        THROW_VR_EXCEPTION_IF(p && p != parent, "SceneObject already attached to a different parent");
         this->parent = parent;
     }
 

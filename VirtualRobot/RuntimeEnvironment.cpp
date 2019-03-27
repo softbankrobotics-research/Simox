@@ -125,7 +125,7 @@ namespace VirtualRobot
             // silently skip this error (e.g. device not ready, permission denied etc)
         }
 
-        for (auto & dataPath : dataPaths)
+        for (auto& dataPath : dataPaths)
         {
             boost::filesystem::path p(dataPath);
 
@@ -168,7 +168,7 @@ namespace VirtualRobot
         ("data-path", boost::program_options::value< std::vector< std::string > >()->composing(), "Set data path. Multiple data paths are allowed.")
         ;
 
-        for (auto & processKey : processKeys)
+        for (auto& processKey : processKeys)
             desc.add_options()
             (processKey.c_str(), boost::program_options::value< std::vector< std::string > >(), processKey.c_str())
             ;
@@ -187,7 +187,7 @@ namespace VirtualRobot
             //VR_INFO << "Data paths are: " << endl;
             std::vector< std::string > dp = vm["data-path"].as< std::vector< std::string > >();
 
-            for (const auto & i : dp)
+            for (const auto& i : dp)
             {
                 addDataPath(i);
                 //VR_INFO << dp[i] << "\n";
@@ -195,7 +195,7 @@ namespace VirtualRobot
         }
 
         // process generic keys
-        for (auto & processKey : processKeys)
+        for (auto& processKey : processKeys)
         {
             if (vm.count(processKey.c_str()))
             {
@@ -217,7 +217,7 @@ namespace VirtualRobot
         // collect unrecognized arguments
         std::vector<std::string> options = boost::program_options::collect_unrecognized(parsed.options, boost::program_options::include_positional);
 
-        for (const auto & option : options)
+        for (const auto& option : options)
         {
             unrecognizedOptions.push_back(option);
         }
@@ -295,7 +295,7 @@ namespace VirtualRobot
         cout << " *********** Simox RuntimeEnvironment ************* " << endl;
         cout << "Data paths:"  << endl;
 
-        for (const auto & dataPath : dataPaths)
+        for (const auto& dataPath : dataPaths)
         {
             cout << " * " << dataPath << endl;
         }
@@ -304,7 +304,7 @@ namespace VirtualRobot
         {
             cout << "Known keys:" << endl;
 
-            for (const auto & processKey : processKeys)
+            for (const auto& processKey : processKeys)
             {
                 cout << " * " << processKey << endl;
             }
@@ -326,7 +326,7 @@ namespace VirtualRobot
         {
             cout << "Unrecognized options:" << endl;
 
-            for (const auto & unrecognizedOption : unrecognizedOptions)
+            for (const auto& unrecognizedOption : unrecognizedOptions)
             {
                 cout << " * <" << unrecognizedOption << ">" << endl;
             }

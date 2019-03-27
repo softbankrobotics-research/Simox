@@ -52,7 +52,7 @@ namespace VirtualRobot
             CollisionData   //!< a visualization of the collision model data that is internally used (this mode is only for debug purposes, the model is static, i.e. updates/movements/rotations are not visualized!)
         };
 
-		struct VIRTUAL_ROBOT_IMPORT_EXPORT Physics
+        struct VIRTUAL_ROBOT_IMPORT_EXPORT Physics
         {
             enum CoMLocation
             {
