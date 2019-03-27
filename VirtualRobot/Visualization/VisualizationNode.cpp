@@ -17,7 +17,8 @@
 namespace VirtualRobot
 {
 
-    VisualizationNode::VisualizationNode()
+    VisualizationNode::VisualizationNode(const TriMeshModelPtr& triMeshModel) :
+        triMeshModel{triMeshModel}
     {
         updateVisualization = true;
         showVisualization = true;
@@ -43,7 +44,7 @@ namespace VirtualRobot
 
     VirtualRobot::TriMeshModelPtr VisualizationNode::getTriMeshModel()
     {
-        return TriMeshModelPtr();
+        return triMeshModel;
     }
 
     void VisualizationNode::attachVisualization(const std::string& name, VisualizationNodePtr v)

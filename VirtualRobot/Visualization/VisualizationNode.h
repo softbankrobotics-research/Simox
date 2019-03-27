@@ -43,7 +43,7 @@ namespace VirtualRobot
         /*!
         Constructor
         */
-        VisualizationNode();
+        VisualizationNode(const TriMeshModelPtr& triMeshModel = nullptr);
 
         /*!
         */
@@ -167,6 +167,8 @@ namespace VirtualRobot
 
         bool showVisualization;
         bool showAttachedVisualizations;
+
+        TriMeshModelPtr triMeshModel;
 
         std::map< std::string, VisualizationNodePtr > attachedVisualizations;   //< These optional visualizations will not show up in the TriMeshModel
     };

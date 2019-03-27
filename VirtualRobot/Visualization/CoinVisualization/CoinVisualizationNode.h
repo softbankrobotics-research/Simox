@@ -112,7 +112,6 @@ namespace VirtualRobot
         std::map< std::string, SoNode* > attachedCoinVisualizations;    //< These optional visualizations will not show up in the TriMeshModel
 
         SoMatrixTransform* globalPoseTransform;
-        TriMeshModelPtr triMeshModel;
         SoScale* scaling;
         float margin = 0.0f;
         static void InventorTriangleCB(void* data, SoCallbackAction* action,
