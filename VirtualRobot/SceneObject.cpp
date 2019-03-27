@@ -942,6 +942,10 @@ namespace VirtualRobot
     {
         return SceneObjectPtr(_clone(name, colChecker, scaling));
     }
+    SceneObjectPtr SceneObject::clone(CollisionCheckerPtr colChecker, float scaling) const
+    {
+        return clone(getName(), colChecker, scaling);
+    }
 
     void SceneObject::setName(const std::string& name)
     {

@@ -337,6 +337,7 @@ namespace VirtualRobot
             Clones this object. If no col checker is given, the one of the original object is used.
         */
         SceneObjectPtr clone(const std::string& name, CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const;
+        SceneObjectPtr clone(CollisionCheckerPtr colChecker = CollisionCheckerPtr(), float scaling = 1.0f) const;
 
         /*!
             Attach a connected object. The connected object is linked to this SceneObject and moves accordingly.
