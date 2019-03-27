@@ -7,7 +7,7 @@ macro(BulletCheckPrecision)
         CMAKE_FLAGS
             "-DINCLUDE_DIRECTORIES:string=${BULLET_INCLUDE_DIRS}"
             "-DLINK_LIBRARIES:string=${BULLET_LIBRARIES}"
-            "-DCMAKE_CXX_FLAGS:string=-std=c++11"
+            "-DCMAKE_CXX_FLAGS:string=-std=c++17"
         COMPILE_DEFINITIONS
             "-DBT_USE_DOUBLE_PRECISION"
         OUTPUT_VARIABLE _buildOutDouble
@@ -37,7 +37,7 @@ macro(BulletCheckPrecision)
             message(STATUS "    CMAKE_FLAGS")
             message(STATUS "        -DINCLUDE_DIRECTORIES:string=${BULLET_INCLUDE_DIRS}")
             message(STATUS "        -DLINK_LIBRARIES:string=${BULLET_LIBRARIES}")
-            message(STATUS "        -DCMAKE_CXX_FLAGS:string=-std=c++11")
+            message(STATUS "        -DCMAKE_CXX_FLAGS:string=-std=c++17")
             message(STATUS "    COMPILE_DEFINITIONS")
             message(STATUS "        -DBT_USE_DOUBLE_PRECISION")
             message(STATUS "Build output for double precision:")
