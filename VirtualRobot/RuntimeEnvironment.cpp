@@ -230,14 +230,14 @@ namespace VirtualRobot
         keyValues[key] = value;
     }
 
-    std::string RuntimeEnvironment::getValue(const std::string& key)
+    std::string RuntimeEnvironment::getValue(const std::string& key, const std::string& defaultValue)
     {
         if (keyValues.find(key) != keyValues.end())
         {
             return keyValues[key];
         }
 
-        return std::string("");
+        return defaultValue;
     }
 
     std::map< std::string, std::string > RuntimeEnvironment::getKeyValuePairs()

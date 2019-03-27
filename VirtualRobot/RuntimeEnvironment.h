@@ -82,9 +82,9 @@ namespace VirtualRobot
         static void addKeyValuePair(const std::string& key, const std::string& value);
 
         /*!
-            Return the corresponding vale to key. If key cannot be found, an empty string is returned.
+            Return the corresponding vale to key. If key cannot be found, defaultValue is returned.
         */
-        static std::string getValue(const std::string& key);
+        static std::string getValue(const std::string& key, const std::string& defaultValue = "");
         static bool hasValue(const std::string& key);
 
         //! return all key value pairs
