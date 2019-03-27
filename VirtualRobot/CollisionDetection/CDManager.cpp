@@ -62,6 +62,21 @@ namespace VirtualRobot
         }
     }
 
+    void CDManager::addCollisionModel(const std::vector<RobotNodePtr>& nodes, const std::string& setName)
+    {
+        VirtualRobot::SceneObjectSetPtr cms(
+            new VirtualRobot::SceneObjectSet(
+                setName.empty() ? "set_" + std::to_string(colModels.size()) : setName,
+                getCollisionChecker()
+            )
+        );
+        for (const auto& robotNode : nodes)
+        {
+            cms->addSceneObject(robotNode);
+        }
+        addCollisionModel(cms);
+    }
+
     bool CDManager::isInCollision(SceneObjectSetPtr m)
     {
         if (!m || !colChecker)
