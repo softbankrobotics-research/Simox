@@ -598,6 +598,60 @@ namespace VirtualRobot
         return ss.str();
     }
 
+    bool EndEffectorActor::isAtHiLimit() const
+    {
+        for (const auto& actor : actors)
+        {
+            const float v = actor.robotNode->getJointValue();
+            const auto [min, max] =
+                std::minmax(
+                    actor.robotNode->getJointLimitHi(),
+                    actor.robotNode->getJointLimitLo()
+                );
+            if (actor.directionAndSpeed > 0)
+            {
+                if (v < max)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (v > min)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
+    bool EndEffectorActor::isAtLoLimit() const
+    {
+        for (const auto& actor : actors)
+        {
+            const float v = actor.robotNode->getJointValue();
+            const auto [min, max] =
+                std::minmax(
+                    actor.robotNode->getJointLimitHi(),
+                    actor.robotNode->getJointLimitLo()
+                );
+            if (actor.directionAndSpeed > 0)
+            {
+                if (v > min)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (v < max)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
 } // namespace VirtualRobot

@@ -109,6 +109,9 @@ namespace VirtualRobot
         ContactInfoVector closeActors(SceneObjectSetPtr obstacles = SceneObjectSetPtr(), float stepSize = 0.02);
         ContactInfoVector closeActors(SceneObjectPtr obstacle, float stepSize = 0.02);
 
+        bool allActorsClosed() const;
+        bool allActorsOpen() const;
+
         /*!
             Opens each actor until a joint limit is hit or a collision occurred.
             This method is intended for hand-like end-effectors.

@@ -164,8 +164,30 @@ namespace VirtualRobot
         SceneObjectSetPtr colModels(new SceneObjectSet("", obstacle->getCollisionChecker()));
         colModels->addSceneObject(obstacle);
         return closeActors(colModels, stepSize);
+
+    bool EndEffector::allActorsClosed() const
+    {
+        for (const auto& actor : actors)
+        {
+            if (!actor->isAtHiLimit())
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
+    bool EndEffector::allActorsOpen() const
+    {
+        for (const auto& actor : actors)
+        {
+            if (!actor->isAtLoLimit())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
     void EndEffector::openActors(SceneObjectSetPtr obstacles, float stepSize)
     {

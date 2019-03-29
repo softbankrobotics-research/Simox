@@ -122,6 +122,8 @@ namespace VirtualRobot
 
         virtual std::string toXML(int ident = 1);
 
+        bool isAtHiLimit() const;
+        bool isAtLoLimit() const;
     private:
 
         std::string name;
