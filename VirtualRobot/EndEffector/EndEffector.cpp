@@ -110,19 +110,23 @@ namespace VirtualRobot
         statics = this->statics;
     }
 
-    EndEffector::ContactInfoVector EndEffector::closeActors(SceneObjectSetPtr obstacles, float stepSize)
+    EndEffector::ContactInfoVector EndEffector::closeActors(SceneObjectSetPtr obstacles, float stepSize, float stepSizeSpeedFactor, std::uint64_t steps)
     {
+        const bool hasStepLimit = steps;
+        std::vector<char> actorFastMode(actors.size(), stepSizeSpeedFactor > 1);
+        EndEffector::ContactInfoVector fastModeContacts;
         std::vector<char> actorCollisionStatus(actors.size(), false);
         EndEffector::ContactInfoVector result;
 
         bool finished = false;
-        int loop = 0;
+        std::uint64_t loop = 0;
 
         const auto shared_this = shared_from_this();
 
         while (!finished)
         {
             loop++;
+            --steps;
             finished = true;
 
             for (unsigned int i = 0; i < actors.size(); i++)
@@ -132,7 +136,22 @@ namespace VirtualRobot
                 {
                     finished = false;
 
-                    actorCollisionStatus[i] = actors[i]->moveActorCheckCollision(shared_this, result, obstacles, stepSize);
+                    auto& fastMode = actorFastMode.at(i);
+                    if (fastMode)
+                    {
+                        const auto fastStepSize = stepSize * stepSizeSpeedFactor;
+                        fastMode = !actors[i]->moveActorCheckCollision(shared_this, fastModeContacts, obstacles, fastStepSize);
+                        if (!fastMode)
+                        {
+                            //now in collision if fast mode is used
+                            actors[i]->moveActor(-fastStepSize);
+                            actorCollisionStatus[i] = actors[i]->moveActorCheckCollision(shared_this, result, obstacles, stepSize);
+                        }
+                    }
+                    else
+                    {
+                        actorCollisionStatus[i] = actors[i]->moveActorCheckCollision(shared_this, result, obstacles, stepSize);
+                    }
                 }
             }
 
@@ -148,22 +167,40 @@ namespace VirtualRobot
                     actorCollisionStatus[i] = false;
                 }
             }
+            if ((hasStepLimit && 0 == steps) || finished)
+            {
+                if (finished)
+                {
+                    return result;
+                }
+                return {};
+            }
         }
 
         return result;
     }
 
-
-    EndEffector::ContactInfoVector EndEffector::closeActors(SceneObjectPtr obstacle, float stepSize /*= 0.02*/)
+    EndEffector::ContactInfoVector EndEffector::closeActors(SceneObjectPtr obstacle, float stepSize /*= 0.02*/, float stepSizeSpeedFactor, uint64_t steps)
     {
         if (!obstacle)
         {
-            return closeActors(SceneObjectSetPtr(), stepSize);
+            return closeActors(SceneObjectSetPtr(), stepSize, stepSizeSpeedFactor, steps);
         }
 
         SceneObjectSetPtr colModels(new SceneObjectSet("", obstacle->getCollisionChecker()));
         colModels->addSceneObject(obstacle);
-        return closeActors(colModels, stepSize);
+        return closeActors(colModels, stepSize, stepSizeSpeedFactor, steps);
+    }
+
+    EndEffector::ContactInfoVector EndEffector::closeActors(std::nullptr_t, float stepSize, float stepSizeSpeedFactor, std::uint64_t steps)
+    {
+        return closeActors(SceneObjectSetPtr(), stepSize, stepSizeSpeedFactor, steps);
+    }
+
+    EndEffector::ContactInfoVector EndEffector::closeActors(float stepSize, float stepSizeSpeedFactor, std::uint64_t steps)
+    {
+        return closeActors(SceneObjectSetPtr(), stepSize, stepSizeSpeedFactor, steps);
+    }
 
     bool EndEffector::allActorsClosed() const
     {
@@ -189,9 +226,9 @@ namespace VirtualRobot
         return true;
     }
 
-    void EndEffector::openActors(SceneObjectSetPtr obstacles, float stepSize)
+    void EndEffector::openActors(SceneObjectSetPtr obstacles, float stepSize, float stepSizeSpeedFactor)
     {
-        closeActors(obstacles, -stepSize);
+        closeActors(obstacles, -stepSize, stepSizeSpeedFactor);
     }
 
     VirtualRobot::SceneObjectSetPtr EndEffector::createSceneObjectSet(CollisionCheckerPtr colChecker)

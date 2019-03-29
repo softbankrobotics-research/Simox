@@ -106,8 +106,10 @@ namespace VirtualRobot
             Closes each actor until a joint limit is hit or a collision occurred.
             This method is intended for gripper or hand-like end-effectors.
         */
-        ContactInfoVector closeActors(SceneObjectSetPtr obstacles = SceneObjectSetPtr(), float stepSize = 0.02);
-        ContactInfoVector closeActors(SceneObjectPtr obstacle, float stepSize = 0.02);
+        ContactInfoVector closeActors(SceneObjectSetPtr obstacles = SceneObjectSetPtr(), float stepSize = 0.02, float stepSizeSpeedFactor = 1, std::uint64_t steps = 0);
+        ContactInfoVector closeActors(SceneObjectPtr obstacle, float stepSize = 0.02, float stepSizeSpeedFactor = 1, std::uint64_t steps = 0);
+        ContactInfoVector closeActors(std::nullptr_t, float stepSize = 0.02, float stepSizeSpeedFactor = 1, std::uint64_t steps = 0);
+        ContactInfoVector closeActors(float stepSize, float stepSizeSpeedFactor = 1, std::uint64_t steps = 0);
 
         bool allActorsClosed() const;
         bool allActorsOpen() const;
@@ -117,7 +119,11 @@ namespace VirtualRobot
             This method is intended for hand-like end-effectors.
             Note that the same effect can be realized by calling closeActors with a negative step size
         */
-        void openActors(SceneObjectSetPtr obstacles = SceneObjectSetPtr(), float stepSize = 0.02);
+        void openActors(SceneObjectSetPtr obstacles = SceneObjectSetPtr(), float stepSize = 0.02, float stepSizeSpeedFactor = 1);
+        void openActors(float stepSize, float stepSizeSpeedFactor)
+        {
+            openActors(nullptr, stepSize, stepSizeSpeedFactor);
+        }
 
         /*!
             Build a SceneObjectSet that covers all RobotNodes of this EndEffector.
