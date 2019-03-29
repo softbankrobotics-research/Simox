@@ -148,12 +148,12 @@ BOOST_FIXTURE_TEST_SUITE(MathHelpers, BlockFixture)
 using namespace math;
 
 
-BOOST_AUTO_TEST_CASE(test_posBlock_const)
+BOOST_AUTO_TEST_CASE(test_Position_const)
 {
     BOOST_CHECK_EQUAL(Helpers::Position(const_cast<const Matrix4f&>(pose)), pos);
 }
 
-BOOST_AUTO_TEST_CASE(test_posBlock_nonconst)
+BOOST_AUTO_TEST_CASE(test_Position_nonconst)
 {
     BOOST_CHECK_EQUAL(Helpers::Position(pose), pos);
     
@@ -162,12 +162,12 @@ BOOST_AUTO_TEST_CASE(test_posBlock_nonconst)
 }
 
 
-BOOST_AUTO_TEST_CASE(test_oriBlock_const)
+BOOST_AUTO_TEST_CASE(test_Orientation_const)
 {
     BOOST_CHECK_EQUAL(Helpers::Orientation(const_cast<const Eigen::Matrix4f&>(pose)), ori);
 }
 
-BOOST_AUTO_TEST_CASE(test_oriBlock_nonconst)
+BOOST_AUTO_TEST_CASE(test_Orientation_nonconst)
 {
     BOOST_CHECK_EQUAL(Helpers::Orientation(pose), ori);
     
@@ -176,14 +176,35 @@ BOOST_AUTO_TEST_CASE(test_oriBlock_nonconst)
 }
 
 
-BOOST_AUTO_TEST_CASE(test_toPose_matrix_and_quaternion)
+BOOST_AUTO_TEST_CASE(test_Pose_matrix_and_quaternion)
 {
     BOOST_CHECK_EQUAL(Helpers::Pose(pos, quat), pose);
 }
 
-BOOST_AUTO_TEST_CASE(test_toPose_matrix_and_rotation_matrix)
+BOOST_AUTO_TEST_CASE(test_Pose_matrix_and_rotation_matrix)
 {
     BOOST_CHECK_EQUAL(Helpers::Pose(pos, ori), pose);
+}
+
+BOOST_AUTO_TEST_CASE(test_Pose_position)
+{
+    Matrix4f posePos = posePos.Identity();
+    posePos.block<3, 1>(0, 3) = pos;
+    BOOST_CHECK_EQUAL(Helpers::Pose(pos), posePos);
+}
+
+BOOST_AUTO_TEST_CASE(test_Pose_orientation_matrix)
+{
+    Matrix4f poseOri = poseOri.Identity();
+    poseOri.block<3, 3>(0, 0) = ori;
+    BOOST_CHECK_EQUAL(Helpers::Pose(ori), poseOri);
+}
+
+BOOST_AUTO_TEST_CASE(test_Pose_quaternion)
+{
+    Matrix4f poseOri = poseOri.Identity();
+    poseOri.block<3, 3>(0, 0) = ori;
+    BOOST_CHECK_EQUAL(Helpers::Pose(quat), poseOri);
 }
 
 
@@ -192,8 +213,8 @@ BOOST_AUTO_TEST_SUITE_END()
 
 struct OrthogonolizeFixture
 {
-    void test(double angle, const Vector3d& axis, float noiseAmpl, float precAngularDist);
-    Eigen::Matrix3f test(Matrix3f matrix, float noiseAmpl);
+    void test(double angle, const Vector3d& axis, float noiseAmpl, float precAngularDist, float precOrth = -1);
+    Eigen::Matrix3f test(Matrix3f matrix, float noiseAmpl, float precOrth = -1);
     
     template <typename Distribution>
     static Eigen::Matrix3f Random(Distribution& distrib)
@@ -205,7 +226,7 @@ struct OrthogonolizeFixture
 
 
 void OrthogonolizeFixture::test(
-        double angle, const Vector3d& axis, float noiseAmpl, float precAngularDist)
+        double angle, const Vector3d& axis, float noiseAmpl, float precAngularDist, float precOrth)
 {
     // construct matrix with double to avoid rounding errors
     Eigen::AngleAxisd rot(angle, axis);
@@ -213,23 +234,23 @@ void OrthogonolizeFixture::test(
     
     Eigen::Matrix3f matrix = quat.toRotationMatrix().cast<float>();
     
-    Eigen::Matrix3f orth = test(matrix, noiseAmpl);
+    Eigen::Matrix3f orth = test(matrix, noiseAmpl, precOrth);
     
     Quaternionf quatOrth(orth);
     BOOST_TEST_MESSAGE("Angular distance: " << quatOrth.angularDistance(quat.cast<float>()));
     BOOST_CHECK_LE(quatOrth.angularDistance(quat.cast<float>()), precAngularDist);
 }
 
-Matrix3f OrthogonolizeFixture::test(Matrix3f matrix, float noiseAmpl)
+Matrix3f OrthogonolizeFixture::test(Matrix3f matrix, float noiseAmpl, float _precOrth)
 {
-    const float PREC_ORTHOGONAL = 1e-6f;
+    const float precOrth = _precOrth > 0 ? _precOrth : 1e-6f;
     
     const Eigen::Vector3f pos(3, -1, 2);
     Eigen::Matrix4f pose = Helpers::Pose(pos, matrix);
     pose.row(3) << 1, 2, 3, 4;  // destroy last row
     
     BOOST_TEST_MESSAGE("Rotation matrix: \n" << matrix);
-    BOOST_CHECK(math::Helpers::IsMatrixOrthogonal(matrix, PREC_ORTHOGONAL));
+    BOOST_CHECK(math::Helpers::IsMatrixOrthogonal(matrix, precOrth));
     
     BOOST_TEST_MESSAGE("Pose matrix: \n" << pose);
     
@@ -244,19 +265,21 @@ Matrix3f OrthogonolizeFixture::test(Matrix3f matrix, float noiseAmpl)
     BOOST_TEST_MESSAGE("Rotation matrix with noise: \n" << matrix);
     if (noiseAmpl > 0)
     {
-        BOOST_CHECK(!math::Helpers::IsMatrixOrthogonal(matrix, PREC_ORTHOGONAL));
-        BOOST_CHECK(!math::Helpers::IsMatrixOrthogonal(Helpers::Orientation(pose), PREC_ORTHOGONAL));
+        BOOST_CHECK(!math::Helpers::IsMatrixOrthogonal(matrix, precOrth));
+        BOOST_CHECK(!math::Helpers::IsMatrixOrthogonal(Helpers::Orientation(pose), precOrth));
     }
     
     Eigen::Matrix3f orth = math::Helpers::Orthogonalize(matrix);
     Eigen::Matrix4f poseOrth = math::Helpers::Orthogonalize(pose);
     
     BOOST_TEST_MESSAGE("Orthogonalized: \n" << orth);
-    BOOST_CHECK(math::Helpers::IsMatrixOrthogonal(orth, PREC_ORTHOGONAL));
-    BOOST_TEST_MESSAGE("Q * Q.T: (should be Identitiy) \n" << (orth * orth.transpose()));
+    BOOST_TEST_MESSAGE("R * R.T: (should be Identitiy) \n" << (orth * orth.transpose()));
+    BOOST_CHECK(math::Helpers::IsMatrixOrthogonal(orth, precOrth));
 
     BOOST_TEST_MESSAGE("Orthogonalized pose: \n" << poseOrth);
-    BOOST_CHECK(math::Helpers::IsMatrixOrthogonal(Helpers::Orientation(poseOrth), PREC_ORTHOGONAL));
+    const auto poseOrthOri = Helpers::Orientation(poseOrth);
+    BOOST_TEST_MESSAGE("R * R.T: (should be Identitiy) \n" << (poseOrthOri * poseOrthOri.transpose()));
+    BOOST_CHECK(math::Helpers::IsMatrixOrthogonal(poseOrthOri, precOrth));
     BOOST_CHECK_EQUAL(math::Helpers::Position(poseOrth), pos);
     BOOST_CHECK_EQUAL(poseOrth.row(3).head<3>(), Eigen::Vector3f::Zero().transpose());
     BOOST_CHECK_EQUAL(poseOrth(3, 3), 1);
@@ -294,7 +317,7 @@ BOOST_AUTO_TEST_CASE(test_orthogonalize_arbitrary_rotation)
     test(2.3, Eigen::Vector3d( 0.3, 1., -.5).normalized(), 0.1f, 0.2f);
     
     test(1.02, Eigen::Vector3d( -2, .3, -.25).normalized(), 1e-3f, 1e-3f);
-    test(1.02, Eigen::Vector3d( -3,  2, -10).normalized(), 0.1f, 0.2f);
+    test(1.02, Eigen::Vector3d( -3,  2, -10).normalized(), 0.1f, 0.2f, 1e-5f);
 }
 
 
