@@ -602,6 +602,7 @@ namespace VirtualRobot
         for (size_t i = 0; i < vertices.size(); i++)
         {
             colors.push_back(color);
+        }
     }
 
 
