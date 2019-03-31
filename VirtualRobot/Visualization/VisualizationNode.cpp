@@ -32,11 +32,33 @@ namespace VirtualRobot
         attachedVisualizations.clear();
     }
 
-    VirtualRobot::VisualizationNodePtr VisualizationNode::clone(bool /*deepCopy*/, float /*scaling*/)
+    VirtualRobot::VisualizationNodePtr VisualizationNode::clone(bool deepCopy, float scaling)
     {
+        THROW_VR_EXCEPTION_IF(scaling <= 0, "Scaling must be >0");
+
         VisualizationNodePtr p(new VisualizationNode());
+
+        if (deepCopy && triMeshModel)
+        {
+            p->triMeshModel = triMeshModel->clone();
+            p->triMeshModel->scale(scaling);
+        }
+        else
+        {
+            p->triMeshModel = triMeshModel;
+        }
+
+
         p->setUpdateVisualization(updateVisualization);
+        p->setGlobalPose(getGlobalPose());
         p->setFilename(filename, boundingBox);
+
+        for (const auto& [key, value] : attachedVisualizations)
+        {
+            VisualizationNodePtr attachedClone = value->clone(deepCopy, scaling);
+            p->attachVisualization(key, attachedClone);
+        }
+
         p->primitives = primitives;
 
         return p;
@@ -256,9 +278,12 @@ namespace VirtualRobot
         }
     }
 
-    void VisualizationNode::shrinkFatten(float /*offset*/)
+    void VisualizationNode::shrinkFatten(float offset)
     {
-        VR_WARNING << "not implemented..." << endl;
+        if (offset != 0.0f && triMeshModel)
+        {
+            triMeshModel->fattenShrink(offset, true);
+        }
     }
 
     void VisualizationNode::createTriMeshModel()
