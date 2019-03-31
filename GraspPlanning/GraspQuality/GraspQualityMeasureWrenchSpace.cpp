@@ -330,12 +330,10 @@ namespace GraspStudio
             return false;
         }
 
-        std::vector<MathTools::TriangleFace6D>::iterator faceIter;
-
-        for (faceIter = convexHullGWS->faces.begin(); faceIter != convexHullGWS->faces.end(); faceIter++)
+        for (const auto& face : convexHullGWS->faces)
         {
             // ignore rounding errors
-            if (faceIter->distPlaneZero > 1e-4)
+            if (face.distPlaneZero > 1e-4)
             {
                 return false;
             }
@@ -358,14 +356,14 @@ namespace GraspStudio
 
         for (auto& face : ch->faces)
         {
-            if (face.distNormCenter > 0)
+            const auto dist = face.distNormCenter;
+            if (dist > 0)
             {
+                //outside
                 nWrongFacets++;
+                continue;
             }
-            else if (-(face.distNormCenter) < fRes)
-            {
-                fRes = -(face.distNormCenter);
-            }
+            fRes = std::min(fRes, -dist);
         }
 
         if (nWrongFacets > 0)
@@ -470,8 +468,7 @@ namespace GraspStudio
 
     std::string GraspQualityMeasureWrenchSpace::getName()
     {
-        std::string sName("GraspWrenchSpace");
-        return sName;
+        return "GraspWrenchSpace";
     }
 
 
