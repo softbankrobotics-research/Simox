@@ -136,6 +136,7 @@ namespace VirtualRobot
         unsigned int checkAndCorrectNormals(bool inverted);
 
         virtual void scale(const Eigen::Vector3f& scaleFactor);
+        virtual void scale(float scaleFactor);
         TriMeshModelPtr clone() const;
         TriMeshModelPtr clone(const Eigen::Vector3f& scaleFactor) const;
 

@@ -855,6 +855,11 @@ namespace VirtualRobot
         boundingBox.scale(scaleFactor);
     }
 
+    void TriMeshModel::scale(float scaleFactor)
+    {
+        scale(Eigen::Vector3f{scaleFactor, scaleFactor, scaleFactor});
+    }
+
     VirtualRobot::TriMeshModelPtr TriMeshModel::clone() const
     {
         Eigen::Vector3f scaleFactor;

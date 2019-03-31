@@ -517,7 +517,7 @@ namespace VirtualRobot
         }
     }
 
-    void CoinVisualizationNode::scale(Eigen::Vector3f& scaleFactor)
+    void CoinVisualizationNode::scale(const Eigen::Vector3f& scaleFactor)
     {
         scaling->scaleFactor.setValue(scaleFactor(0), scaleFactor(1), scaleFactor(2));
         triMeshModel.reset();

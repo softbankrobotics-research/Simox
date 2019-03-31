@@ -53,7 +53,7 @@ namespace VirtualRobot
 
         void print() override;
 
-        void scale(Eigen::Vector3f& scaleFactor) override;
+        void scale(const Eigen::Vector3f& scaleFactor) override;
 
         /*!
             Attach an optional visualization to this VisualizationNode. The attached visualizations will not show up in the TriMeshModel.

@@ -241,9 +241,19 @@ namespace VirtualRobot
         return false;
     }
 
-    void VisualizationNode::scale(Eigen::Vector3f& /*scaleFactor*/)
+    void VisualizationNode::scale(const Eigen::Vector3f& scaleFactor)
     {
-        VR_WARNING << "not implemented..." << endl;
+        if (triMeshModel)
+        {
+            triMeshModel->scale(scaleFactor);
+        }
+    }
+    void VisualizationNode::scale(float scaleFactor)
+    {
+        if (triMeshModel)
+        {
+            triMeshModel->scale(Eigen::Vector3f{scaleFactor, scaleFactor, scaleFactor});
+        }
     }
 
     void VisualizationNode::shrinkFatten(float /*offset*/)
