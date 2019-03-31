@@ -63,7 +63,9 @@ namespace GraspStudio
         if (contactPointsM.empty())
         {
             if (verbose && printAll)
+            {
                 printf("Contact points not set.\n");
+            }
             return;
         }
 
@@ -294,7 +296,7 @@ namespace GraspStudio
                 nWrongFacets++;
                 continue;
             }
-            fRes = std::max(fRes, -dist);
+            fRes = std::min(fRes, -dist);
         }
 
         if (nWrongFacets > 0)
