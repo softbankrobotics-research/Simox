@@ -152,8 +152,8 @@ namespace GraspStudio
         {
 #ifdef INVERT_NORMALS
             /*p.p(0) = -(*iter).n(0);
-            p.p(1) = -(*iter).n(1);
-            p.p(2) = -(*iter).n(2);*/
+                p.p(1) = -(*iter).n(1);
+                p.p(2) = -(*iter).n(2);*/
             p.p = -1.0f * (iter->n);
 #else
             p.p = iter->n;
@@ -285,7 +285,7 @@ namespace GraspStudio
         float fRes = FLT_MAX;
         int nWrongFacets = 0;
 
-        for (auto & face : ch->faces)
+        for (auto& face : ch->faces)
         {
             const auto dist = face.distNormCenter;
             if (dist > 0)

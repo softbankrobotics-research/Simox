@@ -142,7 +142,7 @@ namespace VirtualRobot
         return triMeshModel;
     }
 
-    typedef std::map<const SoPrimitiveVertex*,int> CoinVertexIndexMap;
+    typedef std::map<const SoPrimitiveVertex*, int> CoinVertexIndexMap;
     /**
      * This method constructs an instance of TriMeshModel and stores it in
      * CoinVisualizationNode::triMeshModel.
@@ -213,7 +213,7 @@ namespace VirtualRobot
         c << triangle[2][0], triangle[2][1], triangle[2][2];
         n << normal[0][0], normal[0][1], normal[0][2];
 
-        // add new triangle to the model        
+        // add new triangle to the model
         triangleMeshModel->addTriangleWithFace(a, b, c, n);
 
     }
@@ -332,7 +332,7 @@ namespace VirtualRobot
             }
             else
             {
-                newModel->addChild(visualization);                
+                newModel->addChild(visualization);
             }
         }
 
@@ -342,8 +342,10 @@ namespace VirtualRobot
         {
             newModel->unrefNoDelete();
         }
-        if(!deepCopy)
+        if (!deepCopy)
+        {
             p->triMeshModel = this->triMeshModel;
+        }
         //else -> lazy generation
 
         p->setUpdateVisualization(updateVisualization);
@@ -501,7 +503,7 @@ namespace VirtualRobot
 
     void CoinVisualizationNode::shrinkFatten(float offset)
     {
-        if(offset != 0.0f)
+        if (offset != 0.0f)
         {
             triMeshModel.reset();
             getTriMeshModel()->mergeVertices();
@@ -513,7 +515,6 @@ namespace VirtualRobot
             visualization->ref();
             scaledVisualization->addChild(visualization);
         }
-
     }
 
     void CoinVisualizationNode::scale(Eigen::Vector3f& scaleFactor)

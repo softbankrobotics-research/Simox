@@ -40,7 +40,7 @@ namespace VirtualRobot
 
         /// Constructor.
         TriMeshModel();
-        
+
         struct triangle
         {
             triangle() = default;
@@ -55,16 +55,16 @@ namespace VirtualRobot
 
         /// Virtual destructor.
         virtual ~TriMeshModel() = default;
-        
+
 
         void addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3);
         void addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3, Eigen::Vector3f normal,
-                                 const VisualizationFactory::Color &color1 = VisualizationFactory::Color::Gray(),
-                                 const VisualizationFactory::Color &color2 = VisualizationFactory::Color::Gray(),
-                                 const VisualizationFactory::Color &color3 = VisualizationFactory::Color::Gray());
+                                 const VisualizationFactory::Color& color1 = VisualizationFactory::Color::Gray(),
+                                 const VisualizationFactory::Color& color2 = VisualizationFactory::Color::Gray(),
+                                 const VisualizationFactory::Color& color3 = VisualizationFactory::Color::Gray());
         void addTriangleWithFace(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3, const Eigen::Vector4f& vertexColor1, const Eigen::Vector4f& vertexColor2, const Eigen::Vector4f& vertexColor3);
         void addMesh(const TriMeshModel& mesh);
-        static Eigen::Vector3f CreateNormal(const Eigen::Vector3f &vertex1, const Eigen::Vector3f &vertex2, const Eigen::Vector3f &vertex3);
+        static Eigen::Vector3f CreateNormal(const Eigen::Vector3f& vertex1, const Eigen::Vector3f& vertex2, const Eigen::Vector3f& vertex3);
         void addFace(const MathTools::TriangleFace& face);
         int addVertex(const Eigen::Vector3f& vertex);
         unsigned int addNormal(const Eigen::Vector3f& normal);
@@ -87,7 +87,7 @@ namespace VirtualRobot
          * @param color Default Color
          * @return Number of created colors entries
          */
-        unsigned int addMissingColors(const VisualizationFactory::Color &color = VisualizationFactory::Color::Gray());
+        unsigned int addMissingColors(const VisualizationFactory::Color& color = VisualizationFactory::Color::Gray());
 
         /**
          * @brief Smoothes the normal surface by calculating the average of all face-normals of one vertex.
@@ -118,10 +118,10 @@ namespace VirtualRobot
          * @return Number of removed vertices
          */
         size_t removeUnusedVertices();
-        
+
         /// Get the areas of all faces.
         std::vector<float> getFaceAreas() const;
-        
+
 
         // Overwrite all colors
         void setColor(VisualizationFactory::Color color);
@@ -144,7 +144,7 @@ namespace VirtualRobot
         std::vector<VisualizationFactory::Color> colors;
         std::vector<MathTools::TriangleFace> faces;
         std::vector<VisualizationFactory::PhongMaterial> materials;
-        BoundingBox boundingBox;        
+        BoundingBox boundingBox;
     };
 } // namespace VirtualRobot
 

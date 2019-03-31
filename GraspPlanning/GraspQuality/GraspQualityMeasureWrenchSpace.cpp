@@ -38,8 +38,7 @@ namespace GraspStudio
         volumeOWS = 0.0f;
     }
 
-    GraspQualityMeasureWrenchSpace::~GraspQualityMeasureWrenchSpace()
-    = default;
+    GraspQualityMeasureWrenchSpace::~GraspQualityMeasureWrenchSpace() = default;
 
 
     void GraspQualityMeasureWrenchSpace::setContactPoints(const std::vector<VirtualRobot::MathTools::ContactPoint>& contactPoints)
@@ -131,7 +130,9 @@ namespace GraspStudio
         if (contactPointsM.empty())
         {
             if (verbose && printAll)
+            {
                 printf("Contact points not set.\n");
+            }
             return;
         }
 
@@ -220,8 +221,8 @@ namespace GraspStudio
         {
 #ifdef INVERT_NORMALS
             /*p.p(0) = -(*iter).n(0);
-            p.p(1) = -(*iter).n(1);
-            p.p(2) = -(*iter).n(2);*/
+                    p.p(1) = -(*iter).n(1);
+                    p.p(2) = -(*iter).n(2);*/
             p.p = -1.0f * (iter->n);
 #else
             p.p = iter->n;
@@ -318,56 +319,6 @@ namespace GraspStudio
             {
                 minDist = currentDist2;
             }
-
-
-            /*
-            faceCenter.p(0) = (((convexHullGWS.Vertices)[(*faceIter).id1]).p(0)+
-                ((convexHullGWS.Vertices)[(*faceIter).id2]).p(0)+
-                ((convexHullGWS.Vertices)[(*faceIter).id3]).p(0)+
-                ((convexHullGWS.Vertices)[(*faceIter).id4]).p(0)+
-                ((convexHullGWS.Vertices)[(*faceIter).id5]).p(0)+
-                ((convexHullGWS.Vertices)[(*faceIter).id6]).p(0))/6.0;
-            faceCenter.p(1) = (((convexHullGWS.Vertices)[(*faceIter).id1]).p(1)+
-                ((convexHullGWS.Vertices)[(*faceIter).id2]).p(1)+
-                ((convexHullGWS.Vertices)[(*faceIter).id3]).p(1)+
-                ((convexHullGWS.Vertices)[(*faceIter).id4]).p(1)+
-                ((convexHullGWS.Vertices)[(*faceIter).id5]).p(1)+
-                ((convexHullGWS.Vertices)[(*faceIter).id6]).p(1))/6.0;
-            faceCenter.p(2) = (((convexHullGWS.Vertices)[(*faceIter).id1]).p(2)+
-                ((convexHullGWS.Vertices)[(*faceIter).id2]).p(2)+
-                ((convexHullGWS.Vertices)[(*faceIter).id3]).p(2)+
-                ((convexHullGWS.Vertices)[(*faceIter).id4]).p(2)+
-                ((convexHullGWS.Vertices)[(*faceIter).id5]).p(2)+
-                ((convexHullGWS.Vertices)[(*faceIter).id6]).p(2))/6.0;
-            faceCenter.n(0) = (((convexHullGWS.Vertices)[(*faceIter).id1]).n(0)+
-                ((convexHullGWS.Vertices)[(*faceIter).id2]).n(0)+
-                ((convexHullGWS.Vertices)[(*faceIter).id3]).n(0)+
-                ((convexHullGWS.Vertices)[(*faceIter).id4]).n(0)+
-                ((convexHullGWS.Vertices)[(*faceIter).id5]).n(0)+
-                ((convexHullGWS.Vertices)[(*faceIter).id6]).n(0))/6.0;
-            faceCenter.n(1) = (((convexHullGWS.Vertices)[(*faceIter).id1]).n(1)+
-                ((convexHullGWS.Vertices)[(*faceIter).id2]).n(1)+
-                ((convexHullGWS.Vertices)[(*faceIter).id3]).n(1)+
-                ((convexHullGWS.Vertices)[(*faceIter).id4]).n(1)+
-                ((convexHullGWS.Vertices)[(*faceIter).id5]).n(1)+
-                ((convexHullGWS.Vertices)[(*faceIter).id6]).n(1))/6.0;
-            faceCenter.n(2) = (((convexHullGWS.Vertices)[(*faceIter).id1]).n(2)+
-                ((convexHullGWS.Vertices)[(*faceIter).id2]).n(2)+
-                ((convexHullGWS.Vertices)[(*faceIter).id3]).n(2)+
-                ((convexHullGWS.Vertices)[(*faceIter).id4]).n(2)+
-                ((convexHullGWS.Vertices)[(*faceIter).id5]).n(2)+
-                ((convexHullGWS.Vertices)[(*faceIter).id6]).n(2))/6.0;
-
-            fDist1 = (faceCenter.p(0)-point.p(0));
-            fDist2 = (faceCenter.p(1)-point.p(1));
-            fDist3 = (faceCenter.p(2)-point.p(2));
-            fDist4 = (faceCenter.n(0)-point.n(0));
-            fDist5 = (faceCenter.n(1)-point.n(1));
-            fDist6 = (faceCenter.n(2)-point.n(2));
-            fDist1 = fDist1*fDist1 + fDist2*fDist2 + fDist3*fDist3 + fDist4*fDist4 + fDist5*fDist5 + fDist6*fDist6;
-
-            if (fDist1<fRes)
-                fRes = fDist1;  */
         }
 
         return sqrtf(minDist);
@@ -405,7 +356,7 @@ namespace GraspStudio
         float fRes = FLT_MAX;
         int nWrongFacets = 0;
 
-        for (auto & face : ch->faces)
+        for (auto& face : ch->faces)
         {
             if (face.distNormCenter > 0)
             {
@@ -516,56 +467,6 @@ namespace GraspStudio
 
         return true;
     }
-    /*
-    SoSeparator* GraspQualityMeasureWrenchSpace::GetVisualizationGWS()
-    {
-        SoSeparator *pSep = new SoSeparator();
-        if (!m_GWSCalculated)
-        {
-            GRASPSTUDIO_INFO << ": Warning no GWS calculate..." << endl;
-            return pSep;
-        }
-        SoSeparator *pSep2 = new SoSeparator();
-        SoTranslation *pTrans = new SoTranslation();
-        pTrans->translation.setValue(m_CoM.p(0),m_CoM.p(1),m_CoM.p(2));
-        SoScale *pSc = new SoScale();
-        pSc->scaleFactor.setValue(100.0f,100.0f,100.0f);
-        SoMaterial *pMat = new SoMaterial();
-        pMat->transparency.setValue(0.5f);
-        pMat->diffuseColor.setValue(1.0f,1.0f,0.1f);
-        pSep->addChild(pMat);
-        pSep->addChild(pTrans);
-        pSep->addChild(pSc);
-        CConvexHullGenerator::CreateIVModel(convexHullGWS,pSep2,true);
-        pSep->addChild(pSep2);
-        return pSep;
-    }
-
-    SoSeparator* GraspQualityMeasureWrenchSpace::GetVisualizationOWS()
-    {
-        SoSeparator *pSep = new SoSeparator();
-        if (!m_OWSCalculated)
-        {
-            GRASPSTUDIO_INFO << ": Warning no OWS calculate..." << endl;
-            return pSep;
-        }
-        //VirtualRobot::MathTools::ConvexHull6d gws = m_pGraspQualityMeasureWrench->getConvexHullOWS();
-        //VirtualRobot::MathTools::ContactPoint pCenter = m_pGraspQualityMeasureWrench->GetSampledObjectPointsCenter();
-        SoTranslation *pTransl = new SoTranslation();
-        pTransl->translation.setValue(m_CoM.p(0),m_CoM.p(1),m_CoM.p(2));
-        SoScale *pSc = new SoScale();
-        pSc->scaleFactor.setValue(100.0f,100.0f,100.0f);
-        SoSeparator *pSep2 = new SoSeparator();
-        SoMaterial *pMat = new SoMaterial();
-        pMat->transparency.setValue(0.5f);
-        pMat->diffuseColor.setValue(1.0f,1.0f,0.1f);
-        pSep->addChild(pMat);
-        pSep->addChild(pTransl);
-        pSep->addChild(pSc);
-        CConvexHullGenerator::CreateIVModel(convexHullOWS,pSep2,true);
-        pSep->addChild(pSep2);
-        return pSep;
-    }*/
 
     std::string GraspQualityMeasureWrenchSpace::getName()
     {
@@ -583,4 +484,4 @@ namespace GraspStudio
         return res;
     }
 
-} // namespace
+}
