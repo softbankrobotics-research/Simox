@@ -256,11 +256,37 @@ namespace VirtualRobot
         return bbox;
     }
 
-    bool VisualizationNode::saveModel(const std::string& /*modelPath*/, const std::string& /*filename*/)
+    bool VisualizationNode::saveModel(const std::string& modelPath, const std::string& filename)
     {
-        // derived classes have to overwrite this method, otherwise a NYI will show up
-        VR_ERROR << "NYI..." << endl;
-        return false;
+        const boost::filesystem::path completePath(modelPath);
+
+        if (!boost::filesystem::is_directory(completePath))
+        {
+            if (!boost::filesystem::create_directories(completePath))
+            {
+                VR_ERROR << "Could not create model dir  " << completePath.string() << endl;
+                return false;
+            }
+        }
+        const auto completeFile = boost::filesystem::absolute(completePath / filename).replace_extension("off");
+
+        const auto& t = *getTriMeshModel();
+        VR_INFO << "writing " << completeFile.string() << std::endl;
+        std::ofstream out{completeFile.string()};
+        out << "OFF\n# num vert / num face / num edge\n"
+            << t.vertices.size() << ' ' << t.faces.size()
+            << " 0\n\n#vert (x y z)\n";
+        for (const auto& v : t.vertices)
+        {
+            out << v.x() <<  ' ' << v.y() <<  ' ' << v.z() <<  '\n';
+        }
+        out << "\n# face (num vert N v0idx v1idx ... vNidx)\n";
+        for (const auto& f : t.faces)
+        {
+            out << "3 " << f.id1 <<  ' ' << f.id2 <<  ' ' << f.id3 <<  '\n';
+        }
+
+        return true;
     }
 
     void VisualizationNode::scale(const Eigen::Vector3f& scaleFactor)
