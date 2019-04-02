@@ -309,8 +309,6 @@ SET(SOURCES
     
     MJCF/Document.cpp
     MJCF/elements.cpp
-    MJCF/elements/Attribute.cpp
-    MJCF/elements/Element.cpp
     MJCF/elements/actuator.cpp
     MJCF/elements/asset.cpp
     MJCF/elements/body.cpp
@@ -318,15 +316,17 @@ SET(SOURCES
     MJCF/elements/custom.cpp
     MJCF/elements/default.cpp
     MJCF/elements/equality.cpp
-    MJCF/elements/exceptions.cpp
     MJCF/elements/keyframe.cpp
-    MJCF/elements/mjcf_utils.cpp
     MJCF/elements/option.cpp
     MJCF/elements/sensor.cpp
     MJCF/elements/size.cpp
     MJCF/elements/statistic.cpp
     MJCF/elements/tendon.cpp
     MJCF/elements/visual.cpp
+    MJCF/elements/core/Attribute.cpp
+    MJCF/elements/core/Element.cpp
+    MJCF/elements/core/exceptions.cpp
+    MJCF/elements/core/mjcf_utils.cpp
     
     Nodes/CameraSensor.cpp
     Nodes/CameraSensorFactory.cpp
@@ -513,8 +513,6 @@ SET(INCLUDES
     
     MJCF/Document.h
     MJCF/elements.h
-    MJCF/elements/Attribute.h
-    MJCF/elements/Element.h
     MJCF/elements/actuator.h
     MJCF/elements/asset.h
     MJCF/elements/body.h
@@ -522,9 +520,7 @@ SET(INCLUDES
     MJCF/elements/custom.h
     MJCF/elements/default.h
     MJCF/elements/equality.h
-    MJCF/elements/exceptions.h
     MJCF/elements/keyframe.h
-    MJCF/elements/mjcf_utils.h
     MJCF/elements/option.h
     MJCF/elements/sensor.h
     MJCF/elements/size.h
@@ -532,6 +528,10 @@ SET(INCLUDES
     MJCF/elements/tendon.h
     MJCF/elements/visual.h
     MJCF/elements/has_member.hpp
+    MJCF/elements/core/Attribute.h
+    MJCF/elements/core/Element.h
+    MJCF/elements/core/exceptions.h
+    MJCF/elements/core/mjcf_utils.h
     
     Nodes/CameraSensor.h
     Nodes/CameraSensorFactory.h

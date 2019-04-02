@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Attribute.h"
-#include "mjcf_utils.h"
+#include "core/Attribute.h"
+#include "core/mjcf_utils.h"
 
 namespace mjcf
 {

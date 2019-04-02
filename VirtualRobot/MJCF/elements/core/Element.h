@@ -13,7 +13,6 @@ namespace mjcf
     // Forward declaration.
     class Document;
     
-    
     template <class _Derived>
     class Element
     {
@@ -147,6 +146,9 @@ namespace mjcf
         
         Document& document() { return *_document; }
         const Document& document() const  { return *_document; }
+        
+        tinyxml2::XMLElement* element() { return elem; }
+        const tinyxml2::XMLElement* element() const { return elem; }
         
         
     private:
@@ -364,7 +366,7 @@ namespace mjcf
     template <class D>
     void Element<D>::assertElemValueEqualsTag()
     {
-        if (elem)
+        if (elem && !Derived::Tag.empty())
         {
             VR_ASSERT_MESSAGE(elem->Value() == Derived::tag, 
                               "Element tag '" + std::string(elem->Value()) + "' must be '" + Derived::tag + "'");
