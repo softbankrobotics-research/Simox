@@ -1,19 +1,19 @@
 #pragma once
 
-#include "actuator.h"
-#include "asset.h"
-#include "body.h"
-#include "compiler.h"
-#include "contact.h"
-#include "default.h"
-#include "equality.h"
-#include "keyframe.h"
-#include "option.h"
-#include "sensor.h"
-#include "size.h"
-#include "statistic.h"
-#include "tendon.h"
-#include "visual.h"
+#include "elements/actuator.h"
+#include "elements/asset.h"
+#include "elements/body.h"
+#include "elements/compiler.h"
+#include "elements/contact.h"
+#include "elements/default.h"
+#include "elements/equality.h"
+#include "elements/keyframe.h"
+#include "elements/option.h"
+#include "elements/sensor.h"
+#include "elements/size.h"
+#include "elements/statistic.h"
+#include "elements/tendon.h"
+#include "elements/visual.h"
 
 
 namespace mjcf

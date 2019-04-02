@@ -308,6 +308,7 @@ SET(SOURCES
     math/statistics/Histogram.cpp
     
     MJCF/Document.cpp
+    MJCF/elements.cpp
     MJCF/elements/Attribute.cpp
     MJCF/elements/Element.cpp
     MJCF/elements/actuator.cpp
@@ -316,7 +317,6 @@ SET(SOURCES
     MJCF/elements/contact.cpp
     MJCF/elements/custom.cpp
     MJCF/elements/default.cpp
-    MJCF/elements/elements.cpp
     MJCF/elements/equality.cpp
     MJCF/elements/exceptions.cpp
     MJCF/elements/keyframe.cpp
@@ -512,6 +512,7 @@ SET(INCLUDES
     math/statistics/Histogram.h
     
     MJCF/Document.h
+    MJCF/elements.h
     MJCF/elements/Attribute.h
     MJCF/elements/Element.h
     MJCF/elements/actuator.h
@@ -520,7 +521,6 @@ SET(INCLUDES
     MJCF/elements/contact.h
     MJCF/elements/custom.h
     MJCF/elements/default.h
-    MJCF/elements/elements.h
     MJCF/elements/equality.h
     MJCF/elements/exceptions.h
     MJCF/elements/keyframe.h

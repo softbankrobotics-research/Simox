@@ -7,7 +7,7 @@
 
 #include <VirtualRobot/Util/xml/tinyxml2.h>
 
-#include "elements/elements.h"
+#include "elements.h"
 
 
 namespace mjcf
