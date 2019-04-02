@@ -131,9 +131,9 @@ namespace VirtualRobot
 
         void VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(const float x[6], Eigen::Matrix4f& m);
         void VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(const Eigen::Vector3f& pos, const Eigen::Vector3f& rpy, Eigen::Matrix4f& m);
-        void VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(float x, float y, float z,float roll, float pitch, float yaw, Eigen::Matrix4f& m);
+        void VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(float x, float y, float z, float roll, float pitch, float yaw, Eigen::Matrix4f& m);
         Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(const Eigen::Vector3f& pos, const Eigen::Vector3f& rpy);
-        Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(float x, float y, float z,float roll, float pitch, float yaw);
+        Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT posrpy2eigen4f(float x, float y, float z, float roll, float pitch, float yaw);
         Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT posquat2eigen4f(float x, float y, float z, float qx, float qy, float qz, float qw);
         Eigen::Matrix3f VIRTUAL_ROBOT_IMPORT_EXPORT quat2eigen3f(float qx, float qy, float qz, float qw);
 
@@ -162,7 +162,7 @@ namespace VirtualRobot
         void VIRTUAL_ROBOT_IMPORT_EXPORT eigen4f2quat(const Eigen::Matrix4f& m, Quaternion& q);
 
         Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT getTranslation(const Eigen::Matrix4f& m);
-        void VIRTUAL_ROBOT_IMPORT_EXPORT getTranslation(const Eigen::Matrix4f& m, Eigen::Vector3f &v);
+        void VIRTUAL_ROBOT_IMPORT_EXPORT getTranslation(const Eigen::Matrix4f& m, Eigen::Vector3f& v);
 
         void VIRTUAL_ROBOT_IMPORT_EXPORT eigen4f2axisangle(const Eigen::Matrix4f& m, Eigen::Vector3f& storeAxis, float& storeAngle);
         Eigen::Matrix4f VIRTUAL_ROBOT_IMPORT_EXPORT axisangle2eigen4f(const Eigen::Vector3f& axis, float angle);
@@ -184,8 +184,8 @@ namespace VirtualRobot
         float VIRTUAL_ROBOT_IMPORT_EXPORT deg2rad(float deg);
 
         // [0,2PI]x[0,2PI]x[0,2PI]
-        Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT quat2hopf(const Quaternion &q);
-        Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT hopf2quat(const Eigen::Vector3f &hopf);
+        Eigen::Vector3f VIRTUAL_ROBOT_IMPORT_EXPORT quat2hopf(const Quaternion& q);
+        Quaternion VIRTUAL_ROBOT_IMPORT_EXPORT hopf2quat(const Eigen::Vector3f& hopf);
 
         /************************************************************************/
         /* GEOMETRY                                                             */
@@ -329,7 +329,7 @@ namespace VirtualRobot
                 result.push_back(Segment(oobbPoint[3], oobbPoint[7]));
 
                 return result;
-            };
+            }
 
             void changeCoordSystem(const Eigen::Matrix4f& newGlobalPose)
             {
@@ -624,10 +624,10 @@ namespace VirtualRobot
          * \param storeRotDiffRad The rotational absolute distance between p1 and p2 is stored here (radian)
          * \return
          */
-        void VIRTUAL_ROBOT_IMPORT_EXPORT getPoseDiff(const Eigen::Matrix4f& p1, const Eigen::Matrix4f& p2, float &storePosDiff, float &storeRotDiffRad);
+        void VIRTUAL_ROBOT_IMPORT_EXPORT getPoseDiff(const Eigen::Matrix4f& p1, const Eigen::Matrix4f& p2, float& storePosDiff, float& storeRotDiffRad);
 
         float VIRTUAL_ROBOT_IMPORT_EXPORT getTriangleArea(const Eigen::Vector3f& a, const Eigen::Vector3f& b, const Eigen::Vector3f& c);
-        
+
         /************************************************************************/
         /* CONVEX HULLS                                                         */
         /* More convex hull methods can be found in the GarspStudio lib         */
