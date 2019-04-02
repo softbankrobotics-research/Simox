@@ -38,7 +38,7 @@ class GraspPlannerWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    GraspPlannerWindow(std::string& robotFile, std::string& eefName, std::string& preshape, std::string& objectFile);
+    GraspPlannerWindow(std::string& robotFile, std::string& eefName, std::string& preshape, std::string& objFile);
     ~GraspPlannerWindow() override;
 
     /*!< Executes the SoQt mainLoop. You need to call this in order to execute the application. */
@@ -67,10 +67,10 @@ public slots:
 
     void planObjectBatch();
 protected:
-    bool evaluateGrasp(VirtualRobot::GraspPtr g, VirtualRobot::RobotPtr eefRobot, VirtualRobot::EndEffectorPtr eef, int nrEvalLoops, GraspStudio::GraspEvaluationPoseUncertainty::PoseEvalResults &results);
+    bool evaluateGrasp(VirtualRobot::GraspPtr g, VirtualRobot::RobotPtr eefRobot, VirtualRobot::EndEffectorPtr eef, int nrEvalLoops, GraspStudio::GraspEvaluationPoseUncertainty::PoseEvalResults& results);
 
     void loadRobot();
-    void loadObject();
+    void loadObject(const std::string& objFile);
 
     void setupUI();
 
@@ -96,7 +96,6 @@ protected:
 
 
     std::string robotFile;
-    std::string objectFile;
     std::string eefName;
     std::string preshape;
 
@@ -108,5 +107,7 @@ protected:
 
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationRobot;
     boost::shared_ptr<VirtualRobot::CoinVisualization> visualizationObject;
+private slots:
+    void on_pushButtonLoadObject_clicked();
 };
 
