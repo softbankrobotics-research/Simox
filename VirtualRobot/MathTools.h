@@ -345,7 +345,7 @@ namespace VirtualRobot
                 result[7] << maxBB(0), maxBB(1), maxBB(2);
                 Eigen::Matrix4f m;
 
-                for (int i = 0; i < 8; i++)
+                for (std::size_t i = 0; i < 8; i++)
                 {
                     m.setIdentity();
                     m.block(0, 3, 3, 1) = result[i];
@@ -361,9 +361,9 @@ namespace VirtualRobot
                 minBB << FLT_MAX, FLT_MAX, FLT_MAX;
                 maxBB << -FLT_MAX, -FLT_MAX, -FLT_MAX;
 
-                for (int i = 0; i < 8; i++)
+                for (std::uint8_t i = 0; i < 8; i++)
                 {
-                    for (int j = 0; j < 3; j++)
+                    for (std::uint8_t j = 0; j < 3; j++)
                     {
                         if (result3[i](j) < minBB(j))
                         {
