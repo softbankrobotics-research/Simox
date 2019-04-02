@@ -322,12 +322,9 @@ namespace mjcf
         return nextSiblingElement<OtherD>(predicateWithAttrib<OtherD>(attrName, attrValue));
     }
     
-#include <stdexcept>
-    
     template <class D>
     void Element<D>::assertElemValueEqualsTag()
     {
-
         if (elem)
         {
             VR_ASSERT_MESSAGE(elem->Value() == Derived::tag, 
