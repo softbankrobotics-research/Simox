@@ -307,6 +307,27 @@ SET(SOURCES
     math/statistics/BoxPlot.cpp
     math/statistics/Histogram.cpp
     
+    MJCF/Document.cpp
+    MJCF/elements/Attribute.cpp
+    MJCF/elements/Element.cpp
+    MJCF/elements/actuator.cpp
+    MJCF/elements/asset.cpp
+    MJCF/elements/body.cpp
+    MJCF/elements/contact.cpp
+    MJCF/elements/custom.cpp
+    MJCF/elements/default.cpp
+    MJCF/elements/elements.cpp
+    MJCF/elements/equality.cpp
+    MJCF/elements/exceptions.cpp
+    MJCF/elements/keyframe.cpp
+    MJCF/elements/mjcf_utils.cpp
+    MJCF/elements/option.cpp
+    MJCF/elements/sensor.cpp
+    MJCF/elements/size.cpp
+    MJCF/elements/statistic.cpp
+    MJCF/elements/tendon.cpp
+    MJCF/elements/visual.cpp
+    
     Nodes/CameraSensor.cpp
     Nodes/CameraSensorFactory.cpp
     Nodes/ContactSensor.cpp
@@ -489,6 +510,28 @@ SET(INCLUDES
     math/statistics/measures.h
     math/statistics/BoxPlot.h
     math/statistics/Histogram.h
+    
+    MJCF/Document.h
+    MJCF/elements/Attribute.h
+    MJCF/elements/Element.h
+    MJCF/elements/actuator.h
+    MJCF/elements/asset.h
+    MJCF/elements/body.h
+    MJCF/elements/contact.h
+    MJCF/elements/custom.h
+    MJCF/elements/default.h
+    MJCF/elements/elements.h
+    MJCF/elements/equality.h
+    MJCF/elements/exceptions.h
+    MJCF/elements/keyframe.h
+    MJCF/elements/mjcf_utils.h
+    MJCF/elements/option.h
+    MJCF/elements/sensor.h
+    MJCF/elements/size.h
+    MJCF/elements/statistic.h
+    MJCF/elements/tendon.h
+    MJCF/elements/visual.h
+    MJCF/elements/has_member.hpp
     
     Nodes/CameraSensor.h
     Nodes/CameraSensorFactory.h
