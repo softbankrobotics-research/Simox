@@ -109,13 +109,82 @@ struct Geom : public Element<Geom>
     mjcf_FloatAttributeDef(Geom, fitscale, 1);
 };
 
+struct Site : public Element<Site>
+{
+    static const std::string tag;
+    mjcf_ElementDerivedConstructors(Site)
+    
+    mjcf_NameAttribute(Site);
+    mjcf_ClassAttribute(Site);
+    
+    // sphere, capsule, ellipsoid, cylinder, box
+    mjcf_StringAttributeDef(Site, type, "sphere");
+    mjcf_IntAttributeDef(Site, group, 0);
+
+    mjcf_StringAttributeOpt(Site, material);
+    mjcf_RgbaAttributeDef(Site, rgba, Eigen::Vector4f(.5, .5, .5, 1));
+    
+    mjcf_Vector3fAttributeDef(Site, size, Eigen::Vector3f::Constant(0.005f));
+    mjcf_AttributeOpt(Site, Eigen::Vector6f, fromto);
+    
+    mjcf_PoseAttributes(Site);
+};
+
+struct Camera : public Element<Camera>
+{
+    static const std::string tag;
+    mjcf_ElementDerivedConstructors(Camera)
+    
+    mjcf_NameAttribute(Camera);
+    mjcf_ClassAttribute(Camera);
+    
+    // fixed, track, trackcom, targetbody, targetbodycom
+    mjcf_StringAttributeDef(Camera, mode, "fixed");
+    mjcf_StringAttributeOpt(Camera, target); // required if targetbody or targetbodycom
+
+    /// Vertical field of view of the camera, expressed in degrees regardless 
+    /// of the global angle setting. 
+    mjcf_FloatAttributeDef(Camera, fovy, 45);
+    /// Inter-pupilary distance.
+    mjcf_FloatAttributeDef(Camera, ipd, 0.068f);
+    
+    mjcf_PoseAttributes(Camera);
+};
+
+struct Light : public Element<Light>
+{
+    static const std::string tag;
+    mjcf_ElementDerivedConstructors(Light)
+    
+    mjcf_NameAttribute(Light);
+    mjcf_ClassAttribute(Light);
+    
+    // fixed, track, trackcom, targetbody, targetbodycom
+    mjcf_StringAttributeDef(Light, mode, "fixed");
+    mjcf_StringAttributeOpt(Light, target); // required if targetbody or targetbodycom
+
+    mjcf_BoolAttributeDef(Light, directional, false);
+    mjcf_BoolAttributeDef(Light, castshadow, false);
+    mjcf_BoolAttributeDef(Light, active, false);
+    
+    mjcf_PosAttribute(Light);
+    mjcf_Vector3fAttributeDef(Light, dir, - Eigen::Vector3f::UnitZ());
+    
+    mjcf_Vector3fAttributeDef(Light, attenuation, Eigen::Vector3f::UnitX());
+    mjcf_FloatAttributeDef(Light, cutoff, 45);
+    mjcf_FloatAttributeDef(Light, exponent, 10);
+    
+    mjcf_Vector3fAttributeDef(Light, ambient, Eigen::Vector3f::Zero());
+    mjcf_Vector3fAttributeDef(Light, diffuse, Eigen::Vector3f::Constant(0.7f));
+    mjcf_Vector3fAttributeDef(Light, specular, Eigen::Vector3f::Constant(0.3f));
+};
 
 struct Body : public Element<Body>
 {
     static const std::string tag;
     mjcf_ElementDerivedConstructors(Body)
     
-    bool hasMass();
+    bool hasMass() const;
     
     /// Add a child body element.
     Body addBody(const std::string& name = "");

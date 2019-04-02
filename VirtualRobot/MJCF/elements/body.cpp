@@ -6,11 +6,14 @@
 using namespace mjcf;
 
 
-const std::string Body::tag         = "body";
-const std::string Geom::tag         = "geom";
 const std::string Inertial::tag     = "inertial";
 const std::string Joint::tag        = "joint";
 const std::string FreeJoint::tag    = "freejoint";
+const std::string Geom::tag         = "geom";
+const std::string Site::tag         = "site";
+const std::string Camera::tag       = "camera";
+const std::string Light::tag        = "light";
+const std::string Body::tag         = "body";
 const std::string Worldbody::tag        = "worldbody";
 
 
@@ -35,7 +38,7 @@ void Inertial::inertiaFromMatrix(const Eigen::Matrix3f& matrix)
     }
 }
 
-bool Body::hasMass()
+bool Body::hasMass() const
 {
     return hasChild<Geom>() || hasChild<Inertial>();
 }
