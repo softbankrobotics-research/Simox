@@ -30,7 +30,7 @@ namespace mjcf
         // CONSTRUCTORS
         
         /// Constructor.
-        Element(Document* _document, tinyxml2::XMLElement* elem);
+        Element(Document* document, tinyxml2::XMLElement* elem);
         
         
         /// Indicate whether this is an element of the given type.
@@ -57,6 +57,9 @@ namespace mjcf
         
         
         // CHILDREN
+        
+        /// Indicate whether this element has any children.
+        bool hasChildren() const;
         
         /// Indicate whether there is a child of the given type.
         template <class OtherDerived>
@@ -113,6 +116,22 @@ namespace mjcf
         /// Delete given child from this.
         template <class OtherDerived>
         void deleteChild(const Element<OtherDerived>& element);
+        
+        
+        // CLONING AND TRANSFORMATION
+        
+        Derived deepClone() const;
+        
+        /**
+         * @brief Transform this element to another type.
+         * 
+         * Change the underlying element's tag and return the element as the 
+         * new type. Using `*this` afterwards can result in unexpected 
+         * behaviour (and should in general be avoided), so use this method
+         * with caution!
+         */
+        template <class OtherDerived>
+        OtherDerived transform();
         
         
         // OPERATORS
@@ -201,6 +220,12 @@ namespace mjcf
     }
     
     template <class D>
+    bool Element<D>::hasChildren() const
+    {
+        return !elem->NoChildren();
+    }
+    
+    template <class D>
     template <class OtherD>
     bool Element<D>::hasChild() const
     {
@@ -260,7 +285,7 @@ namespace mjcf
     }
     
     template <class D>
-    template<class OtherD>
+    template <class OtherD>
     OtherD Element<D>::nextSiblingElement(std::function<bool (OtherD)> predicate) const
     {
         for (OtherD sibling = nextSiblingElement<OtherD>(); sibling;
@@ -272,6 +297,13 @@ namespace mjcf
             }
         }
         return OtherD(_document, nullptr);
+    }
+    
+    template <class D>
+    template<class OtherD>
+    OtherD Element<D>::nextSiblingElement(const std::string& attrName, const std::string& attrValue) const
+    {
+        return nextSiblingElement<OtherD>(predicateWithAttrib<OtherD>(attrName, attrValue));
     }
     
     template <class D>
@@ -316,10 +348,17 @@ namespace mjcf
     }
     
     template <class D>
-    template<class OtherD>
-    OtherD Element<D>::nextSiblingElement(const std::string& attrName, const std::string& attrValue) const
+    auto Element<D>::deepClone() const -> Derived
     {
-        return nextSiblingElement<OtherD>(predicateWithAttrib<OtherD>(attrName, attrValue));
+        return { _document, elem->DeepClone(nullptr)->ToElement() };
+    }
+    
+    template <class D>
+    template <class OtherD>
+    OtherD Element<D>::transform()
+    {
+        elem->SetValue(OtherD::tag.c_str());
+        return { _document, elem };
     }
     
     template <class D>
@@ -354,8 +393,11 @@ namespace mjcf
 #define mjcf_ElementDerivedConstructorsBase(Base, Derived)  \
     Derived() : Base<Derived>(nullptr, nullptr) {}                   \
     Derived(Document* document, tinyxml2::XMLElement* elem) : Base<Derived>(document, elem) {} \
+    Derived(const Base<Derived>& base) : Base<Derived>(base) {}      \
     Derived(const Derived& other) : Base<Derived>(other) {} \
     Derived(Derived&& other) : Base<Derived>(other) {}      \
+    Derived& operator=(const Base<Derived>& base)           \
+    { Base<Derived>::operator=(base);  return *this; }      \
     Derived& operator=(const Derived& other)                \
     { Base<Derived>::operator=(other); return *this; }      \
     Derived& operator=(Derived&& other)                     \
