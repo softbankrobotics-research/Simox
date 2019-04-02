@@ -105,6 +105,12 @@ namespace mjcf
         
     };
 
+    template <class Derived, typename AttrT>
+    std::ostream& operator<<(std::ostream& os, const Attribute<Derived, AttrT>& rhs)
+    {
+        os << rhs.get();
+        return os;
+    }
     
     
     /**
