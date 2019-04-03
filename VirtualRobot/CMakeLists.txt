@@ -380,9 +380,7 @@ SET(SOURCES
     XML/RobotIO.cpp
     XML/SceneIO.cpp
     XML/mjcf/MasslessBodySanitizer.cpp
-    XML/mjcf/MjcfDocument.cpp
     XML/mjcf/MujocoIO.cpp
-    XML/mjcf/utils.cpp
 )
 
 SET(INCLUDES
@@ -602,9 +600,7 @@ SET(INCLUDES
     XML/RobotIO.h
     XML/SceneIO.h
     XML/mjcf/MasslessBodySanitizer.h
-    XML/mjcf/MjcfDocument.h
     XML/mjcf/MujocoIO.h
-    XML/mjcf/utils.h
     
 )
 
