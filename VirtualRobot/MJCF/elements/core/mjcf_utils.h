@@ -41,13 +41,6 @@ namespace Eigen
 namespace mjcf
 {
 
-    enum class ActuatorType
-    {
-        MOTOR, POSITION, VELOCITY
-    };
-
-    ActuatorType toActuatorType(std::string str);
-
     // Get lenght of common prefix of two strings (was used for mergin body names).
     std::size_t commonPrefixLength(const std::string& a, const std::string& b);
 
@@ -78,6 +71,14 @@ namespace mjcf
     
     
     
+    /// Single values via boost::lexical cast. Only enabled for non-Eigen types.
+    template <typename AttrT,
+              typename std::enable_if<!Eigen::is_eigen_expression<AttrT>::value, AttrT>::type* = nullptr>
+    void fromAttr(const std::string& valueStr, AttrT& value);
+    
+    /// Bool
+    void fromAttr(const std::string& valueStr, bool& value);
+    
     /// Eigen Matrix and vectors
     template <typename Derived> 
     void fromAttr(const std::string& valueStr, Eigen::MatrixBase<Derived>& value);
@@ -85,10 +86,6 @@ namespace mjcf
     template <typename Derived> 
     void fromAttr(const std::string& valueStr, Eigen::QuaternionBase<Derived>& value);
 
-    /// Single values via boost::lexical cast. Only enabled for non-Eigen types.
-    template <typename AttrT,
-              typename std::enable_if<!Eigen::is_eigen_expression<AttrT>::value, AttrT>::type* = nullptr>
-    void fromAttr(const std::string& valueStr, AttrT& value);
     
     
     template <typename Scalar>
@@ -109,9 +106,9 @@ namespace mjcf
     template<typename Derived>
     std::string toAttr(const Eigen::MatrixBase<Derived>& mat)
     {
-        static const Eigen::IOFormat iof
+        static const Eigen::IOFormat iof 
         {
-            7, 0, "", " ", "", "", "", ""
+            Eigen::FullPrecision, Eigen::DontAlignCols, " ", " ", "", "", "", ""
         };
     
         std::stringstream ss;

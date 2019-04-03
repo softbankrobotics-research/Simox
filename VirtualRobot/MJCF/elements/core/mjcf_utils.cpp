@@ -7,18 +7,6 @@
 namespace mjcf
 {
 
-    ActuatorType toActuatorType(std::string str)
-    {
-        static const std::map<std::string, ActuatorType> map
-        {
-            {"motor",    ActuatorType::MOTOR},
-            {"position", ActuatorType::POSITION},
-            {"velocity", ActuatorType::VELOCITY}
-        };
-        std::transform(str.begin(), str.end(), str.begin(), ::tolower);
-        return map.at(str);
-    }
-
     std::size_t commonPrefixLength(const std::string& a, const std::string& b)
     {
         const std::string* smaller = &a;
@@ -40,6 +28,16 @@ namespace mjcf
         return strings[int(b)];
     }
     
+    void fromAttr(const std::string& valueStr, bool& value)
+    {
+        static const std::map<std::string, bool> map = {
+            { "true", true },
+            { "false", false },
+            { "1", true },
+            { "0", false },
+        };
+        value = map.at(valueStr);
+    }
 
     Eigen::Vector2f strToVec2(const char* string)
     {
@@ -68,7 +66,7 @@ namespace mjcf
     {
         return strcmp(lhs, rhs) == 0;
     }
-
+    
 }
 
 bool std::operator==(const char* lhs, const std::string& rhs)
