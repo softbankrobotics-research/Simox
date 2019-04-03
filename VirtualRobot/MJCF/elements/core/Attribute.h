@@ -1,5 +1,8 @@
 #pragma once
 
+#include <VirtualRobot.h>
+#include <VirtualRobot/math/Helpers.h>
+
 #include "Element.h"
 
 
@@ -296,7 +299,23 @@ namespace mjcf
 
 // pose = pos + quat
 #define mjcf_PoseAttributes(Derived) \
-    mjcf_PosAttribute(Derived);\
+    Eigen::Matrix4f getPose() const                                     \
+    { return math::Helpers::Pose(pos.get(), quat.get()); }              \
+    void setPose(const Eigen::Matrix4f& p)                              \
+    {   pos = math::Helpers::Position(p);                               \
+        quat = Eigen::Quaternionf(math::Helpers::Orientation(p));   }   \
+    mjcf_PosAttribute(Derived);                                         \
     mjcf_QuatAttribute(Derived)
 
+
+Eigen::Vector5f mjcf_solimpDefault();
+
+// solref
+#define mjcf_SolrefAttribute(Derived) \
+    mjcf_AttributeDef(Derived, Eigen::Vector2f, solref, Eigen::Vector2f(0.02f, 1.f))
+// solimp
+#define mjcf_SolimpAttribute(Derived) \
+    mjcf_AttributeDef(Derived, Eigen::Vector5f, solimp, mjcf_solimpDefault())
+    
+    
 } 
