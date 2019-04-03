@@ -328,6 +328,7 @@ SET(SOURCES
     MJCF/elements/core/Element.cpp
     MJCF/elements/core/exceptions.cpp
     MJCF/elements/core/mjcf_utils.cpp
+    MJCF/elements/core/Visitor.cpp
     
     Nodes/CameraSensor.cpp
     Nodes/CameraSensorFactory.cpp
@@ -534,6 +535,7 @@ SET(INCLUDES
     MJCF/elements/core/Element.h
     MJCF/elements/core/exceptions.h
     MJCF/elements/core/mjcf_utils.h
+    MJCF/elements/core/Visitor.h
     
     Nodes/CameraSensor.h
     Nodes/CameraSensorFactory.h
