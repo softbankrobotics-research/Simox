@@ -15,11 +15,11 @@ MasslessBodySanitizer::MasslessBodySanitizer(RobotPtr& robot) :
     robot(robot)
 {}
 
-void MasslessBodySanitizer::sanitize(Worldbody worldbody)
+void MasslessBodySanitizer::sanitize(Body root)
 {
     // merge body leaf nodes with parent if they do not have a mass (inertial or geom)
     
-    for (Body body = worldbody.firstChild<Body>();
+    for (Body body = root.firstChild<Body>();
          body; body = body.nextSiblingElement<Body>())
     {
         sanitizeRecursion(body);
@@ -121,11 +121,9 @@ void doo(Body body, Body child, const Eigen::Matrix4f& childPose)
 
 void MasslessBodySanitizer::mergeBodies(Body body, Body childBody, Eigen::Matrix4f& accChildPose)
 {
-    const std::string childBodyName = childBody.name;
-    
-    std::cout << "Merging with '" << childBodyName << "' ";
+    std::cout << "Merging with '" << childBody.name << "' " << std::endl;
 
-    RobotNodePtr childNode = robot->getRobotNode(childBodyName);
+    RobotNodePtr childNode = robot->getRobotNode(childBody.name);
     Eigen::Matrix4f childPose = childNode->getTransformationFrom(childNode->getParent());
     
     // update accumulated child pose
@@ -144,7 +142,7 @@ void MasslessBodySanitizer::mergeBodies(Body body, Body childBody, Eigen::Matrix
     
     // update body name
     MergedBodySet& bodySet = getMergedBodySetWith(body.name);
-    bodySet.addBody(childBodyName);
+    bodySet.addBody(childBody.name);
     body.name = bodySet.getMergedBodyName();
     
     std::cout << "\t(new name: " << bodySet.getMergedBodyName() << ")" << std::endl;

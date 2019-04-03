@@ -15,7 +15,7 @@
 #include "../RobotConfig.h"
 #include "../RuntimeEnvironment.h"
 #include "rapidxml.hpp"
-#include "mjcf/MujocoIO.h"
+#include "mujoco/MujocoIO.h"
 
 
 #include <vector>
@@ -281,7 +281,7 @@ namespace VirtualRobot
         float maxVelocity = -1.0f; // m/s
         float maxAcceleration = -1.0f; // m/s^2
         float maxTorque = -1.0f; // Nm
-        float scaleVisu = false;
+        bool scaleVisu = false;
         Eigen::Vector3f scaleVisuFactor = Eigen::Vector3f::Zero();
 
         while (node)

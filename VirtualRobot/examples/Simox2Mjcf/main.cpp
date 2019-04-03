@@ -3,7 +3,7 @@
 #include <VirtualRobot/RuntimeEnvironment.h>
 
 #include <VirtualRobot/XML/RobotIO.h>
-#include <VirtualRobot/XML/mjcf/MujocoIO.h>
+#include <VirtualRobot/XML/mujoco/MujocoIO.h>
 
 
 using namespace VirtualRobot;
@@ -19,7 +19,8 @@ void printUsage(const char* argv0)
               << "[--outdir <output directory>] "
               << "[--meshRelDir <relative mesh directory>] "
               << "[--actuator {motor|position|velocity}] "
-              << "[--mocap {y|n}]"
+              << "[--mocap {y|n}] "
+              << "[--verbose {y|n}]"
               << std::endl;
 }
 
@@ -35,13 +36,13 @@ int main(int argc, char* argv[])
     RuntimeEnvironment::considerKey("meshRelDir");
     RuntimeEnvironment::considerKey("actuator");
     RuntimeEnvironment::considerKey("mocap");
+    RuntimeEnvironment::considerKey("verbose");
     
     RuntimeEnvironment::processCommandLine(argc, argv);
 
-    //RuntimeEnvironment::print();
+    RuntimeEnvironment::print();
     
     fs::path inputFilename;
-    
     
     if (RuntimeEnvironment::hasValue("robot"))
     {
@@ -62,16 +63,16 @@ int main(int argc, char* argv[])
         return 0;
     }
     
-    fs::path outputDir = RuntimeEnvironment::checkParameter(
+    const fs::path outputDir = RuntimeEnvironment::checkParameter(
                 "outdir", (inputFilename.parent_path() / "mjcf").string());
-    std::string meshRelDir = RuntimeEnvironment::checkParameter("meshRelDir", "mesh");
+    const std::string meshRelDir = RuntimeEnvironment::checkParameter("meshRelDir", "mesh");
     
     
-    std::string actuatorTypeStr = RuntimeEnvironment::checkParameter("actuator", "motor");
-    mjcf::ActuatorType actuatorType;
+    const std::string actuatorTypeStr = RuntimeEnvironment::checkParameter("actuator", "motor");
+    mujoco::ActuatorType actuatorType;
     try
     {
-        actuatorType = mjcf::toActuatorType(actuatorTypeStr);
+        actuatorType = mujoco::toActuatorType(actuatorTypeStr);
     }
     catch (const std::out_of_range&)
     {
@@ -80,7 +81,8 @@ int main(int argc, char* argv[])
         return -1;
     }
     
-    bool mocap = RuntimeEnvironment::checkParameter("mocap", "n") == "y";
+    const bool mocap = RuntimeEnvironment::checkParameter("mocap", "n") == "y";
+    const bool verbose = RuntimeEnvironment::checkParameter("verbose", "n") == "y";
     
     
     std::cout << "Input file:      " << inputFilename << std::endl;
@@ -110,9 +112,10 @@ int main(int argc, char* argv[])
     else
     {
         // direct API
-        mjcf::MujocoIO mujocoIO(robot);
+        mujoco::MujocoIO mujocoIO(robot);
         mujocoIO.setActuatorType(actuatorType);
         mujocoIO.setWithMocapBody(mocap);
+        mujocoIO.setVerbose(verbose);
         mujocoIO.saveMJCF(inputFilename.filename().string(), outputDir.string(), meshRelDir);
     }
 }

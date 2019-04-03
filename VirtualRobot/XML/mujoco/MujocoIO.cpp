@@ -10,8 +10,6 @@
 #include <VirtualRobot/XML/RobotIO.h>
 
 
-
-namespace tx = tinyxml2; 
 namespace fs = boost::filesystem;
 
 
@@ -26,8 +24,8 @@ ActuatorType toActuatorType(const std::string& string)
         {"position", ActuatorType::POSITION},
         {"velocity", ActuatorType::VELOCITY}
     };
-    std::string lower;
-    std::transform(string.begin(), string.end(), lower.begin(), ::tolower);
+    std::string lower = string;
+    std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
     return map.at(lower);
 }
 
@@ -66,8 +64,7 @@ void MujocoIO::saveMJCF(const std::string& filename, const std::string& basePath
     std::cout << "Adding meshes and geoms ..." << std::endl;
     addNodeBodyMeshes();
     
-    bool print = false;
-    if (print)
+    if (verbose)
     {
         std::cout << "===========================" << std::endl
                   << "Current model: "             << std::endl
@@ -77,7 +74,7 @@ void MujocoIO::saveMJCF(const std::string& filename, const std::string& basePath
     }
     
     std::cout << "Merging massless bodies ..." << std::endl;
-    masslessBodySanitizer.sanitize(document->worldbody());
+    masslessBodySanitizer.sanitize(robotRoot);
     
     std::cout << "Adding contact excludes ..." << std::endl;
     addContactExcludes();
@@ -90,7 +87,7 @@ void MujocoIO::saveMJCF(const std::string& filename, const std::string& basePath
     
     std::cout << "Done." << std::endl;
     
-    if (print)
+    if (verbose)
     {
         std::cout << std::endl;
         std::cout << "===========================" << std::endl
@@ -326,7 +323,7 @@ void MujocoIO::addNodeBodyMeshes()
         {
             if (srcMeshPath.extension().string() != "stl")
             {
-                std::cout << "Converting to .stl: " << srcMeshPath;
+                std::cout << "Converting to .stl: " << srcMeshPath << std::endl;
                 
                 if (!meshlabserverAviable)
                 {
@@ -348,6 +345,7 @@ void MujocoIO::addNodeBodyMeshes()
                 
                 // run command
                 std::cout << "----------------------------------------------------------" << std::endl;
+                std::cout << "Running command: " << convertCommand.str() << std::endl;
                 int r = system(convertCommand.str().c_str());
                 std::cout << "----------------------------------------------------------" << std::endl;
                 if (r != 0)
@@ -499,13 +497,16 @@ void MujocoIO::addActuators()
         switch (actuatorType)
         {
             case ActuatorType::MOTOR:
-                document->actuator().addMotor(name);
+            {
+                mjcf::ActuatorMotor act = document->actuator().addMotor(name);
+                act.name = joint.name;
                 break;
+            }
                 
             case ActuatorType::POSITION:
             {
-                document->actuator().addMotor(name);
                 mjcf::ActuatorPosition act = document->actuator().addPosition(name);
+                act.name = joint.name;
                 
                 if (joint.limited)
                 {
@@ -516,7 +517,8 @@ void MujocoIO::addActuators()
                 break;
                 
             case ActuatorType::VELOCITY:
-                document->actuator().addVelocity(name);
+                mjcf::ActuatorVelocity act = document->actuator().addVelocity(name);
+                act.name = joint.name;
                 break;
         }
     }
@@ -583,6 +585,11 @@ void MujocoIO::setActuatorType(ActuatorType value)
 void MujocoIO::setWithMocapBody(bool enabled)
 {
     withMocapBody = enabled;
+}
+
+void MujocoIO::setVerbose(bool value)
+{
+    this->verbose = value;
 }
 
 

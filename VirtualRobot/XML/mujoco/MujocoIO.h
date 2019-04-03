@@ -54,6 +54,8 @@ namespace mujoco
          */
         void setWithMocapBody(bool enabled);
         
+        void setVerbose(bool value);
+        
         
     private:
         
@@ -109,6 +111,8 @@ namespace mujoco
         
         /// Add a mocap
         bool withMocapBody = false;
+        
+        bool verbose = false;
         
         
         // Paths

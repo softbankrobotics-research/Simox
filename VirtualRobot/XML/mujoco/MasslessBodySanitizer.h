@@ -1,6 +1,6 @@
 #pragma once
 
-#include <VirtualRobot.h>
+#include <VirtualRobot/Robot.h>
 #include <VirtualRobot/MJCF/Document.h>
 
 
@@ -38,7 +38,7 @@ namespace mujoco
         
         MasslessBodySanitizer(RobotPtr& robot);
         
-        void sanitize(mjcf::Worldbody worldbody);
+        void sanitize(mjcf::Body root);
         
         const std::vector<MergedBodySet>& getMergedBodySets() const;
 
