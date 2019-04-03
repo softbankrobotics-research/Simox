@@ -86,3 +86,6 @@ struct Include : public Element<Include>
 #undef mjcf_PosAttribute
 #undef mjcf_QuatAttribute
 #undef mjcf_PoseAttributes
+
+#undef mjcf_SolimpAttribute
+#undef mjcf_SolrefAttribute
