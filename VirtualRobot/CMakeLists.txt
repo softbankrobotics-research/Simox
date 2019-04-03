@@ -353,7 +353,7 @@ SET(SOURCES
     TimeOptimalTrajectory/Path.cpp
     TimeOptimalTrajectory/TimeOptimalTrajectory.cpp
     
-    Tools/Gravity.cpp    
+    Tools/Gravity.cpp
     
     Util/json/eigen_conversion.cpp
     Util/xml/tinyxml2.cpp
@@ -380,8 +380,8 @@ SET(SOURCES
     XML/ObjectIO.cpp
     XML/RobotIO.cpp
     XML/SceneIO.cpp
-    XML/mjcf/MasslessBodySanitizer.cpp
-    XML/mjcf/MujocoIO.cpp
+    XML/mujoco/MasslessBodySanitizer.cpp
+    XML/mujoco/MujocoIO.cpp
 )
 
 SET(INCLUDES
@@ -601,8 +601,8 @@ SET(INCLUDES
     XML/ObjectIO.h
     XML/RobotIO.h
     XML/SceneIO.h
-    XML/mjcf/MasslessBodySanitizer.h
-    XML/mjcf/MujocoIO.h
+    XML/mujoco/MasslessBodySanitizer.h
+    XML/mujoco/MujocoIO.h
     
 )
 
