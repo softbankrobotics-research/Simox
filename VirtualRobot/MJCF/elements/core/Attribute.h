@@ -1,6 +1,5 @@
 #pragma once
 
-#include <VirtualRobot.h>
 #include <VirtualRobot/math/Helpers.h>
 
 #include "Element.h"
@@ -70,7 +69,6 @@ namespace mjcf
         /// Set the attribute value.
         void set(const AttrT& value)
         {
-            VR_ASSERT(this->owner());
             this->owner().template setAttribute<AttrT>(name, value);
         }
         
@@ -136,7 +134,6 @@ namespace mjcf
         
         AttrT get() const override
         {
-            VR_ASSERT(this->owner());
             return this->owner().template getAttribute<AttrT>(this->name);
         }
         
@@ -171,7 +168,6 @@ namespace mjcf
         
         AttrT get() const override
         {
-            VR_ASSERT(this->owner());
             return this->owner().template getAttribute<AttrT>(this->name, this->defaultValue);
         }
         
