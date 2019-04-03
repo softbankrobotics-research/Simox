@@ -318,6 +318,7 @@ SET(SOURCES
     MJCF/elements/types/asset.cpp
     MJCF/elements/types/body.cpp
     MJCF/elements/types/contact.cpp
+    MJCF/elements/types/compiler.cpp
     MJCF/elements/types/custom.cpp
     MJCF/elements/types/default.cpp
     MJCF/elements/types/equality.cpp
@@ -525,6 +526,7 @@ SET(INCLUDES
     MJCF/elements/types/actuator.h
     MJCF/elements/types/asset.h
     MJCF/elements/types/body.h
+    MJCF/elements/types/compiler.h
     MJCF/elements/types/contact.h
     MJCF/elements/types/custom.h
     MJCF/elements/types/default.h
