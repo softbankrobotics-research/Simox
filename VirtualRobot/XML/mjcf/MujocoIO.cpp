@@ -1,17 +1,35 @@
 #include "MujocoIO.h"
-#include "utils.h"
 
 #include <VirtualRobot/RobotNodeSet.h>
-#include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/VirtualRobotException.h>
+
+#include <VirtualRobot/MJCF/visitors/Collector.h>
+#include <VirtualRobot/Nodes/RobotNodePrismatic.h>
+#include <VirtualRobot/Nodes/RobotNodeRevolute.h>
 #include <VirtualRobot/Visualization/TriMeshModel.h>
+#include <VirtualRobot/XML/RobotIO.h>
 
 
-using namespace VirtualRobot;
-using namespace mjcf;
+
 namespace tx = tinyxml2; 
 namespace fs = boost::filesystem;
 
+
+namespace VirtualRobot::mujoco
+{
+
+ActuatorType toActuatorType(const std::string& string)
+{
+    static const std::map<std::string, ActuatorType> map
+    {
+        {"motor",    ActuatorType::MOTOR},
+        {"position", ActuatorType::POSITION},
+        {"velocity", ActuatorType::VELOCITY}
+    };
+    std::string lower;
+    std::transform(string.begin(), string.end(), lower.begin(), ::tolower);
+    return map.at(lower);
+}
 
 
 MujocoIO::MujocoIO(RobotPtr robot) : robot(robot) 
@@ -31,7 +49,7 @@ void MujocoIO::saveMJCF(const std::string& filename, const std::string& basePath
     
     makeCompiler();
     
-    makeDefaultsGroup();
+    makeDefaultsClass();
     document->setNewElementClass(robot->getName(), true);
     
     addSkybox();
@@ -54,12 +72,12 @@ void MujocoIO::saveMJCF(const std::string& filename, const std::string& basePath
         std::cout << "===========================" << std::endl
                   << "Current model: "             << std::endl
                   << "--------------"              << std::endl;
-        document->Print();
+        std::cout << *document;
         std::cout << "===========================" << std::endl;
     }
     
     std::cout << "Merging massless bodies ..." << std::endl;
-    masslessBodySanitizer.sanitize();
+    masslessBodySanitizer.sanitize(document->worldbody());
     
     std::cout << "Adding contact excludes ..." << std::endl;
     addContactExcludes();
@@ -68,7 +86,7 @@ void MujocoIO::saveMJCF(const std::string& filename, const std::string& basePath
     addActuators();
     
     std::cout << "Scaling lengths by " << lengthScaling << " ..." << std::endl;
-    scaleLengths(document->robotRootBody());
+    scaleLengths(robotRoot);
     
     std::cout << "Done." << std::endl;
     
@@ -78,13 +96,13 @@ void MujocoIO::saveMJCF(const std::string& filename, const std::string& basePath
         std::cout << "===========================" << std::endl
                   << "Output file: "             << std::endl
                   << "------------"              << std::endl;
-        document->Print();
+        std::cout << *document;
         std::cout << "===========================" << std::endl;
     }
     
     assert(!outputFileName.empty());
     std::cout << "Writing to " << (outputDirectory / outputFileName) << std::endl;
-    document->SaveFile((outputDirectory / outputFileName).c_str());
+    document->saveFile((outputDirectory / outputFileName).string());
 }
 
 void MujocoIO::setPaths(const std::string& filename, const std::string& basePath, const std::string& meshRelDir)
@@ -114,37 +132,44 @@ void MujocoIO::ensureDirectoriesExist()
 
 void MujocoIO::makeCompiler()
 {
-    document->compiler()->SetAttribute("angle", "radian");
-    document->compiler()->SetAttribute("balanceinertia", "true");
+    document->compiler().angle = "radian";
+    document->compiler().balanceinertia = true;
 }
 
-void MujocoIO::makeDefaultsGroup()
+void MujocoIO::makeDefaultsClass()
 {
-    XMLElement* defaultsClass = document->addDefaultsClass(robot->getName());
+    mjcf::DefaultClass defaultsClass = document->default_().addClass(robot->getName());
     
     std::stringstream comment;
     comment << "Add default values for " << robot->getName() << " here.";
-    defaultsClass->InsertFirstChild(document->NewComment(comment.str().c_str()));
+    defaultsClass.insertComment(comment.str(), true);
     
-    document->addDefaultAttr(defaultsClass, "joint", "frictionloss", 1);
-    document->addDefaultAttr(defaultsClass, "joint", "damping", 0);
-    document->addDefaultAttr(defaultsClass, "geom", "condim", 4);
-    document->addDefaultAttr(defaultsClass, "position", "kp", 1);
-    document->addDefaultAttr(defaultsClass, "velocity", "kv", 1);
+    mjcf::Joint joint = defaultsClass.getElement<mjcf::Joint>();
+    joint.frictionloss = 1;
+    joint.damping = 0;
+    
+    mjcf::Geom geom = defaultsClass.getElement<mjcf::Geom>();
+    geom.condim = 4;
+    
+    mjcf::ActuatorPosition actPos = defaultsClass.getElement<mjcf::ActuatorPosition>();
+    actPos.kp = 1;
+    
+    mjcf::ActuatorVelocity actVel = defaultsClass.getElement<mjcf::ActuatorVelocity >();
+    actVel.kv = 1;
 }
 
 
 void MujocoIO::addSkybox()
 {
-    document->addSkyboxTexture(Eigen::Vector3f(.8f, .9f, .95f), 
-                               Eigen::Vector3f(.4f, .6f, .8f));
+    document->asset().addSkyboxTexture(Eigen::Vector3f(.8f, .9f, .95f), 
+                                       Eigen::Vector3f(.4f, .6f, .8f));
 }
 
 
 void MujocoIO::addMocapBody()
 {
-    std::string className = "mocap";
-    float geomSize = 0.01f;
+    const std::string className = "mocap";
+    const float geomSize = 0.01f;
     
     std::string bodyName;
     {
@@ -154,22 +179,26 @@ void MujocoIO::addMocapBody()
     }
     
     // add defaults class
-    XMLElement* defClass = document->addDefaultsClass(className);
+    mjcf::DefaultClass defaultClass = document->default_().getClass(className);
     
-    document->addDefaultAttr(defClass, "geom", "rgba", 
-                             toAttr(Eigen::Vector4f(.9f, .5f, .5f, .5f)).c_str());
+    mjcf::Geom geom = defaultClass.getElement<mjcf::Geom>();
+    geom.rgba = Eigen::Vector4f(.9f, .5f, .5f, .5f);
     
-    document->addDefaultAttr(defClass, "equality", "solimp", 
-                             toAttr(Eigen::Vector3f{.95f, .99f, .001f}).c_str());
-    document->addDefaultAttr(defClass, "equality", "solref", 
-                             toAttr(Eigen::Vector2f{ .02f, 1.f}).c_str());
+    {
+        mjcf::EqualityDefaults equality = defaultClass.getElement<mjcf::EqualityDefaults>();
+        Eigen::Vector5f solimp = equality.solimp;
+        solimp(1) = 0.99f;
+        equality.solimp = solimp;
+        //equality.solref = Eigen::Vector2f(.02f, 1.f);
+    }
     
     // add body
-    XMLElement* mocap = document->addMocapBody(bodyName, geomSize);
-    mocap->SetAttribute("childclass", className.c_str());
+    mjcf::Body mocap = document->worldbody().addMocapBody(bodyName, geomSize);
+    mocap.childclass = className;
     
     // add equality weld constraint
-    document->addEqualityWeld(bodyName, robot->getName(), bodyName, className);
+    mjcf::EqualityWeld weld = document->equality().addWeld(bodyName, robot->getName(), bodyName);
+    weld.class_ = className;
 }
 
 
@@ -181,16 +210,16 @@ void MujocoIO::makeNodeBodies()
     assert(rootNode);
     
     // add root
-    XMLElement* robotRootBody = document->addRobotRootBodyElement(robot->getName());
+    robotRoot = document->worldbody().addBody(robot->getName(), robot->getName());
     
     if (withMocapBody)
     {
-        document->addDummyInertial(robotRootBody);
-        XMLElement* joint = document->addFreeJointElement(robotRootBody);
-        joint->SetAttribute("name", robot->getName().c_str());
+        robotRoot.addDummyInertial();
+        mjcf::FreeJoint joint = robotRoot.addFreeJoint();
+        joint.name = robot->getName();
     }
     
-    XMLElement* root = document->addBodyElement(robotRootBody, rootNode);
+    mjcf::Body root = addNodeBody(robotRoot, rootNode);
     nodeBodies[rootNode->getName()] = root;
     assert(root);
     
@@ -198,6 +227,77 @@ void MujocoIO::makeNodeBodies()
     {
         addNodeBody(node);
     }
+}
+
+mjcf::Body MujocoIO::addNodeBody(mjcf::Body parent, RobotNodePtr node)
+{
+    mjcf::Body body = parent.addBody(node->getName());
+
+    if (node->hasParent())
+    {
+        body.setPose(node->getTransformationFrom(node->getParent()));
+    }
+    
+    if (node->isRotationalJoint() || node->isTranslationalJoint())
+    {
+        addNodeJoint(body, node);
+    }
+    
+    addNodeInertial(body, node);
+    
+    return body;
+}
+
+mjcf::Joint MujocoIO::addNodeJoint(mjcf::Body body, RobotNodePtr node)
+{
+    assert(node->isRotationalJoint() xor node->isTranslationalJoint());
+    
+    mjcf::Joint joint = body.addJoint();
+    joint.name = node->getName();
+    
+    // get the axis
+    Eigen::Vector3f axis;
+    if (node->isRotationalJoint())
+    {
+        RobotNodeRevolutePtr revolute = boost::dynamic_pointer_cast<RobotNodeRevolute>(node);
+        assert(revolute);
+        axis = revolute->getJointRotationAxisInJointCoordSystem();
+    }
+    else if (node->isTranslationalJoint())
+    {
+        RobotNodePrismaticPtr prismatic = boost::dynamic_pointer_cast<RobotNodePrismatic>(node);
+        assert(prismatic);
+        axis = prismatic->getJointTranslationDirectionJointCoordSystem();
+    }
+    
+    joint.type = node->isRotationalJoint() ? "hinge" : "slide";
+    joint.axis = axis;
+    joint.limited = !node->isLimitless();
+    
+    if (!node->isLimitless())
+    {
+        joint.range = { node->getJointLimitLow(), node->getJointLimitHigh() };
+    }
+    
+    return joint;
+}
+
+mjcf::Inertial MujocoIO::addNodeInertial(mjcf::Body body, RobotNodePtr node)
+{
+    Eigen::Matrix3f matrix = node->getInertiaMatrix();
+    if (matrix.isIdentity(document->getFloatCompPrecision()) 
+        && node->getMass() < document->getFloatCompPrecision())
+    {
+        // dont set an inertial element and let it be derived automatically
+        return { };
+    }
+    
+    mjcf::Inertial inertial = body.addInertial();
+    inertial.pos = node->getCoMLocal();
+    inertial.mass = node->getMass();
+    inertial.inertiaFromMatrix(matrix);
+    
+    return inertial;
 }
 
 void MujocoIO::addNodeBodyMeshes()
@@ -273,56 +373,69 @@ void MujocoIO::addNodeBodyMeshes()
         
         
         // add asset
-        std::string meshName = node->getName();
-        document->addMeshElement(meshName, fs::absolute(dstMeshPath).string());
+        const std::string meshName = node->getName();
+        document->asset().addMesh(meshName, fs::absolute(dstMeshPath).string());
         
         // add geom to body
-        XMLElement* body = nodeBodies[node->getName()];
-        document->addGeomElement(body, meshName);
+        mjcf::Body& body = nodeBodies.at(node->getName());
+        body.addGeomMesh(meshName);
     }
 }
 
 
 
-XMLElement* MujocoIO::addNodeBody(RobotNodePtr node)
+mjcf::Body MujocoIO::addNodeBody(RobotNodePtr node)
 {
-    XMLElement* element = nodeBodies[node->getName()];
-    if (element)
+    // see whether body for the node already exists
+    auto find = nodeBodies.find(node->getName());
+    if (find != nodeBodies.end())
     {
-        // break recursion
-        return element;
+        // exists => break recursion
+        return find->second;
     }
     
-    XMLElement* parent = nodeBodies[node->getParent()->getName()];
-    if (!parent)
+    // check whether body exists for parent node
+    mjcf::Body parent;
+    find = nodeBodies.find(node->getParent()->getName());
+    if (find == nodeBodies.end())
     {
+        // parent does not exist => create it first
         parent = addNodeBody(robot->getRobotNode(node->getParent()->getName()));
     }
+    else
+    {
+        // parent exists
+        parent = find->second;
+    }
     
-    element = document->addBodyElement(parent, node);
-    nodeBodies[node->getName()] = element;
+    // add body as child of parent
+    mjcf::Body body = addNodeBody(parent, node);
+    nodeBodies[node->getName()] = body;
 
-    return element;
+    return body;
 }
 
-struct ParentChildContactExcludeVisitor : public tinyxml2::XMLVisitor
+struct ParentChildContactExcludeVisitor : public mjcf::Visitor
 {
-    
-    ParentChildContactExcludeVisitor(Document& document) : document(document) {}
-    ~ParentChildContactExcludeVisitor() override = default;
+    ParentChildContactExcludeVisitor(mjcf::Document& document) : mjcf::Visitor (document)
+    {}
+    virtual ~ParentChildContactExcludeVisitor() override = default;
 
-    bool VisitEnter(const tinyxml2::XMLElement&, const tinyxml2::XMLAttribute*) override;
+    //bool VisitEnter(const tinyxml2::XMLElement&, const tinyxml2::XMLAttribute*) override;
+    bool visitEnter(const mjcf::AnyElement& element) override;
     
-    Document& document;  ///< The document.
+    std::vector<std::pair<std::string, std::string>> excludePairs;
     bool firstSkipped = false;  ///< Used to skip the root element.
 };
 
-bool ParentChildContactExcludeVisitor::VisitEnter(const tinyxml2::XMLElement& body, const tinyxml2::XMLAttribute*)
+bool ParentChildContactExcludeVisitor::visitEnter(const mjcf::AnyElement& element)
 {
-    if (!isElement(body, "body"))
+    if (!element.is<mjcf::Body>())
     {
         return true;
     }
+    
+    const mjcf::Body body = element.as<mjcf::Body>();
     
     if (!firstSkipped)
     {
@@ -330,10 +443,9 @@ bool ParentChildContactExcludeVisitor::VisitEnter(const tinyxml2::XMLElement& bo
         return true;
     }
     
-    const XMLElement* parent = body.Parent()->ToElement();
+    const mjcf::Body parent = body.parent<mjcf::Body>();
     assert(parent);
-    
-    document.addContactExclude(*parent, body);
+    excludePairs.emplace_back(parent.name.get(), body.name.get());
     
     return true;
 }
@@ -359,88 +471,86 @@ void MujocoIO::addContactExcludes()
     }
     
     // resolve body names and add exludes
-    for (auto& excludePair : excludePairs)
+    for (const auto& excludePair : excludePairs)
     {
-        std::string body1 = masslessBodySanitizer.getMergedBodyName(excludePair.first);
-        std::string body2 = masslessBodySanitizer.getMergedBodyName(excludePair.second);
-        document->addContactExclude(body1, body2);
+        const std::string body1 = masslessBodySanitizer.getMergedBodyName(excludePair.first);
+        const std::string body2 = masslessBodySanitizer.getMergedBodyName(excludePair.second);
+        document->contact().addExclude(body1, body2);
     }
     
+    // Add excludes between parent and child elemenets. 
+    // This should actually not be necessary?
     ParentChildContactExcludeVisitor visitor(*document);
-    document->robotRootBody()->Accept(&visitor);
+    robotRoot.accept(visitor);
+    for (const auto& excludePair : visitor.excludePairs)
+    {
+        document->contact().addExclude(excludePair.first, excludePair.second);
+    }
 }
 
 void MujocoIO::addActuators()
 {
-    std::vector<const mjcf::XMLElement*> jointElements = getAllElements("joint");
+    std::vector<mjcf::Joint> jointElements = mjcf::Collector<mjcf::Joint>::collect(
+                *document, document->worldbody());
     
     for (auto joint : jointElements)
     {
-        std::string name = joint->Attribute("name");
+        const std::string name = joint.name;
         switch (actuatorType)
         {
             case ActuatorType::MOTOR:
-                document->addActuatorMotorElement(name);
+                document->actuator().addMotor(name);
                 break;
                 
             case ActuatorType::POSITION:
             {
-                XMLElement* act = document->addActuatorPositionElement(name);
+                document->actuator().addMotor(name);
+                mjcf::ActuatorPosition act = document->actuator().addPosition(name);
                 
-                const char* limited = joint->Attribute("limited");
-                if (limited)
+                if (joint.limited)
                 {
-                    act->SetAttribute("ctrllimited", limited);
-                    
-                    const char* range = joint->Attribute("range");
-                    if (range)
-                    {
-                        act->SetAttribute("ctrlrange", range);
-                    }
+                    act.ctrllimited = joint.limited;
+                    act.ctrlrange = joint.range;
                 }
             }
                 break;
                 
             case ActuatorType::VELOCITY:
-                document->addActuatorVelocityElement(name);
+                document->actuator().addVelocity(name);
                 break;
         }
     }
 }
 
-void MujocoIO::scaleLengths(XMLElement* elem)
+void MujocoIO::scaleLengths(mjcf::AnyElement element)
 {
     assert(elem);
     
-    if (isElement(elem, "joint"))
+    if (element.is<mjcf::Joint>())
     {
-        if (isAttr(elem, "type", "slide") && hasAttr(elem, "range"))
+        mjcf::Joint joint = element.as<mjcf::Joint>();
+        
+        if (joint.type == "slide" || joint.range.isSet())
         {
-            std::cout << t << "Scaling range of slide joint " 
-                      << elem->Attribute("name") << std::endl;
-            
-            Eigen::Vector2f range = strToVec2(elem->Attribute("range"));
-            range *= lengthScaling;
-            setAttr(elem, "range", range);
+            std::cout << t << "Scaling range of slide joint " << joint.name << std::endl;
+            joint.range = joint.range.get() * lengthScaling;
         }
     }
-    else if (isElement(elem, "position")
-             //&& isElement(elem.Parent()->ToElement(), "actuator")
-             && hasAttr(elem, "ctrlrange"))
+    else if (element.is<mjcf::ActuatorPosition>())
     {
-        std::cout << t << "Scaling ctrlrange of position actuator " 
-                  << elem->Attribute("name") << std::endl;
-        
-        Eigen::Vector2f ctrlrange = strToVec2(elem->Attribute("ctrlrange"));
-        ctrlrange *= lengthScaling;
-        setAttr(elem, "ctrlrange", ctrlrange);
-    }
-    else if (hasAttr(elem, "pos"))
-    {
-        std::cout << t << "Scaling pos of " << elem->Value() << " ";
-        if (hasAttr(elem, "name"))
+        mjcf::ActuatorPosition act = element.as<mjcf::ActuatorPosition>();
+        if (act.ctrlrange.isSet())
         {
-            std::cout << "'" << elem->Attribute("name") << "'";
+            std::cout << t << "Scaling ctrlrange of position actuator " << act.name << std::endl;
+            act.ctrlrange = act.ctrlrange.get() * lengthScaling;
+        }
+    }
+    else if (element.isAttributeSet("pos"))
+    {
+        std::cout << t << "Scaling pos of " << element.actualTag() << " ";
+        if (element.isAttributeSet("name"))
+        {
+            std::cout << "'" << element.getAttribute("name") << "'";
         }
         else
         {
@@ -448,50 +558,16 @@ void MujocoIO::scaleLengths(XMLElement* elem)
         }
         std::cout << std::endl;
         
-        Eigen::Vector3f pos = strToVec(elem->Attribute("pos"));
+        Eigen::Vector3f pos = element.getAttribute<Eigen::Vector3f>("pos");
         pos *= lengthScaling;
-        setAttr(elem, "pos", pos);
+        element.setAttribute("pos", pos);
     }
     
-    
-    for (XMLElement* child = elem->FirstChildElement();
-         child;
-         child = child->NextSiblingElement())
+    for (mjcf::AnyElement child = element.firstChild<mjcf::AnyElement>();
+         child; child = child.nextSiblingElement<mjcf::AnyElement>())
     {
         scaleLengths(child);
     }
-}
-
-
-struct ListElementsVisitor : public tinyxml2::XMLVisitor
-{
-    
-    ListElementsVisitor(const std::string& elementName) : elementName(elementName) {}
-    ~ListElementsVisitor() override = default;
-
-    // XMLVisitor interface
-    bool VisitEnter(const tinyxml2::XMLElement&, const tinyxml2::XMLAttribute*) override;
-    
-    const std::vector<const tinyxml2::XMLElement*>& getFoundElements() const;
-    
-    std::string elementName;
-    std::vector<const tinyxml2::XMLElement*> foundElements;
-};
-
-bool ListElementsVisitor::VisitEnter(const tinyxml2::XMLElement& elem, const tinyxml2::XMLAttribute*)
-{
-    if (isElement(elem, elementName))
-    {
-        foundElements.push_back(&elem);
-    }
-    return true;
-}
-
-std::vector<const mjcf::XMLElement*> MujocoIO::getAllElements(const std::string& elemName)
-{
-    ListElementsVisitor visitor(elemName);
-    document->worldbody()->Accept(&visitor);
-    return visitor.foundElements;
 }
 
 void MujocoIO::setLengthScaling(float value)
@@ -509,3 +585,6 @@ void MujocoIO::setWithMocapBody(bool enabled)
     withMocapBody = enabled;
 }
 
+
+
+}

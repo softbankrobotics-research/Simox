@@ -3,16 +3,22 @@
 #include <boost/filesystem.hpp>
 
 #include <VirtualRobot/Robot.h>
+#include <VirtualRobot/MJCF/Document.h>
 
-#include "MjcfDocument.h"
 #include "MasslessBodySanitizer.h"
-#include "utils.h"
 
 
 namespace VirtualRobot
 {
-namespace mjcf
+namespace mujoco
 {
+
+    enum class ActuatorType
+    {
+        MOTOR, POSITION, VELOCITY
+    };
+    ActuatorType toActuatorType(const std::string& string);
+    
 
     class MujocoIO
     {
@@ -60,7 +66,7 @@ namespace mjcf
         /// Make the compiler section.
         void makeCompiler();
         /// Add a defaults group for the robot.
-        void makeDefaultsGroup();
+        void makeDefaultsClass();
         /// Add a skybox texture asset.
         void addSkybox();
         
@@ -69,9 +75,17 @@ namespace mjcf
         
         /// Construct the body structure corresponding to the robot nodes.
         void makeNodeBodies();
-        /// Add a body element for a robot node. If its parent does not exist, 
-        /// create the parent body first.
-        mjcf::XMLElement* addNodeBody(RobotNodePtr node);
+        
+        /// Add a body element for a robot node.
+        /// If its parent does not exist, create the parent body first.
+        mjcf::Body addNodeBody(RobotNodePtr node);
+        
+        /// Add a body for the given node as child of parent and return it.
+        mjcf::Body addNodeBody(mjcf::Body parent, RobotNodePtr node);
+        /// Add a joint for the given node in body and return it.
+        mjcf::Joint addNodeJoint(mjcf::Body body, RobotNodePtr node);
+        /// Add an inertial for the given node in body and return it.
+        mjcf::Inertial addNodeInertial(mjcf::Body body, RobotNodePtr node);
         
         /// Convert meshes and add mesh assets for robot nodes with visualization.
         void addNodeBodyMeshes();
@@ -83,10 +97,8 @@ namespace mjcf
         void addActuators();
         
         /// Scale all lengths by lengthScaling.
-        void scaleLengths(XMLElement* elem);
+        void scaleLengths(mjcf::AnyElement elem);
         
-        std::vector<const mjcf::XMLElement*> getAllElements(const std::string& elemName);
-
         
         // Paremeters
         
@@ -116,21 +128,22 @@ namespace mjcf
         // Output
         
         /// The built MJCF document.
-        DocumentPtr document = nullptr;
+        mjcf::DocumentPtr document = nullptr;
+        mjcf::Body robotRoot;
 
         
         // Processing
         
         /// Sanitizes massless bodies.
-        mjcf::MasslessBodySanitizer masslessBodySanitizer {document, robot};
+        mujoco::MasslessBodySanitizer masslessBodySanitizer { robot };
         
         /// Map of robot node names to XML elements.
-        std::map<std::string, mjcf::XMLElement*> nodeBodies;
-        
+        std::map<std::string, mjcf::Body> nodeBodies;
         
         const std::string t = "| ";
         
     };
+    
     
 }
 }

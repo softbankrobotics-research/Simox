@@ -1516,8 +1516,8 @@ namespace VirtualRobot
     void RobotIO::saveMJCF(RobotPtr robot, const std::string& filename, 
                            const std::string& basePath, const std::string& meshDir)
     {
-        mjcf::MujocoIO mujocoIO(robot);
-        mujocoIO.setActuatorType(mjcf::ActuatorType::MOTOR);
+        mujoco::MujocoIO mujocoIO(robot);
+        mujocoIO.setActuatorType(mujoco::ActuatorType::MOTOR);
         mujocoIO.saveMJCF(filename, basePath, meshDir);
     }
 
