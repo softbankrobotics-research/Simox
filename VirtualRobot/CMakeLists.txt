@@ -309,26 +309,26 @@ SET(SOURCES
     
     MJCF/Document.cpp
     MJCF/elements.cpp
-    MJCF/elements/actuator.cpp
-    MJCF/elements/asset.cpp
-    MJCF/elements/body.cpp
-    MJCF/elements/contact.cpp
-    MJCF/elements/custom.cpp
-    MJCF/elements/default.cpp
-    MJCF/elements/equality.cpp
-    MJCF/elements/keyframe.cpp
-    MJCF/elements/option.cpp
-    MJCF/elements/sensor.cpp
-    MJCF/elements/size.cpp
-    MJCF/elements/statistic.cpp
-    MJCF/elements/tendon.cpp
-    MJCF/elements/visual.cpp
     MJCF/elements/core/AnyElement.cpp
     MJCF/elements/core/Attribute.cpp
     MJCF/elements/core/Element.cpp
     MJCF/elements/core/exceptions.cpp
     MJCF/elements/core/mjcf_utils.cpp
     MJCF/elements/core/Visitor.cpp
+    MJCF/elements/types/actuator.cpp
+    MJCF/elements/types/asset.cpp
+    MJCF/elements/types/body.cpp
+    MJCF/elements/types/contact.cpp
+    MJCF/elements/types/custom.cpp
+    MJCF/elements/types/default.cpp
+    MJCF/elements/types/equality.cpp
+    MJCF/elements/types/keyframe.cpp
+    MJCF/elements/types/option.cpp
+    MJCF/elements/types/sensor.cpp
+    MJCF/elements/types/size.cpp
+    MJCF/elements/types/statistic.cpp
+    MJCF/elements/types/tendon.cpp
+    MJCF/elements/types/visual.cpp
     
     Nodes/CameraSensor.cpp
     Nodes/CameraSensorFactory.cpp
@@ -515,20 +515,6 @@ SET(INCLUDES
     
     MJCF/Document.h
     MJCF/elements.h
-    MJCF/elements/actuator.h
-    MJCF/elements/asset.h
-    MJCF/elements/body.h
-    MJCF/elements/contact.h
-    MJCF/elements/custom.h
-    MJCF/elements/default.h
-    MJCF/elements/equality.h
-    MJCF/elements/keyframe.h
-    MJCF/elements/option.h
-    MJCF/elements/sensor.h
-    MJCF/elements/size.h
-    MJCF/elements/statistic.h
-    MJCF/elements/tendon.h
-    MJCF/elements/visual.h
     MJCF/elements/has_member.hpp
     MJCF/elements/core/AnyElement.h
     MJCF/elements/core/Attribute.h
@@ -536,6 +522,20 @@ SET(INCLUDES
     MJCF/elements/core/exceptions.h
     MJCF/elements/core/mjcf_utils.h
     MJCF/elements/core/Visitor.h
+    MJCF/elements/types/actuator.h
+    MJCF/elements/types/asset.h
+    MJCF/elements/types/body.h
+    MJCF/elements/types/contact.h
+    MJCF/elements/types/custom.h
+    MJCF/elements/types/default.h
+    MJCF/elements/types/equality.h
+    MJCF/elements/types/keyframe.h
+    MJCF/elements/types/option.h
+    MJCF/elements/types/sensor.h
+    MJCF/elements/types/size.h
+    MJCF/elements/types/statistic.h
+    MJCF/elements/types/tendon.h
+    MJCF/elements/types/visual.h
     
     Nodes/CameraSensor.h
     Nodes/CameraSensorFactory.h

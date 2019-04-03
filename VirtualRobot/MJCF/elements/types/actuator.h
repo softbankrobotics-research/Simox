@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/Attribute.h"
+#include "../core/Attribute.h"
 
 
 namespace mjcf

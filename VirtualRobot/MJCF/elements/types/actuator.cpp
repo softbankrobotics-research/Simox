@@ -1,6 +1,6 @@
 #include "actuator.h"
 
-#include "../Document.h"
+#include "../../Document.h"
 
 
 using namespace mjcf;
