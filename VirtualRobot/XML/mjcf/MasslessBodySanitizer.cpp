@@ -68,7 +68,7 @@ void MasslessBodySanitizer::sanitizeRecursion(mjcf::Body body)
 }
 
 template <class ChildT>
-static void updatePos(ChildT child, const Eigen::Matrix3f& accChildPose)
+static void updatePos(ChildT child, const Eigen::Matrix4f& accChildPose)
 {
     child.pos = math::Helpers::TransformPosition(accChildPose, child.pos);
 }
