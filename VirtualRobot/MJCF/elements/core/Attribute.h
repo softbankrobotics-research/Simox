@@ -92,6 +92,22 @@ namespace mjcf
             return *this;
         }
         
+        /// Copy assignment operator for writing an attribute value.
+        template <class OtherDerived, class OtherAttrT>
+        Attribute& operator=(const Attribute<OtherDerived, OtherAttrT>& attribute)
+        {
+            this->set(attribute.get());
+            return *this;
+        }
+        
+        /// Copy assignment operator for writing an attribute value.
+        template <class OtherDerived, class OtherAttrT>
+        Attribute& operator=(Attribute<OtherDerived, OtherAttrT>&& attribute)
+        {
+            this->set(attribute.get());
+            return *this;
+        }
+        
         /// Indicate whether the attribute is required (implies no default).
         virtual bool isRequired() const = 0;
         /// Indicate whether the attribute is optional or has a default.
