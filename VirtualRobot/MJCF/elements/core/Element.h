@@ -2,6 +2,7 @@
 
 #include <VirtualRobot/Util/xml/tinyxml2.h>
 
+#include "const_aware_ptr.hpp"
 #include "exceptions.h"
 #include "mjcf_utils.h"
 #include "Visitor.h"
@@ -29,7 +30,7 @@ namespace mjcf
         // CONSTRUCTORS
         
         /// Empty constructor.
-        Element() : Element(nullptr, nullptr) {}
+        Element() {}
         
         /**
          * @brief Construct and element with given document and underlying (tinyxml2) element.
@@ -37,6 +38,19 @@ namespace mjcf
          */
         Element(Document* document, tinyxml2::XMLElement* element);
         
+    protected:
+        
+        /**
+         * Only allow inheriting classes to construct with a const element pointer,
+         * since const-ness is effectively cast away on construction, and offering
+         * it publicly would create a false sense of security at this point.
+         */
+        Element(Document* document, const tinyxml2::XMLElement* element);
+        
+        
+    public:
+        
+        // TYPE CHECKING
         
         /// Indicate whether this is an element of the given type.
         template <class OtherT>
@@ -128,14 +142,14 @@ namespace mjcf
         
         /// Insert an element at the front.
         template <class OtherDerived>
-        void insertFirstChild(const Element<OtherDerived>& element);
+        void insertFirstChild(Element<OtherDerived>& element);
         /// Insert an element at the end.
         template <class OtherDerived>
-        void insertEndChild(const Element<OtherDerived>& element);
+        void insertEndChild(Element<OtherDerived>& element);
 
         /// Delete given child from this.
         template <class OtherDerived>
-        void deleteChild(const Element<OtherDerived>& element);
+        void deleteChild(Element<OtherDerived>& element);
         
         
         /// Insert a comment as child of *this.
@@ -169,7 +183,7 @@ namespace mjcf
         // OPERATORS
         
         /// Indicate whether this contains a valid element.
-        operator bool() const { return _element != nullptr; }
+        operator bool() const { return bool(_element); }
         
         template <typename Derived>
         friend std::ostream& operator<<(std::ostream& os, const Element<Derived>& element);
@@ -196,11 +210,11 @@ namespace mjcf
         std::function<bool(OtherDerived)> predicateWithAttrib(
                 const std::string& attrName, const std::string& attrValue) const;
         
-        Document* _document;
-        tinyxml2::XMLElement* _element;
+        Document* _document = nullptr;
+        detail::const_aware_ptr<tinyxml2::XMLElement> _element = nullptr;
         
     };
-
+    
     
     template <class D>
     Element<D>::Element(Document* document, tinyxml2::XMLElement* element) : 
@@ -208,6 +222,11 @@ namespace mjcf
     {
         assertElemValueEqualsTag();
     }
+    
+    template <class D>
+    Element<D>::Element(Document* document, const tinyxml2::XMLElement* element) :
+        Element(document, const_cast<tinyxml2::XMLElement*>(element))
+    {}
     
     template <class D>
     bool Element<D>::isAttributeSet(const std::string& attrName) const
@@ -286,7 +305,7 @@ namespace mjcf
     template <class OtherD>
     OtherD Element<D>::firstChild() const
     {
-        return OtherD(_document, /*may be null*/ _element->FirstChildElement(OtherD::tag.c_str()));
+        return Element<OtherD>(_document, /*may be null*/ _element->FirstChildElement(OtherD::tag.c_str()));
     }
     
     template <class D>
@@ -301,7 +320,7 @@ namespace mjcf
                 return child;
             }
         }
-        return OtherD(_document, nullptr);
+        return {};
     }
     
     template <class D>
@@ -317,7 +336,7 @@ namespace mjcf
     template <class OtherD>
     OtherD Element<D>::nextSiblingElement() const
     {
-        return OtherD(_document, _element->NextSiblingElement(OtherD::tag.c_str()));
+        return Element<OtherD>(_document, _element->NextSiblingElement(OtherD::tag.c_str()));
     }
     
     template <class D>
@@ -332,7 +351,7 @@ namespace mjcf
                 return sibling;
             }
         }
-        return OtherD(_document, nullptr);
+        return {};
     }
     
     template <class D>
@@ -380,21 +399,21 @@ namespace mjcf
     
     template <class D>
     template <class OtherD>
-    void Element<D>::insertFirstChild(const Element<OtherD>& element)
+    void Element<D>::insertFirstChild(Element<OtherD>& element)
     {
         _element->InsertFirstChild(element._element);
     }
     
     template <class D>
     template <class OtherD>
-    void Element<D>::insertEndChild(const Element<OtherD>& element)
+    void Element<D>::insertEndChild(Element<OtherD>& element)
     {
         _element->InsertEndChild(element._element);
     }
     
     template <class D>
     template <class OtherD>
-    void Element<D>::deleteChild(const Element<OtherD>& element)
+    void Element<D>::deleteChild(Element<OtherD>& element)
     {
         _element->DeleteChild(element._element);
     }
@@ -448,7 +467,7 @@ namespace mjcf
     
 
 #define mjcf_ElementDerivedConstructorsBase(Base, Derived)  \
-    Derived() : Base<Derived>(nullptr, nullptr) {}                   \
+    Derived() : Base<Derived>() {}                   \
     Derived(Document* document, tinyxml2::XMLElement* elem) : Base<Derived>(document, elem) {} \
     Derived(const Base<Derived>& base) : Base<Derived>(base) {}      \
     Derived(const Derived& other) : Base<Derived>(other) {} \
