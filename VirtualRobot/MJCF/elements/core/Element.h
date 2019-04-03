@@ -136,7 +136,7 @@ namespace mjcf
         // OPERATORS
         
         /// Indicate whether this contains a valid element.
-        operator bool() const { return elem != nullptr; }
+        operator bool() const { return _element != nullptr; }
         
         template <typename Derived>
         friend std::ostream& operator<<(std::ostream& os, const Element<Derived>& element);
@@ -147,8 +147,8 @@ namespace mjcf
         Document& document() { return *_document; }
         const Document& document() const  { return *_document; }
         
-        tinyxml2::XMLElement* element() { return elem; }
-        const tinyxml2::XMLElement* element() const { return elem; }
+        tinyxml2::XMLElement* element() { return _element; }
+        const tinyxml2::XMLElement* element() const { return _element; }
         
         
     private:
@@ -164,13 +164,14 @@ namespace mjcf
                 const std::string& attrName, const std::string& attrValue) const;
         
         Document* _document;
-        tinyxml2::XMLElement* elem;
+        tinyxml2::XMLElement* _element;
         
     };
+
     
     template <class D>
-    Element<D>::Element(Document* document, tinyxml2::XMLElement* elem) : 
-        _document(document), elem(elem)
+    Element<D>::Element(Document* document, tinyxml2::XMLElement* element) : 
+        _document(document), _element(element)
     {
         assertElemValueEqualsTag();
     }
@@ -178,14 +179,14 @@ namespace mjcf
     template <class D>
     bool Element<D>::isAttributeSet(const std::string& attrName) const
     {
-        return elem->Attribute(attrName.c_str()) != nullptr;
+        return _element->Attribute(attrName.c_str()) != nullptr;
     }
     
     template <class D>
     template <typename AttrT>    
     AttrT Element<D>::getAttribute(const std::string& name) const
     {
-        const char* attr = elem->Attribute(name.c_str());
+        const char* attr = _element->Attribute(name.c_str());
         if (!attr)
         {
             throw AttribNotSetError(name);
@@ -207,14 +208,14 @@ namespace mjcf
     void Element<D>::setAttribute(const std::string& name, const AttrT& value)
     {
         std::string attrStr = toAttr(value);
-        elem->SetAttribute(name.c_str(), attrStr.c_str());
+        _element->SetAttribute(name.c_str(), attrStr.c_str());
     }
 
     template <class D>
     std::vector<std::string> Element<D>::getSetAttributeNames() const
     {
         std::vector<std::string> names;
-        for (auto* attr = elem->FirstAttribute(); attr; attr = attr->Next())
+        for (auto* attr = _element->FirstAttribute(); attr; attr = attr->Next())
         {
             names.emplace_back(attr->Name());
         }
@@ -224,7 +225,7 @@ namespace mjcf
     template <class D>
     bool Element<D>::hasChildren() const
     {
-        return !elem->NoChildren();
+        return !_element->NoChildren();
     }
     
     template <class D>
@@ -252,7 +253,7 @@ namespace mjcf
     template <class OtherD>
     OtherD Element<D>::firstChild() const
     {
-        return OtherD(_document, /*may be null*/ elem->FirstChildElement(OtherD::tag.c_str()));
+        return OtherD(_document, /*may be null*/ _element->FirstChildElement(OtherD::tag.c_str()));
     }
     
     template <class D>
@@ -283,7 +284,7 @@ namespace mjcf
     template <class OtherD>
     OtherD Element<D>::nextSiblingElement() const
     {
-        return OtherD(_document, elem->NextSiblingElement(OtherD::tag.c_str()));
+        return OtherD(_document, _element->NextSiblingElement(OtherD::tag.c_str()));
     }
     
     template <class D>
@@ -332,35 +333,35 @@ namespace mjcf
     template <class OtherD>
     void Element<D>::insertFirstChild(const Element<OtherD>& element)
     {
-        elem->InsertFirstChild(element.elem);
+        _element->InsertFirstChild(element._element);
     }
     
     template <class D>
     template <class OtherD>
     void Element<D>::insertEndChild(const Element<OtherD>& element)
     {
-        elem->InsertEndChild(element.elem);
+        _element->InsertEndChild(element._element);
     }
     
     template <class D>
     template <class OtherD>
     void Element<D>::deleteChild(const Element<OtherD>& element)
     {
-        elem->DeleteChild(element.elem);
+        _element->DeleteChild(element._element);
     }
     
     template <class D>
     auto Element<D>::deepClone() const -> Derived
     {
-        return { _document, elem->DeepClone(nullptr)->ToElement() };
+        return { _document, _element->DeepClone(nullptr)->ToElement() };
     }
     
     template <class D>
     template <class OtherD>
     OtherD Element<D>::transform()
     {
-        elem->SetValue(OtherD::tag.c_str());
-        return { _document, elem };
+        _element->SetValue(OtherD::tag.c_str());
+        return { _document, _element };
     }
     
     template <class D>
@@ -387,7 +388,7 @@ namespace mjcf
     template <class D>
     std::ostream& operator<<(std::ostream& os, const Element<D>& element)
     {
-        os << "MJCF Element '" << D::tag << "' (-> " << element.elem << ")";
+        os << "MJCF Element '" << D::tag << "' (-> " << element._element << ")";
         return os;
     }
     
@@ -409,6 +410,6 @@ namespace mjcf
     
 #define mjcf_ElementDerivedConstructors(Derived)            \
     mjcf_ElementDerivedConstructorsBase(Element, Derived)
-
+    
 
 }
