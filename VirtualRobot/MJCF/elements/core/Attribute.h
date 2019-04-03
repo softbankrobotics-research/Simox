@@ -319,7 +319,7 @@ Eigen::Vector5f mjcf_solimpDefault();
     mjcf_AttributeDef(Derived, Eigen::Vector2f, solref, Eigen::Vector2f(0.02f, 1.f))
 // solimp
 #define mjcf_SolimpAttribute(Derived) \
-    mjcf_AttributeDef(Derived, Eigen::Vector5f, solimp, mjcf_solimpDefault())
+    mjcf_AttributeDef(Derived, Eigen::Vector5f, solimp, ::mjcf::mjcf_solimpDefault())
     
     
 } 
