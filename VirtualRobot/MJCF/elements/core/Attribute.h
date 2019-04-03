@@ -203,12 +203,12 @@ namespace mjcf
 // Macro for a requried or optional Attribute in an Element<Derived> of type AttrT
 // with potentially different memberName and attrName
 #define mjcf_AttributeFullNoDef(Derived, AttrT, memberName, attrName, required) \
-    AttributeNoDef<Derived, AttrT> memberName {*this, attrName, required}
+    ::mjcf::AttributeNoDef<Derived, AttrT> memberName {*this, attrName, required}
     
 // Macro for an optional Attribute in an Element<Derived> of type AttrT
 // with potentially different memberName and attrName.
 #define mjcf_AttributeFullDef(Derived, AttrT, memberName, attrName, defaultValue) \
-    AttributeDef<Derived, AttrT> memberName {*this, attrName, defaultValue}
+    ::mjcf::AttributeDef<Derived, AttrT> memberName {*this, attrName, defaultValue}
 
     
 // A requried Attribute in an Element<Derived> of type AttrT.

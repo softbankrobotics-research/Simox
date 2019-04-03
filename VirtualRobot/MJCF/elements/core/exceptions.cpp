@@ -20,7 +20,7 @@ ParseAttributeError::ParseAttributeError(
         const std::string& source, 
         const std::type_info& targetType, 
         const std::string& reason) :
-    MjcfError("Could not parse attribute string '" + source + " to " + targetType.name() + ".\n"
+    MjcfError("Could not parse attribute string '" + source + "' to " + targetType.name() + ".\n"
               "Reason: " + reason)
 {}
 

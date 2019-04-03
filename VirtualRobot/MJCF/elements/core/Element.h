@@ -490,7 +490,7 @@ namespace mjcf
 
 #define mjcf_ElementDerivedConstructorsBase(Base, Derived)  \
     Derived() : Base<Derived>() {}                   \
-    Derived(Document* document, tinyxml2::XMLElement* elem) : Base<Derived>(document, elem) {} \
+    Derived(Document* document, ::tinyxml2::XMLElement* elem) : Base<Derived>(document, elem) {} \
     Derived(const Base<Derived>& base) : Base<Derived>(base) {}      \
     Derived(const Derived& other) : Base<Derived>(other) {} \
     Derived(Derived&& other) : Base<Derived>(other) {}      \
