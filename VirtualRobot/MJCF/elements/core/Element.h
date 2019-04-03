@@ -1,6 +1,5 @@
 #pragma once
 
-#include <VirtualRobot.h>
 #include <VirtualRobot/Util/xml/tinyxml2.h>
 
 #include "exceptions.h"
@@ -28,14 +27,26 @@ namespace mjcf
 
         // CONSTRUCTORS
         
-        /// Constructor.
-        Element(Document* document, tinyxml2::XMLElement* elem);
+        /// Empty constructor.
+        Element() : Element(nullptr, nullptr) {}
+        
+        /**
+         * @brief Construct and element with given document and underlying (tinyxml2) element.
+         * @throws error::InvalidElementTag if `element`'s tag does not match `Derived::tag`.
+         */
+        Element(Document* document, tinyxml2::XMLElement* element);
         
         
         /// Indicate whether this is an element of the given type.
         template <class OtherT>
-        bool isElement() const { return std::is_same<Derived, typename OtherT::Derived>(); }
+        static bool isSame() { return std::is_same<Derived, typename OtherT::Derived>(); }
 
+        
+        /// Indicate whether the underlying element's tag is OtherT's tag.
+        /// This should be true at virtually all times.
+        template <class OtherT>
+        bool isElement() const { return OtherT::tag.empty() || std::string(_element->Value()) == OtherT::tag; }
+        
         
         // ATTRIBUTES
         
@@ -119,6 +130,7 @@ namespace mjcf
         
         // CLONING AND TRANSFORMATION
         
+        /// Create a deep clone of this element.
         Derived deepClone() const;
         
         /**
@@ -367,10 +379,9 @@ namespace mjcf
     template <class D>
     void Element<D>::assertElemValueEqualsTag()
     {
-        if (elem && !Derived::Tag.empty())
+        if (_element && !isElement<D>())
         {
-            VR_ASSERT_MESSAGE(elem->Value() == Derived::tag, 
-                              "Element tag '" + std::string(elem->Value()) + "' must be '" + Derived::tag + "'");
+            throw error::InvalidElementTag(Derived::tag, _element->Value());
         }
     }
     

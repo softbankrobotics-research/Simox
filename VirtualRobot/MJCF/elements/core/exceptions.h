@@ -37,6 +37,16 @@ namespace mjcf
                             const std::string& reason);
     };
     
+namespace error
+{
+
+    class InvalidElementTag : public MjcfError
+    {
+    public:
+        InvalidElementTag(const std::string& expected, const std::string& actual);
+    };
+    
+}
 
 
 }

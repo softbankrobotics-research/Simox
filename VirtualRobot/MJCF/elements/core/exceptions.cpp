@@ -24,5 +24,14 @@ ParseAttributeError::ParseAttributeError(
               "Reason: " + reason)
 {}
 
+namespace error
+{
+
+InvalidElementTag::InvalidElementTag(const std::string& expected, const std::string& actual) :
+    MjcfError ("Expected tag '" + expected + "', but received '" + actual + "'.")
+{}
+
+}
+
 
 }
