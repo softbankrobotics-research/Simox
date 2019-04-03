@@ -18,12 +18,14 @@ namespace mjcf
         public:
             Adapter(Visitor& owner);
             
-            virtual bool visitEnter(const tinyxml2::XMLElement& element);
-            virtual bool visitExit(const tinyxml2::XMLElement& element);
+            virtual bool VisitEnter(const tinyxml2::XMLElement& element,
+                                    const tinyxml2::XMLAttribute*) override;
+            virtual bool VisitExit(const tinyxml2::XMLElement& element) override;
             
         private:
             Visitor& owner;
         };
+        
         friend class Adapter;
         
         
@@ -39,10 +41,12 @@ namespace mjcf
         Adapter* adapter();
         const Adapter* adapter() const;
 
+        
+    private:
+        
         const AnyElement cast(const tinyxml2::XMLElement& element);
-        
+
         Document& document;
-        
         Adapter _adapter { *this };
         
     };

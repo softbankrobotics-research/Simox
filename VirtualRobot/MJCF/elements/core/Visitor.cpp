@@ -9,12 +9,12 @@ Visitor::Adapter::Adapter(Visitor& owner) :
     owner(owner)
 {}
 
-bool Visitor::Adapter::visitEnter(const tinyxml2::XMLElement& element)
+bool Visitor::Adapter::VisitEnter(const tinyxml2::XMLElement& element, const tinyxml2::XMLAttribute*)
 {
     return owner.visitEnter(owner.cast(element));
 }
 
-bool Visitor::Adapter::visitExit(const tinyxml2::XMLElement& element)
+bool Visitor::Adapter::VisitExit(const tinyxml2::XMLElement& element)
 {
     return owner.visitExit(owner.cast(element));
 }
