@@ -14,7 +14,7 @@ namespace mjcf { namespace detail
       operator T*() { return _p; }
       operator const T*() const { return _p; }
       
-      operator bool() { return _p; }
+      operator bool() const { return _p; }
       
       T* operator->() { return _p; }
       const T* operator->() const { return _p; }

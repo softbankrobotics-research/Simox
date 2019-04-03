@@ -21,8 +21,8 @@ namespace mjcf
         
         using Derived = _Derived;
         
-        template <class OtherDerived>
-        friend class Element;
+        // Make all Element<*> friends of each other.
+        template <class OtherDerived> friend class Element;
         
         
     public:
@@ -41,11 +41,11 @@ namespace mjcf
     protected:
         
         /**
-         * Only allow inheriting classes to construct with a const element pointer,
+         * Only allow inheriting classes to construct with a const pointers,
          * since const-ness is effectively cast away on construction, and offering
          * it publicly would create a false sense of security at this point.
          */
-        Element(Document* document, const tinyxml2::XMLElement* element);
+        Element(const Document* document, const tinyxml2::XMLElement* element);
         
         
     public:
@@ -183,6 +183,18 @@ namespace mjcf
         OtherDerived transform();
         
         
+        /**
+         * @brief Reinterpret this element as the given element type.
+         * This is only safe from and to `AnyElement`.
+         */
+        // (Ideally, this functionality would only be accessible from AnyElement.
+        //  However, giving AnyElement access to other types' document() and element() seems not
+        //  to work without making document() and element() public (friend declaration does not
+        //  seem to work). This seems to only effect the const methods.
+        template <class OtherDerived>
+        OtherDerived reinterpret() const { return Element<OtherDerived>(_document, _element); }
+        
+        
         // OPERATORS
         
         /// Indicate whether this contains a valid element.
@@ -199,7 +211,7 @@ namespace mjcf
         
         tinyxml2::XMLElement* element() { return _element; }
         const tinyxml2::XMLElement* element() const { return _element; }
-        
+
         
     private:
 
@@ -227,8 +239,8 @@ namespace mjcf
     }
     
     template <class D>
-    Element<D>::Element(Document* document, const tinyxml2::XMLElement* element) :
-        Element(document, const_cast<tinyxml2::XMLElement*>(element))
+    Element<D>::Element(const Document* document, const tinyxml2::XMLElement* element) :
+        Element(const_cast<Document*>(document), const_cast<tinyxml2::XMLElement*>(element))
     {}
     
     template <class D>
@@ -376,7 +388,7 @@ namespace mjcf
     template <class ParentDerived>
     const ParentDerived Element<D>::parent() const
     {
-        return { _document, _element->Parent()->ToElement() };
+        return Element<ParentDerived>(_document, _element->Parent()->ToElement());
     }
     
     

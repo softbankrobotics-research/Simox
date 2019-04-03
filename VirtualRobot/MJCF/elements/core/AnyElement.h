@@ -16,6 +16,12 @@ namespace mjcf
         static const std::string tag;
         mjcf_ElementDerivedConstructors(AnyElement)
         
+        /// Construct from any other element type.
+        template <class OtherDerived>
+        AnyElement(const Element<OtherDerived>& other) : 
+            AnyElement(other.template reinterpret<AnyElement>())
+        {}
+        
         
         /// Indicate whether *this is an element of type OtherDerived.
         template <typename OtherDerived>
@@ -24,10 +30,14 @@ namespace mjcf
         /// Get *this as element of type OtherDerived.
         /// Should only be called if `is()` is true.
         template <typename OtherDerived>
-        OtherDerived as() { return OtherDerived( document(), element() ); }
+        OtherDerived as() { return { document(), element() }; }
         
         template <typename OtherDerived>
-        const OtherDerived as() const { return OtherDerived( document(), element() ); }
+        const OtherDerived as() const { return reinterpret<OtherDerived>(); }
+        
+        
+        /// Return the actual tag.
+        std::string actualTag() const { return element()->Value(); }
         
     };
 
