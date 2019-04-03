@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <memory>
 #include <set>
 
@@ -42,6 +43,7 @@ namespace mjcf
         /// Make a deep copy of source to this.
         void deepCopyFrom(const Document& source);
         
+        void print(std::ostream& os = std::cout) const;
 
         std::string getModelName() const;
         /// Set the name of the Mujoco model.
@@ -84,11 +86,13 @@ namespace mjcf
 
         // METHODS
 
-        /// Add a new element to a parent.
-        /// @param className If not empty, set the class attribute of the new element.
-        /// @param first If true, will be inserted as first, otherweise at end (default)
+        /**
+         * @brief Add a new element to a parent.
+         * @param className If not empty, set the class attribute of the new element.
+         * @param first If true, will be inserted as first, otherweise at end (default)
+         */
         template <class ElementD, class ParentD>
-        ElementD createElement(Element<ParentD> parent, const std::string& className = "", bool first = false);
+        ElementD createElement(Element<ParentD> parent, const std::string& className = "", bool front = false);
         
         /// Return the first child element of parent with the given element name.
         /// If it does not exist, create it.
@@ -99,6 +103,9 @@ namespace mjcf
         template <class SectionD>
         SectionD section();
 
+        /// Prints the document to os.
+        friend std::ostream& operator<<(std::ostream& os, const Document& rhs);
+        
         
     private:
         
@@ -134,7 +141,7 @@ namespace mjcf
     define_has_member(class_);
     
     template <class ElementD, class ParentD>
-    ElementD Document::createElement(Element<ParentD> parent, const std::string& className, bool first)
+    ElementD Document::createElement(Element<ParentD> parent, const std::string& className, bool front)
     {
         ElementD element(this, doc.NewElement(ElementD::Derived::tag.c_str()));
 
@@ -163,7 +170,7 @@ namespace mjcf
             element.setAttribute("class", newElementClass);
         }
 
-        if (first)
+        if (front)
         {
             parent.insertFirstChild(element);
         }
@@ -191,7 +198,6 @@ namespace mjcf
         
         return element;
     }
-    
     
     template<class SectionT>
     SectionT Document::section()

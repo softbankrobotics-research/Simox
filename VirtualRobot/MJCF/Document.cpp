@@ -1,9 +1,10 @@
 #include "Document.h"
 
-#include "elements/exceptions.h"
+#include "elements/core/exceptions.h"
 
 
-using namespace mjcf;
+namespace mjcf
+{
 
 
 Document::Document()
@@ -35,6 +36,13 @@ void Document::saveFile(const std::string& fileName)
 void Document::deepCopyFrom(const Document& source)
 {
     source.doc.DeepCopy(&this->doc);
+}
+
+void Document::print(std::ostream& os) const
+{
+    tinyxml2::XMLPrinter printer;
+    doc.Print(&printer);
+    os << printer.CStr();
 }
 
 
@@ -94,3 +102,10 @@ void Document::setDummyMass(float value)
     dummyMass = value;
 }
 
+std::ostream& operator<<(std::ostream& os, const Document& rhs)
+{
+    rhs.print(os);
+    return os;
+}
+
+}
