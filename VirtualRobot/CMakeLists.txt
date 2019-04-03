@@ -308,7 +308,6 @@ SET(SOURCES
     math/statistics/Histogram.cpp
     
     MJCF/Document.cpp
-    MJCF/elements.cpp
     MJCF/elements/core/AnyElement.cpp
     MJCF/elements/core/Attribute.cpp
     MJCF/elements/core/Element.cpp
@@ -323,6 +322,7 @@ SET(SOURCES
     MJCF/elements/types/default.cpp
     MJCF/elements/types/equality.cpp
     MJCF/elements/types/keyframe.cpp
+    MJCF/elements/types/meta.cpp
     MJCF/elements/types/option.cpp
     MJCF/elements/types/sensor.cpp
     MJCF/elements/types/size.cpp
@@ -530,6 +530,7 @@ SET(INCLUDES
     MJCF/elements/types/default.h
     MJCF/elements/types/equality.h
     MJCF/elements/types/keyframe.h
+    MJCF/elements/types/meta.h
     MJCF/elements/types/option.h
     MJCF/elements/types/sensor.h
     MJCF/elements/types/size.h

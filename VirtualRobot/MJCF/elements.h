@@ -9,39 +9,13 @@
 #include "elements/types/default.h"
 #include "elements/types/equality.h"
 #include "elements/types/keyframe.h"
+#include "elements/types/meta.h"
 #include "elements/types/option.h"
 #include "elements/types/sensor.h"
 #include "elements/types/size.h"
 #include "elements/types/statistic.h"
 #include "elements/types/tendon.h"
 #include "elements/types/visual.h"
-
-
-namespace mjcf
-{
-
-
-/// @see http://www.mujoco.org/book/XMLreference.html#mujoco
-struct MujocoRoot : public Element<MujocoRoot>
-{
-    static const std::string tag;
-    mjcf_ElementDerivedConstructors(MujocoRoot)
-    
-    mjcf_StringAttributeDef(MujocoRoot, model, "MuJoCo Model");
-};
-
-
-/// @see http://www.mujoco.org/book/XMLreference.html#include
-struct Include : public Element<Include>
-{
-    static const std::string tag;
-    mjcf_ElementDerivedConstructors(Include)
-    
-    mjcf_StringAttributeReq(Include, file);
-};
-
-
-}
 
 
 #undef mjcf_AttributeFullNoDef
