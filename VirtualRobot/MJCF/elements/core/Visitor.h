@@ -9,24 +9,24 @@ namespace mjcf
     class Document;
     class Visitor;
 
-namespace detail
-{
-
-    class VisitorAdapter : public tinyxml2::XMLVisitor
-    {
-    public:
-        VisitorAdapter(Visitor& owner);
-        virtual bool visitEnter(const tinyxml2::XMLElement& element);
-        virtual bool visitExit(const tinyxml2::XMLElement& element);
-        
-    private:
-        Visitor& owner;
-    };
-
-}
-
+    
     class Visitor
     {
+    public:
+        class Adapter : public tinyxml2::XMLVisitor
+        {
+        public:
+            Adapter(Visitor& owner);
+            
+            virtual bool visitEnter(const tinyxml2::XMLElement& element);
+            virtual bool visitExit(const tinyxml2::XMLElement& element);
+            
+        private:
+            Visitor& owner;
+        };
+        friend class Adapter;
+        
+        
     public:
         
         Visitor(Document& document);
@@ -36,19 +36,14 @@ namespace detail
         virtual bool visitExit(const AnyElement&) { return true; }
         
         
-        detail::VisitorAdapter* adapter();
-        const detail::VisitorAdapter* adapter() const;
-        
-        
-    private:
-        
-        friend class detail::VisitorAdapter;
+        Adapter* adapter();
+        const Adapter* adapter() const;
+
         const AnyElement cast(const tinyxml2::XMLElement& element);
-        
         
         Document& document;
         
-        detail::VisitorAdapter _adapter { *this };
+        Adapter _adapter { *this };
         
     };
 

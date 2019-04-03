@@ -5,34 +5,29 @@
 namespace mjcf
 {
 
-namespace detail
-{
-
-VisitorAdapter::VisitorAdapter(Visitor& owner) : 
+Visitor::Adapter::Adapter(Visitor& owner) : 
     owner(owner)
 {}
 
-bool VisitorAdapter::visitEnter(const tinyxml2::XMLElement& element)
+bool Visitor::Adapter::visitEnter(const tinyxml2::XMLElement& element)
 {
     return owner.visitEnter(owner.cast(element));
 }
 
-bool VisitorAdapter::visitExit(const tinyxml2::XMLElement& element)
+bool Visitor::Adapter::visitExit(const tinyxml2::XMLElement& element)
 {
     return owner.visitExit(owner.cast(element));
-}
-
 }
 
 Visitor::Visitor(Document& document) : document(document)
 {}
 
-detail::VisitorAdapter* Visitor::adapter()
+Visitor::Adapter* Visitor::adapter()
 {
     return &_adapter;
 }
 
-const detail::VisitorAdapter* Visitor::adapter() const
+const Visitor::Adapter* Visitor::adapter() const
 {
     return &_adapter;
 }
