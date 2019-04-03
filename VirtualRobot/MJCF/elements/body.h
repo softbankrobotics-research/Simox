@@ -222,7 +222,7 @@ struct Worldbody : public Element<Worldbody>
     mjcf_ElementDerivedConstructors(Worldbody)
     
     /// Add a body element.
-    Body addBody(const std::string& name = "");
+    Body addBody(const std::string& name = "", const std::string& childClass = "");
     
     /// Add a mocap body with the given name to the worldbody.
     Body addMocapBody(const std::string& name, float geomSize);

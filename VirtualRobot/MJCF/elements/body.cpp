@@ -145,13 +145,17 @@ Body Worldbody::addMocapBody(const std::string& name, float geomSize)
     return mocap;
 }
 
-Body Worldbody::addBody(const std::string& name)
+Body Worldbody::addBody(const std::string& name, const std::string& childClass)
 {
     Body body = addChild<Body>();
 
     if (!name.empty())
     {
         body.name = name;
+    }
+    if (!childClass.empty())
+    {
+        body.childclass = childClass;
     }
 
     return body;
