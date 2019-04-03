@@ -140,6 +140,9 @@ namespace mjcf
         OtherDerived getOrCreateChild();
         
         
+        template <class OtherDerived>
+        void insertChild(Element<OtherDerived>& element, bool front = false);
+        
         /// Insert an element at the front.
         template <class OtherDerived>
         void insertFirstChild(Element<OtherDerived>& element);
@@ -399,6 +402,13 @@ namespace mjcf
     
     template <class D>
     template <class OtherD>
+    void Element<D>::insertChild(Element<OtherD>& element, bool front)
+    {
+        front ? insertFirstChild(element) : insertEndChild(element());
+    }
+    
+    template <class D>
+    template <class OtherD>
     void Element<D>::insertFirstChild(Element<OtherD>& element)
     {
         _element->InsertFirstChild(element._element);
@@ -478,7 +488,6 @@ namespace mjcf
     { Base<Derived>::operator=(other); return *this; }      \
     Derived& operator=(Derived&& other)                     \
     { Base<Derived>::operator=(other); return *this; }
-    
     
     
 #define mjcf_ElementDerivedConstructors(Derived)            \
