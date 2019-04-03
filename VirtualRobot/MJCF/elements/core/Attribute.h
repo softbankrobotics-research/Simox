@@ -101,6 +101,9 @@ namespace mjcf
         /// Indicate whether the attribute has a default (implies optional).
         virtual bool hasDefault() const = 0;
         
+        /// Indicate whether the attribute is set.
+        bool isSet() const { return this->owner().isAttributeSet(this->name); }
+        
         
     protected:
         
@@ -181,6 +184,7 @@ namespace mjcf
     private:
         
         AttrT defaultValue; ///< The default value.
+        
     };
     
 

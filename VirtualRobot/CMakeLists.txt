@@ -518,6 +518,7 @@ SET(INCLUDES
     MJCF/elements/has_member.hpp
     MJCF/elements/core/AnyElement.h
     MJCF/elements/core/Attribute.h
+    MJCF/elements/core/const_aware_ptr.hpp
     MJCF/elements/core/Element.h
     MJCF/elements/core/exceptions.h
     MJCF/elements/core/mjcf_utils.h
