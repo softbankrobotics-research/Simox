@@ -105,6 +105,15 @@ namespace mjcf
         OtherDerived nextSiblingElement(const std::string& attrName, const std::string& attrValue) const;
 
         
+        // PARENT
+        
+        /// Get the parent element.
+        template <class ParentDerived>
+        ParentDerived parent();
+        template <class ParentDerived>
+        const ParentDerived parent() const;
+        
+        
         // INSERTION & DELETION
 
         /// Add a new child of this with of given type.
@@ -320,6 +329,22 @@ namespace mjcf
     {
         return nextSiblingElement<OtherD>(predicateWithAttrib<OtherD>(attrName, attrValue));
     }
+    
+    
+    template <class D>
+    template <class ParentDerived>
+    ParentDerived Element<D>::parent()
+    {
+        return { _document, _element->Parent()->ToElement() };
+    }
+    
+    template <class D>
+    template <class ParentDerived>
+    const ParentDerived Element<D>::parent() const
+    {
+        return { _document, _element->Parent()->ToElement() };
+    }
+    
     
     template <class D>
     template <class OtherD>
