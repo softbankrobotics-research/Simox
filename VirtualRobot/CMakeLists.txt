@@ -329,6 +329,7 @@ SET(SOURCES
     MJCF/elements/types/statistic.cpp
     MJCF/elements/types/tendon.cpp
     MJCF/elements/types/visual.cpp
+    MJCF/visitors/Collector.cpp
     
     Nodes/CameraSensor.cpp
     Nodes/CameraSensorFactory.cpp
@@ -538,6 +539,8 @@ SET(INCLUDES
     MJCF/elements/types/statistic.h
     MJCF/elements/types/tendon.h
     MJCF/elements/types/visual.h
+    MJCF/visitors.h
+    MJCF/visitors/Collector.h
     
     Nodes/CameraSensor.h
     Nodes/CameraSensorFactory.h
