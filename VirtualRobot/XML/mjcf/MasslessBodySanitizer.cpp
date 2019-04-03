@@ -11,15 +11,13 @@ namespace VirtualRobot::mujoco
 
 using namespace mjcf;
 
-MasslessBodySanitizer::MasslessBodySanitizer(mjcf::Document& document, RobotPtr& robot) :
-    document(document), robot(robot)
+MasslessBodySanitizer::MasslessBodySanitizer(RobotPtr& robot) :
+    robot(robot)
 {}
 
-void MasslessBodySanitizer::sanitize()
+void MasslessBodySanitizer::sanitize(Worldbody worldbody)
 {
     // merge body leaf nodes with parent if they do not have a mass (inertial or geom)
-    
-    Worldbody worldbody  = document.worldbody();
     
     for (Body body = worldbody.firstChild<Body>();
          body; body = body.nextSiblingElement<Body>())

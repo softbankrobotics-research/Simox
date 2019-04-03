@@ -36,9 +36,9 @@ namespace mujoco
     {
     public:
         
-        MasslessBodySanitizer(mjcf::Document& document, RobotPtr& robot);
+        MasslessBodySanitizer(RobotPtr& robot);
         
-        void sanitize();
+        void sanitize(mjcf::Worldbody worldbody);
         
         const std::vector<MergedBodySet>& getMergedBodySets() const;
 
@@ -57,7 +57,6 @@ namespace mujoco
         const std::string t = "| ";
         
         
-        mjcf::Document& document;
         RobotPtr& robot;
         
         std::vector<MergedBodySet> mergedBodySets;
