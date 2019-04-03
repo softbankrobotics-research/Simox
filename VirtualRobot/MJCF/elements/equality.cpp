@@ -6,6 +6,7 @@
 using namespace mjcf;
 
 
+const std::string EqualityDefaults::tag = "equality";
 const std::string EqualityConnect::tag = "connect";
 const std::string EqualityWeld::tag = "weld";
 const std::string EqualityJoint::tag = "joint";

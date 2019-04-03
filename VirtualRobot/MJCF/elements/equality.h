@@ -13,6 +13,19 @@ namespace mjcf
     mjcf_StringAttributeReq(Derived, entityName ## 1);    \
     mjcf_StringAttributeOpt(Derived, entityName ## 2)
 
+/**
+ * @brief Element of a defaults class for equality constraints.
+ * Should only be used as a child of mjcf::DefaultsClass.
+ */
+struct EqualityDefaults : public Element<EqualityDefaults>
+{
+    static const std::string tag;
+    mjcf_ElementDerivedConstructors(EqualityDefaults)
+    
+    mjcf_BoolAttributeOpt(EqualityDefaults, active);
+    mjcf_SolrefAttribute(EqualityDefaults);
+    mjcf_SolimpAttribute(EqualityDefaults);
+};
 
 
 struct EqualityConnect : public Element<EqualityConnect>

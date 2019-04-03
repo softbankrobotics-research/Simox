@@ -14,6 +14,7 @@ struct DefaultClass : public Element<DefaultClass>
     
     mjcf_ClassAttribute(DefaultClass);
     
+    /// Get the element of the specified type (create it if it does not exist).
     template <class ElementD>
     ElementD getElement();
     
