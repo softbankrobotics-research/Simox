@@ -144,8 +144,8 @@ namespace mjcf
         
     protected:
         
-        Document& document() { return *_document; }
-        const Document& document() const  { return *_document; }
+        Document* document() { return _document; }
+        const Document* document() const  { return _document; }
         
         tinyxml2::XMLElement* element() { return _element; }
         const tinyxml2::XMLElement* element() const { return _element; }

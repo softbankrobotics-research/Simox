@@ -67,7 +67,7 @@ Inertial Body::addInertial(const Eigen::Vector3f& pos, float mass, const Eigen::
     inertial.pos = pos;
     inertial.mass = mass;
 
-    if (matrix.isDiagonal(document().getFloatCompPrecision()))
+    if (matrix.isDiagonal(document()->getFloatCompPrecision()))
     {
         inertial.diaginertia = matrix.diagonal();
     }
@@ -91,7 +91,7 @@ Inertial Body::addDummyInertial()
     Inertial inertial = addInertial();
 
     inertial.pos = Eigen::Vector3f(0, 0, 0);
-    inertial.mass = document().getDummyMass();
+    inertial.mass = document()->getDummyMass();
     inertial.diaginertia = Eigen::Vector3f::Ones();
 
     return inertial;
