@@ -323,6 +323,7 @@ SET(SOURCES
     MJCF/elements/statistic.cpp
     MJCF/elements/tendon.cpp
     MJCF/elements/visual.cpp
+    MJCF/elements/core/AnyElement.cpp
     MJCF/elements/core/Attribute.cpp
     MJCF/elements/core/Element.cpp
     MJCF/elements/core/exceptions.cpp
@@ -528,6 +529,7 @@ SET(INCLUDES
     MJCF/elements/tendon.h
     MJCF/elements/visual.h
     MJCF/elements/has_member.hpp
+    MJCF/elements/core/AnyElement.h
     MJCF/elements/core/Attribute.h
     MJCF/elements/core/Element.h
     MJCF/elements/core/exceptions.h
