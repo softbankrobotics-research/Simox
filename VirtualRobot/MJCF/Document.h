@@ -207,4 +207,19 @@ namespace mjcf
     {
         return _document->createElement<ElementD, ParentD>(parent, className);
     }
+    
+    template <class D>
+    void Element<D>::insertComment(const std::string& text, bool front)
+    {
+        tinyxml2::XMLComment* comment = _document->doc.NewComment(text.c_str());
+        if (front)
+        {
+            _element->InsertFirstChild(comment);
+        }
+        else
+        {
+            _element->InsertEndChild(comment);
+        }
+    }
+    
 }

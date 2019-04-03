@@ -4,6 +4,7 @@
 
 #include "exceptions.h"
 #include "mjcf_utils.h"
+#include "Visitor.h"
 
 
 namespace mjcf
@@ -135,6 +136,17 @@ namespace mjcf
         /// Delete given child from this.
         template <class OtherDerived>
         void deleteChild(const Element<OtherDerived>& element);
+        
+        
+        /// Insert a comment as child of *this.
+        void insertComment(const std::string& text, bool front = false);
+        
+        
+        // VISITING
+        
+        /// Accept a hierarchical visit of the elements in *this.
+        /// @see tinyxml2::XMLNode::Accept()
+        bool accept(Visitor& visitor);
         
         
         // CLONING AND TRANSFORMATION
@@ -385,6 +397,12 @@ namespace mjcf
     void Element<D>::deleteChild(const Element<OtherD>& element)
     {
         _element->DeleteChild(element._element);
+    }
+    
+    template <class D>
+    bool Element<D>::accept(Visitor& visitor)
+    {
+        return _element->Accept(visitor.adapter());
     }
     
     template <class D>
