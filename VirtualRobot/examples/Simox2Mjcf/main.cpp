@@ -15,12 +15,14 @@ namespace fs = boost::filesystem;
 void printUsage(const char* argv0)
 {
     std::cout << "Usage: " << argv0 
-              << " --robot <simox robot file> "
-              << "[--outdir <output directory>] "
-              << "[--meshRelDir <relative mesh directory>] "
-              << "[--actuator {motor|position|velocity}] "
-              << "[--mocap {y|n}] "
-              << "[--verbose {y|n}]"
+              << " --robot <simox robot file>"
+              << " [--outdir <output directory>]"
+              << " [--meshRelDir <relative mesh directory>]"
+              << " [--actuator {motor|position|velocity}]"
+              << " [--mocap {y|n}]"
+              << " [--length_scaling <length scaling (to m)>]"
+              << " [--mass_scaling <mass scaling (to kg)>]"
+              << " [--verbose {y|n}]"
               << std::endl;
 }
 
@@ -36,6 +38,8 @@ int main(int argc, char* argv[])
     RuntimeEnvironment::considerKey("meshRelDir");
     RuntimeEnvironment::considerKey("actuator");
     RuntimeEnvironment::considerKey("mocap");
+    RuntimeEnvironment::considerKey("scale_length");
+    RuntimeEnvironment::considerKey("scale_mass");
     RuntimeEnvironment::considerKey("verbose");
     
     RuntimeEnvironment::processCommandLine(argc, argv);
@@ -84,6 +88,33 @@ int main(int argc, char* argv[])
     const bool mocap = RuntimeEnvironment::checkParameter("mocap", "n") == "y";
     const bool verbose = RuntimeEnvironment::checkParameter("verbose", "n") == "y";
     
+    auto parseFloatParameter = [](const std::string& key, const std::string& default_)
+    {
+        const std::string string = RuntimeEnvironment::checkParameter(key, default_);
+        try
+        {
+            return std::stof(string);
+        }
+        catch (const std::invalid_argument& e)
+        {
+            std::cerr << "Could not parse value of argument " << key << ": '" << string << "' \n" 
+                      << "Reason: " << e.what() << std::endl;
+            throw e;
+        }
+    };
+    
+    float lengthScaling;
+    float massScaling;
+    try
+    {
+        lengthScaling = parseFloatParameter("scale_length", "0.001");
+        massScaling = parseFloatParameter("scale_mass", "0.001");
+    }
+    catch (const std::invalid_argument&)
+    {
+        return -1;
+    }
+    
     
     std::cout << "Input file:      " << inputFilename << std::endl;
     std::cout << "Output dir:      " << outputDir << std::endl;
@@ -104,7 +135,7 @@ int main(int argc, char* argv[])
         throw; // rethrow
     }
     
-    if (false)
+    if (/* DISABLES CODE */ (false))
     {
         // using RobotIO
         RobotIO::saveMJCF(robot, inputFilename.filename().string(), outputDir.string(), meshRelDir);
@@ -115,6 +146,8 @@ int main(int argc, char* argv[])
         mujoco::MujocoIO mujocoIO(robot);
         mujocoIO.setActuatorType(actuatorType);
         mujocoIO.setWithMocapBody(mocap);
+        mujocoIO.setLengthScaling(lengthScaling);
+        mujocoIO.setMassScaling(massScaling);
         mujocoIO.setVerbose(verbose);
         mujocoIO.saveMJCF(inputFilename.filename().string(), outputDir.string(), meshRelDir);
     }
