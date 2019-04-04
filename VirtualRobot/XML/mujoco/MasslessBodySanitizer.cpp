@@ -67,39 +67,41 @@ void MasslessBodySanitizer::sanitizeRecursion(mjcf::Body body)
     }
 }
 
-template <class ChildT>
-static void updatePos(ChildT child, const Eigen::Matrix4f& accChildPose)
+static void updatePos(AnyElement element, const Eigen::Matrix4f& accChildPose)
 {
-    child.pos = math::Helpers::TransformPosition(accChildPose, child.pos);
+    const Eigen::Vector3f pos = element.getAttribute<Eigen::Vector3f>("pos", Eigen::Vector3f::Zero());
+    element.setAttribute("pos", math::Helpers::TransformPosition(accChildPose, pos));
 }
 
-template <class ChildT>
-static void updateOri(ChildT child, const Eigen::Matrix3f& accChildOri)
+static void updateOri(AnyElement element, const Eigen::Matrix3f& accChildOri)
 {
-    child.quat = Eigen::Quaternionf(accChildOri * child.quat.get());
+    if (element.is<Joint>())
+    {
+        Joint joint = element.as<Joint>();
+        joint.axis = accChildOri * joint.axis.get();
+    }
+    else if (element.is<Light>())
+    {
+        Light light = element.as<Light>();
+        light.dir = accChildOri * light.dir.get();
+    }
+    else
+    {
+        const Eigen::Quaternionf quat = 
+                element.getAttribute<Eigen::Quaternionf>("quat", Eigen::Quaternionf::Identity());
+        element.setAttribute("quat", Eigen::Quaternionf(accChildOri * quat));
+    }
 }
 
-template <>
-void updateOri<Joint>(Joint child, const Eigen::Matrix3f& accChildOri)
-{
-    child.axis = accChildOri * child.axis.get();
-}
-template <>
-void updateOri<Light>(Light child, const Eigen::Matrix3f& accChildOri)
-{
-    child.dir = accChildOri * child.dir.get();
-}
-
-template <class ChildT>
-void doo(Body body, Body child, const Eigen::Matrix4f& childPose)
+void copyChildren(Body body, Body child, const Eigen::Matrix4f& childPose)
 {
     // merge childBody into body => move all its elements here
     // while doing this, apply accChildPose to elements
-    for (Element<ChildT> grandChild = child.firstChild<ChildT>();
-         grandChild; grandChild = grandChild.template nextSiblingElement<ChildT>())
+    for (AnyElement grandChild = child.firstChild<AnyElement>();
+         grandChild; grandChild = grandChild.template nextSiblingElement<AnyElement>())
     {
         // clone grandchild
-        ChildT elem = grandChild.deepClone();
+        AnyElement elem = grandChild.deepClone();
         
         if (elem)
         {
@@ -132,20 +134,14 @@ void MasslessBodySanitizer::mergeBodies(Body body, Body childBody, Eigen::Matrix
     
     // merge childBody into body => move all its elements here
     // while doing this, apply accChildPose to elements
-    doo<Joint>(body, childBody, accChildPose);
-    doo<Body>(body, childBody, accChildPose);
-    doo<Inertial>(body, childBody, accChildPose);
-    doo<Geom>(body, childBody, accChildPose);
-    doo<Site>(body, childBody, accChildPose);
-    doo<Camera>(body, childBody, accChildPose);
-    doo<Light>(body, childBody, accChildPose);
+    copyChildren(body, childBody, accChildPose);
     
     // update body name
     MergedBodySet& bodySet = getMergedBodySetWith(body.name);
     bodySet.addBody(childBody.name);
     body.name = bodySet.getMergedBodyName();
     
-    std::cout << "\t(new name: " << bodySet.getMergedBodyName() << ")" << std::endl;
+    std::cout << t << "\t(new name: '" << bodySet.getMergedBodyName() << "')" << std::endl;
     
     // delete child
     body.deleteChild(childBody);
