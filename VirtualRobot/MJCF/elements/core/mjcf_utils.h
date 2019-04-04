@@ -155,9 +155,9 @@ namespace mjcf
         }
         
         long i = 0;
-        for (auto& coeff : coeffs)
+        for (const auto& coeff : coeffs)
         {
-            value(i) = coeff;
+            value(i++) = coeff;
         }
     }
     
