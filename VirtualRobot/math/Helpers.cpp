@@ -229,6 +229,18 @@ void Helpers::InvertPose(Eigen::Matrix4f& pose)
     Position(pose) = - Orientation(pose) * Position(pose);
 }
 
+void Helpers::ScaleTranslation(Eigen::Matrix4f& pose, float scale)
+{
+    Position(pose) *= scale;
+}
+
+Eigen::Matrix4f Helpers::ScaledTranslation(const Eigen::Matrix4f& pose, float scale)
+{
+    Eigen::Matrix4f scaled = pose;
+    ScaleTranslation(scaled, scale);
+    return scaled;
+}
+
 
 Eigen::Matrix3f Helpers::GetRotationMatrix(const Eigen::Vector3f& source, const Eigen::Vector3f& target)
 {
