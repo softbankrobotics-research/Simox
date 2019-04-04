@@ -82,8 +82,9 @@ void MujocoIO::saveMJCF(const std::string& filename, const std::string& basePath
     std::cout << "Adding actuators ..." << std::endl;
     addActuators();
     
-    std::cout << "Scaling lengths by " << lengthScaling << " ..." << std::endl;
-    scaleLengths(robotRoot);
+    // this is now done directly when constructing the respective elements
+    //std::cout << "Scaling lengths by " << lengthScale << " ..." << std::endl;
+    //scaleLengths(robotRoot);
     
     std::cout << "Done." << std::endl;
     
@@ -144,7 +145,7 @@ void MujocoIO::makeDefaultsClass()
     joint.damping = 0;
     
     mjcf::Mesh mesh = defaultsClass.getElement<mjcf::Mesh>();
-    mesh.scale = Eigen::Vector3f::Constant(lengthScaling);
+    mesh.scale = Eigen::Vector3f::Constant(meshScale);
     
     mjcf::Geom geom = defaultsClass.getElement<mjcf::Geom>();
     geom.condim = 4;
@@ -233,8 +234,9 @@ mjcf::Body MujocoIO::addNodeBody(mjcf::Body parent, RobotNodePtr node)
 
     if (node->hasParent())
     {
-        body.setPose(math::Helpers::ScaledTranslation(
-                         node->getTransformationFrom(node->getParent()), lengthScaling));
+        Eigen::Matrix4f pose = node->getTransformationFrom(node->getParent());
+        math::Helpers::ScaleTranslation(pose, lengthScale);
+        body.setPose(pose);
     }
     
     if (node->isRotationalJoint() || node->isTranslationalJoint())
@@ -275,7 +277,12 @@ mjcf::Joint MujocoIO::addNodeJoint(mjcf::Body body, RobotNodePtr node)
     
     if (!node->isLimitless())
     {
-        joint.range = { node->getJointLimitLow(), node->getJointLimitHigh() };
+        Eigen::Vector2f range = { node->getJointLimitLow(), node->getJointLimitHigh() };
+        if (node->isTranslationalJoint())
+        {
+            range *= lengthScale;
+        }
+        joint.range = range;
     }
     
     return joint;
@@ -292,8 +299,8 @@ mjcf::Inertial MujocoIO::addNodeInertial(mjcf::Body body, RobotNodePtr node)
     }
     
     mjcf::Inertial inertial = body.addInertial();
-    inertial.pos = node->getCoMLocal() * lengthScaling;
-    inertial.mass = node->getMass() * massScaling;
+    inertial.pos = node->getCoMLocal() * lengthScale;
+    inertial.mass = node->getMass() * massScale;
     inertial.inertiaFromMatrix(matrix);
     
     return inertial;
@@ -378,7 +385,8 @@ void MujocoIO::addNodeBodyMeshes()
         
         // add geom to body
         mjcf::Body& body = nodeBodies.at(node->getName());
-        body.addGeomMesh(meshName);
+        mjcf::Geom geom = body.addGeomMesh(meshName);
+        geom.name = node->getName();
     }
 }
 
@@ -529,15 +537,19 @@ void MujocoIO::addActuators()
 void MujocoIO::scaleLengths(mjcf::AnyElement element)
 {
     assert(elem);
+    if (verbose)
+    {
+        std::cout << "Traversing element " << element.actualTag() << std::endl;
+    }
     
     if (element.is<mjcf::Joint>())
     {
         mjcf::Joint joint = element.as<mjcf::Joint>();
         
-        if (joint.type == "slide" || joint.range.isSet())
+        if (joint.type == "slide" && joint.range.isSet())
         {
-            std::cout << t << "Scaling range of slide joint " << joint.name << std::endl;
-            joint.range = joint.range.get() * lengthScaling;
+            std::cout << t << "Scaling range of slide joint '" << joint.name << "'" << std::endl;
+            joint.range = joint.range.get() * lengthScale;
         }
     }
     else if (element.is<mjcf::ActuatorPosition>())
@@ -545,8 +557,8 @@ void MujocoIO::scaleLengths(mjcf::AnyElement element)
         mjcf::ActuatorPosition act = element.as<mjcf::ActuatorPosition>();
         if (act.ctrlrange.isSet())
         {
-            std::cout << t << "Scaling ctrlrange of position actuator " << act.name << std::endl;
-            act.ctrlrange = act.ctrlrange.get() * lengthScaling;
+            std::cout << t << "Scaling ctrlrange of position actuator '" << act.name << "'" << std::endl;
+            act.ctrlrange = act.ctrlrange.get() * lengthScale;
         }
     }
     else if (element.isAttributeSet("pos"))
@@ -563,7 +575,7 @@ void MujocoIO::scaleLengths(mjcf::AnyElement element)
         std::cout << std::endl;
         
         Eigen::Vector3f pos = element.getAttribute<Eigen::Vector3f>("pos");
-        pos *= lengthScaling;
+        pos *= lengthScale;
         element.setAttribute("pos", pos);
     }
     
@@ -574,14 +586,19 @@ void MujocoIO::scaleLengths(mjcf::AnyElement element)
     }
 }
 
-void MujocoIO::setLengthScaling(float value)
+void MujocoIO::setLengthScale(float value)
 {
-    this->lengthScaling = value;
+    this->lengthScale = value;
 }
 
-void MujocoIO::setMassScaling(float value)
+void MujocoIO::setMeshScale(float value)
 {
-    this->massScaling = value;
+    this->meshScale = value;
+}
+
+void MujocoIO::setMassScale(float value)
+{
+    this->massScale = value;
 }
 
 void MujocoIO::setActuatorType(ActuatorType value)

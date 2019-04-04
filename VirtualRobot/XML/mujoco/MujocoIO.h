@@ -39,9 +39,13 @@ namespace mujoco
         
         
         /// Set the scaling for lengths.
-        void setLengthScaling(float value);
+        void setLengthScale(float value);
+        
+        /// Set the scaling for meshes.
+        void setMeshScale(float value);
+        
         /// Set the scaling for mass (to kg).
-        void setMassScaling(float value);
+        void setMassScale(float value);
 
         /// Set the actuator type.
         void setActuatorType(ActuatorType value);
@@ -106,10 +110,12 @@ namespace mujoco
         
         // Paremeters
         
-        /// Scaling for lengths, such as positions and translations.
-        float lengthScaling = 0.001f;
-        /// Scaling for mass ([source] to kg).
-        float massScaling = 0.001f;
+        /// Scaling for lengths, such as positions and translations (to m).
+        float lengthScale = 0.001f;
+        /// Scaling for lengths, such as positions and translations (to m).
+        float meshScale = 1.f;
+        /// Scaling for mass (to kg).
+        float massScale = 1.f;
         
         /// The actuator type.
         ActuatorType actuatorType = ActuatorType::MOTOR;
@@ -117,6 +123,7 @@ namespace mujoco
         /// Add a mocap
         bool withMocapBody = false;
         
+        /// Verbose printing.
         bool verbose = false;
         
         
