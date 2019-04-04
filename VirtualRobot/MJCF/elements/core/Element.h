@@ -215,6 +215,10 @@ namespace mjcf
         
     private:
 
+        /// Get Derived::tag as c-string, or nullptr if Derived::tag is empty (AnyElement).
+        /// The result can be passed to tinyxml2 methods taking element values (tags) as filters.
+        static const char* tag_c_str() { return Derived::tag.empty() ? nullptr : Derived::tag.c_str(); }
+        
         /// Use document to create a new element of type ElementD with given parent.
         template <class ParentD, class ElementD>
         ElementD createElement(Element<ParentD> parent, const std::string& className = "");
@@ -320,7 +324,8 @@ namespace mjcf
     template <class OtherD>
     OtherD Element<D>::firstChild() const
     {
-        return Element<OtherD>(_document, /*may be null*/ _element->FirstChildElement(OtherD::tag.c_str()));
+        return Element<OtherD>(_document, /*may be null*/ 
+                               _element->FirstChildElement(OtherD::tag_c_str()));
     }
     
     template <class D>
@@ -351,7 +356,7 @@ namespace mjcf
     template <class OtherD>
     OtherD Element<D>::nextSiblingElement() const
     {
-        return Element<OtherD>(_document, _element->NextSiblingElement(OtherD::tag.c_str()));
+        return Element<OtherD>(_document, _element->NextSiblingElement(OtherD::tag_c_str()));
     }
     
     template <class D>
