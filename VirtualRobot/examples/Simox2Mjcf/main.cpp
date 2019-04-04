@@ -20,8 +20,9 @@ void printUsage(const char* argv0)
               << " [--meshRelDir <relative mesh directory>]"
               << " [--actuator {motor|position|velocity}]"
               << " [--mocap {y|n}]"
-              << " [--length_scaling <length scaling (to m)>]"
-              << " [--mass_scaling <mass scaling (to kg)>]"
+              << " [--scale_length <length scaling (to m)>]"
+              << " [--scale_mesh <mesh scaling (to m)>]"
+              << " [--scale_mass <mass scaling (to kg)>]"
               << " [--verbose {y|n}]"
               << std::endl;
 }
@@ -39,6 +40,7 @@ int main(int argc, char* argv[])
     RuntimeEnvironment::considerKey("actuator");
     RuntimeEnvironment::considerKey("mocap");
     RuntimeEnvironment::considerKey("scale_length");
+    RuntimeEnvironment::considerKey("scale_mesh");
     RuntimeEnvironment::considerKey("scale_mass");
     RuntimeEnvironment::considerKey("verbose");
     
@@ -103,12 +105,14 @@ int main(int argc, char* argv[])
         }
     };
     
-    float lengthScaling;
-    float massScaling;
+    float lengthScale;
+    float meshScale;
+    float massScale;
     try
     {
-        lengthScaling = parseFloatParameter("scale_length", "0.001");
-        massScaling = parseFloatParameter("scale_mass", "0.001");
+        lengthScale = parseFloatParameter("scale_length", "1");
+        meshScale = parseFloatParameter("mesh_length", "1");
+        massScale = parseFloatParameter("scale_mass", "1");
     }
     catch (const std::invalid_argument&)
     {
@@ -146,8 +150,9 @@ int main(int argc, char* argv[])
         mujoco::MujocoIO mujocoIO(robot);
         mujocoIO.setActuatorType(actuatorType);
         mujocoIO.setWithMocapBody(mocap);
-        mujocoIO.setLengthScaling(lengthScaling);
-        mujocoIO.setMassScaling(massScaling);
+        mujocoIO.setLengthScale(lengthScale);
+        mujocoIO.setMeshScale(meshScale);
+        mujocoIO.setMassScale(massScale);
         mujocoIO.setVerbose(verbose);
         mujocoIO.saveMJCF(inputFilename.filename().string(), outputDir.string(), meshRelDir);
     }
