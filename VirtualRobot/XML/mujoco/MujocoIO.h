@@ -38,8 +38,10 @@ namespace mujoco
                       const std::string& meshRelDir);
         
         
-        /// Set the scaling for lenghts.
+        /// Set the scaling for lengths.
         void setLengthScaling(float value);
+        /// Set the scaling for mass (to kg).
+        void setMassScaling(float value);
 
         /// Set the actuator type.
         void setActuatorType(ActuatorType value);
@@ -106,6 +108,9 @@ namespace mujoco
         
         /// Scaling for lengths, such as positions and translations.
         float lengthScaling = 0.001f;
+        /// Scaling for mass ([source] to kg).
+        float massScaling = 0.001f;
+        
         /// The actuator type.
         ActuatorType actuatorType = ActuatorType::MOTOR;
         

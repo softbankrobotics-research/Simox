@@ -137,13 +137,14 @@ void MujocoIO::makeDefaultsClass()
 {
     mjcf::DefaultClass defaultsClass = document->default_().addClass(robot->getName());
     
-    std::stringstream comment;
-    comment << "Add default values for " << robot->getName() << " here.";
-    defaultsClass.insertComment(comment.str(), true);
+    defaultsClass.insertComment("Add default values for " + robot->getName() + " here.", true);
     
     mjcf::Joint joint = defaultsClass.getElement<mjcf::Joint>();
     joint.frictionloss = 1;
     joint.damping = 0;
+    
+    mjcf::Mesh mesh = defaultsClass.getElement<mjcf::Mesh>();
+    mesh.scale = Eigen::Vector3f::Constant(lengthScaling);
     
     mjcf::Geom geom = defaultsClass.getElement<mjcf::Geom>();
     geom.condim = 4;
@@ -232,7 +233,8 @@ mjcf::Body MujocoIO::addNodeBody(mjcf::Body parent, RobotNodePtr node)
 
     if (node->hasParent())
     {
-        body.setPose(node->getTransformationFrom(node->getParent()));
+        body.setPose(math::Helpers::ScaledTranslation(
+                         node->getTransformationFrom(node->getParent()), lengthScaling));
     }
     
     if (node->isRotationalJoint() || node->isTranslationalJoint())
@@ -281,7 +283,7 @@ mjcf::Joint MujocoIO::addNodeJoint(mjcf::Body body, RobotNodePtr node)
 
 mjcf::Inertial MujocoIO::addNodeInertial(mjcf::Body body, RobotNodePtr node)
 {
-    Eigen::Matrix3f matrix = node->getInertiaMatrix();
+    const Eigen::Matrix3f matrix = node->getInertiaMatrix();
     if (matrix.isIdentity(document->getFloatCompPrecision()) 
         && node->getMass() < document->getFloatCompPrecision())
     {
@@ -290,8 +292,8 @@ mjcf::Inertial MujocoIO::addNodeInertial(mjcf::Body body, RobotNodePtr node)
     }
     
     mjcf::Inertial inertial = body.addInertial();
-    inertial.pos = node->getCoMLocal();
-    inertial.mass = node->getMass();
+    inertial.pos = node->getCoMLocal() * lengthScaling;
+    inertial.mass = node->getMass() * massScaling;
     inertial.inertiaFromMatrix(matrix);
     
     return inertial;
@@ -574,17 +576,22 @@ void MujocoIO::scaleLengths(mjcf::AnyElement element)
 
 void MujocoIO::setLengthScaling(float value)
 {
-    lengthScaling = value;
+    this->lengthScaling = value;
+}
+
+void MujocoIO::setMassScaling(float value)
+{
+    this->massScaling = value;
 }
 
 void MujocoIO::setActuatorType(ActuatorType value)
 {
-    actuatorType = value;
+    this->actuatorType = value;
 }
 
 void MujocoIO::setWithMocapBody(bool enabled)
 {
-    withMocapBody = enabled;
+    this->withMocapBody = enabled;
 }
 
 void MujocoIO::setVerbose(bool value)
