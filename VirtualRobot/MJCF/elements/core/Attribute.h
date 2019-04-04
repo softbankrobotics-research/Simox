@@ -108,6 +108,15 @@ namespace mjcf
             return *this;
         }
         
+        /* Equivalent operators should be called implicitly due to conversion operators.
+        bool operator==(const AttrT& rhs) { return get() == rhs; }
+        bool operator!=(const AttrT& rhs) { return get() != rhs; }
+        */
+        template <class OtherDerived, class OtherAttrT>
+        bool operator==(const Attribute<OtherDerived, OtherAttrT>& rhs) { return get() == rhs.get(); }
+        template <class OtherDerived, class OtherAttrT>
+        bool operator!=(const Attribute<OtherDerived, OtherAttrT>& rhs) { return get() != rhs.get(); }
+        
         /// Indicate whether the attribute is required (implies no default).
         virtual bool isRequired() const = 0;
         /// Indicate whether the attribute is optional or has a default.
