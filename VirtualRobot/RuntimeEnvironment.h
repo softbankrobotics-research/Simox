@@ -59,13 +59,18 @@ namespace VirtualRobot
          * \brief Enable the command line search for given key. 
          * Only keys that are enabled can later be accessed with the getValue() method.
          */
-        static void considerKey(const std::string& key);
+        static void considerKey(const std::string& key, const std::string& description = "");
+        /*!
+         * \brief Enable the command line search for given flag.
+         * A flag does not take an argument but is either present or not.
+         */
+        static void considerFlag(const std::string& flag, const std::string& description = "");
 
         /*!
-            Tries to find a file with name fileName. Therefore the working directory followed by all data paths are checked if the file can be found.
-            \param fileName Could be a filename or a relative path. In case the file could be located, the absolute path is stored in place.
-            \return True when the file could be located (the result will be stored in fileName).
-        */
+         * Tries to find a file with name fileName. Therefore the working directory followed by all data paths are checked if the file can be found.
+         * \param fileName Could be a filename or a relative path. In case the file could be located, the absolute path is stored in place.
+         * \return True when the file could be located (the result will be stored in fileName).
+         */
         static bool getDataFileAbsolute(std::string& fileName);
 
         /*!
@@ -88,6 +93,9 @@ namespace VirtualRobot
         }
         static bool hasValue(const std::string& key);
 
+        /// Indicate whether the given flag was specified.
+        static bool hasFlag(const std::string& flag);
+        
         //! Return all key value pairs
         static std::map<std::string, std::string> getKeyValuePairs();
 
@@ -131,6 +139,7 @@ namespace VirtualRobot
          * Usually not not needed, since on application exit all resources are freed automatically.
          */
         static void cleanup();
+        
     protected:
 
         RuntimeEnvironment() {}
@@ -139,11 +148,16 @@ namespace VirtualRobot
         static void init();
 
 
-        static std::vector< std::string > processKeys;
+        /// Pairs of (key, description). If not given, description is empty.
+        static std::vector< std::pair<std::string, std::string> > processKeys;
+        /// Pairs of (flag, description). If not given, description is empty.
+        static std::vector< std::pair<std::string, std::string> > processFlags;
+        
         static std::vector< std::string > dataPaths;
         static std::vector< std::string > unrecognizedOptions;
 
         static std::map< std::string, std::string > keyValues;
+        static std::set< std::string > flags;
     };
 
 } // namespace

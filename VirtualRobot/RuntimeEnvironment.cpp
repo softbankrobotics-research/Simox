@@ -11,10 +11,12 @@
 
 namespace VirtualRobot
 {
-    std::vector< std::string > RuntimeEnvironment::processKeys;
+    std::vector< std::pair<std::string, std::string> > RuntimeEnvironment::processKeys;
+    std::vector< std::pair<std::string, std::string> > RuntimeEnvironment::processFlags;
     std::vector< std::string > RuntimeEnvironment::unrecognizedOptions;
     std::vector< std::string > RuntimeEnvironment::dataPaths;
     std::map< std::string, std::string > RuntimeEnvironment::keyValues;
+    std::set< std::string > RuntimeEnvironment::flags;
     bool RuntimeEnvironment::pathInitialized = false;
 
     void RuntimeEnvironment::init()
@@ -164,15 +166,25 @@ namespace VirtualRobot
         // Declare the supported options.
         boost::program_options::options_description desc("Simox runtime options");
         desc.add_options()
-        ("help", "Simox command line parser: Set options with '--key value'\n")
-        ("data-path", boost::program_options::value< std::vector< std::string > >()->composing(), "Set data path. Multiple data paths are allowed.")
+            ("help", "Simox command line parser: Set options with '--key value'\n")
+            ("data-path", boost::program_options::value< std::vector< std::string > >()->composing(), 
+             "Set data path. Multiple data paths are allowed.")
         ;
 
-        for (auto& processKey : processKeys)
+        for (const auto& item : processKeys)
+        {
             desc.add_options()
-            (processKey.c_str(), boost::program_options::value< std::vector< std::string > >(), processKey.c_str())
+            (item.first.c_str(), boost::program_options::value<std::vector<std::string>>(), item.second.c_str())
             ;
+        }
 
+        for (const auto& item : processFlags)
+        {
+            desc.add_options()
+            (item.first.c_str(), item.second.c_str())
+            ;
+        }
+        
         boost::program_options::parsed_options parsed =
             boost::program_options::command_line_parser(argc, argv).options(desc).allow_unregistered().run();
 
@@ -185,7 +197,7 @@ namespace VirtualRobot
         if (vm.count("data-path"))
         {
             //VR_INFO << "Data paths are: " << endl;
-            std::vector< std::string > dp = vm["data-path"].as< std::vector< std::string > >();
+            std::vector<std::string> dp = vm["data-path"].as< std::vector< std::string > >();
 
             for (const auto& i : dp)
             {
@@ -195,34 +207,42 @@ namespace VirtualRobot
         }
 
         // process generic keys
-        for (auto& processKey : processKeys)
+        for (const auto& processKey : processKeys)
         {
-            if (vm.count(processKey.c_str()))
+            const std::string& key = processKey.first;
+            if (vm.count(key.c_str()) > 0)
             {
-                std::vector< std::string > dp = vm[processKey.c_str()].as< std::vector< std::string > >();
+                std::vector<std::string> dp = vm[key.c_str()].as<std::vector<std::string>>();
 
                 if (dp.size() > 1)
                 {
-                    VR_WARNING << "More than one parameter for key " << processKey << ". taking the first one..." << endl;
+                    VR_WARNING << "More than one parameter for key '" << key << "'. Using only first one..." << endl;
                 }
 
                 if (dp.size() > 0)
                 {
-                    addKeyValuePair(processKey, dp[0]);    // take the first one...
+                    addKeyValuePair(key, dp[0]);    // take the first one...
                 }
             }
 
         }
+        
+        for (const auto& flag : processFlags)
+        {
+            if (vm.count(flag.first.c_str()) > 0)
+            {
+                flags.insert(flag.first);
+            }
+        }
 
         // collect unrecognized arguments
-        std::vector<std::string> options = boost::program_options::collect_unrecognized(parsed.options, boost::program_options::include_positional);
+        std::vector<std::string> options = boost::program_options::collect_unrecognized(
+                    parsed.options, boost::program_options::include_positional);
 
         for (const auto& option : options)
         {
             unrecognizedOptions.push_back(option);
         }
-
-
     }
 
     void RuntimeEnvironment::addKeyValuePair(const std::string& key, const std::string& value)
@@ -306,19 +326,35 @@ namespace VirtualRobot
 
             for (const auto& processKey : processKeys)
             {
-                cout << " * " << processKey << endl;
+                cout << " * " << processKey.first << endl;
+            }
+        }
+        
+        if (processFlags.size() > 0)
+        {
+            cout << "Known flags:" << endl;
+
+            for (const auto& processFlag : processFlags)
+            {
+                cout << " * " << processFlag.first << endl;
             }
         }
 
         if (keyValues.size() > 0)
         {
             cout << "Parsed options:"  << endl;
-            std::map< std::string, std::string >::iterator it = keyValues.begin();
-
-            while (it != keyValues.end())
+            for (const auto& item : keyValues)
             {
-                cout << " * " << it->first << ": " << it->second << endl;
-                it++;
+                cout << " * " << item.first << ": " << item.second << endl;
+            }
+        }
+        
+        if (flags.size() > 0)
+        {
+            cout << "Parsed flags:"  << endl;
+            for (const auto& flag : flags)
+            {
+                cout << " * " << flag;
             }
         }
 
@@ -331,17 +367,26 @@ namespace VirtualRobot
                 cout << " * <" << unrecognizedOption << ">" << endl;
             }
         }
-
     }
 
-    void RuntimeEnvironment::considerKey(const std::string& key)
+    void RuntimeEnvironment::considerKey(const std::string& key, const std::string& description)
     {
-        processKeys.push_back(key);
+        processKeys.emplace_back(key, description);
+    }
+    
+    void RuntimeEnvironment::considerFlag(const std::string& flag, const std::string& description)
+    {
+        processFlags.emplace_back(flag, description);
     }
 
     bool RuntimeEnvironment::hasValue(const std::string& key)
     {
-        return (keyValues.find(key) != keyValues.end());
+        return keyValues.find(key) != keyValues.end();
+    }
+    
+    bool RuntimeEnvironment::hasFlag(const std::string& flag)
+    {
+        return flags.find(flag) != flags.end();
     }
 
 
