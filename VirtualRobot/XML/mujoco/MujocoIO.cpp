@@ -52,10 +52,11 @@ void MujocoIO::saveMJCF(const std::string& filename, const std::string& basePath
     
     addSkybox();
     
+    mjcf::Body mocapBody;
     if (withMocapBody)
     {
         std::cout << "Adding mocap body ..." << std::endl;
-        addMocapBody();
+        mocapBody = addMocapBody();
     }
     
     std::cout << "Creating bodies structure ..." << std::endl;
@@ -79,6 +80,12 @@ void MujocoIO::saveMJCF(const std::string& filename, const std::string& basePath
     std::cout << "Adding contact excludes ..." << std::endl;
     addContactExcludes();
 
+    if (withMocapBody)
+    {
+        std::cout << "Adding mocap body contact excludes ..." << std::endl;
+        addMocapContactExcludes(mocapBody);
+    }
+    
     std::cout << "Adding actuators ..." << std::endl;
     addActuators();
     
@@ -165,7 +172,7 @@ void MujocoIO::addSkybox()
 }
 
 
-void MujocoIO::addMocapBody()
+mjcf::Body MujocoIO::addMocapBody()
 {
     const std::string className = "mocap";
     const float geomSize = 0.01f;
@@ -198,6 +205,10 @@ void MujocoIO::addMocapBody()
     // add equality weld constraint
     mjcf::EqualityWeld weld = document->equality().addWeld(bodyName, robot->getName(), bodyName);
     weld.class_ = className;
+    
+    document->contact().addExclude(mocap.name, robot->getName());
+    
+    return mocap;
 }
 
 
@@ -464,7 +475,7 @@ void MujocoIO::addContactExcludes()
     RobotNodePtr rootNode = robot->getRootNode();
     
     std::vector<std::pair<std::string, std::string>> excludePairs;
-            
+    
     for (RobotNodePtr node : robot->getRobotNodes())
     {
         for (std::string& ignore : node->getPhysics().ignoreCollisions)
@@ -493,6 +504,18 @@ void MujocoIO::addContactExcludes()
     for (const auto& excludePair : visitor.excludePairs)
     {
         document->contact().addExclude(excludePair.first, excludePair.second);
+    }
+}
+
+void MujocoIO::addMocapContactExcludes(mjcf::Body mocap)
+{
+    if (!mocap)
+    {
+        throw std::invalid_argument("Passed uninitialized mocap body to " + std::string(__FUNCTION__) + "()");
+    }
+    for (const auto& nodeBody : nodeBodies)
+    {
+        document->contact().addExclude(mocap, nodeBody.second);
     }
 }
 

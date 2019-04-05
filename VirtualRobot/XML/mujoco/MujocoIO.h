@@ -79,7 +79,7 @@ namespace mujoco
         void addSkybox();
         
         /// Add a mocap body with defaults group.
-        void addMocapBody();
+        mjcf::Body addMocapBody();
         
         /// Construct the body structure corresponding to the robot nodes.
         void makeNodeBodies();
@@ -100,6 +100,8 @@ namespace mujoco
         
         /// Add contact exclude elements for IgnoreCollision elements.
         void addContactExcludes();
+        /// Add contact exclude elements for IgnoreCollision elements.
+        void addMocapContactExcludes(mjcf::Body mocap);
         
         /// Add actuators for all joints.
         void addActuators();
