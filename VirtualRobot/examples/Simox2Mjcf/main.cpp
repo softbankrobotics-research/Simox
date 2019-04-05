@@ -12,21 +12,6 @@ using VirtualRobot::RuntimeEnvironment;
 namespace fs = boost::filesystem;
 
 
-void printUsage(const char* argv0)
-{
-    std::cout << "Usage: " << argv0 
-              << " --robot <simox robot file>"
-              << " [--outdir <output directory>]"
-              << " [--meshRelDir <relative mesh directory>]"
-              << " [--actuator {motor|position|velocity}]"
-              << " [--mocap {y|n}]"
-              << " [--scale_length <length scaling (to m)>]"
-              << " [--scale_mesh <mesh scaling (to m)>]"
-              << " [--scale_mass <mass scaling (to kg)>]"
-              << " [--verbose {y|n}]"
-              << std::endl;
-}
-
 /**
  * Loads a Simox robot and converts it to Mujoco's XML format (MJCF).
  * The converted file is stored in a directory mjcf/ placed in the directory
@@ -34,23 +19,37 @@ void printUsage(const char* argv0)
  */
 int main(int argc, char* argv[])
 {
-    RuntimeEnvironment::considerKey("robot");
-    RuntimeEnvironment::considerKey("outdir");
-    RuntimeEnvironment::considerKey("meshRelDir");
-    RuntimeEnvironment::considerKey("actuator");
-    RuntimeEnvironment::considerKey("mocap");
-    RuntimeEnvironment::considerKey("scale_length");
-    RuntimeEnvironment::considerKey("scale_mesh");
-    RuntimeEnvironment::considerKey("scale_mass");
-    RuntimeEnvironment::considerKey("verbose");
+    RuntimeEnvironment::setCaption("Convert Simox XML to MJCF (Mujoco XML).");
+    
+    RuntimeEnvironment::considerKey(
+                "robot", "The Simox robot model to convert. (required)");
+    RuntimeEnvironment::considerKey(
+                "outdir", "The output directory. (default: 'mjcf')");
+    RuntimeEnvironment::considerKey(
+                "meshRelDir", "The mesh directory relative to outdir. (default: 'mesh')");
+    RuntimeEnvironment::considerKey(
+                "actuator", "The actuator type to add (motor, position, velocity). (default: motor)");
+    RuntimeEnvironment::considerFlag(
+                "mocap", "Add a mocap body to which the robot root body is welded.");
+    RuntimeEnvironment::considerKey(
+                "scale_length", "Scaling of lengths and distances (to m). For meshes, see 'scale_mesh'. (default: 1.0)");
+    RuntimeEnvironment::considerKey(
+                "scale_mesh", "Scaling of meshes (to m). (default: 1.0)");
+    RuntimeEnvironment::considerKey(
+                "scale_mass", "Scaling of masses (to kg). (default: 1.0)");
+    RuntimeEnvironment::considerFlag(
+                "verbose", "Enable verbose output.");
     
     RuntimeEnvironment::processCommandLine(argc, argv);
 
-    RuntimeEnvironment::print();
+    
+    if (RuntimeEnvironment::hasHelpFlag() || !RuntimeEnvironment::hasValue("robot"))
+    {
+        RuntimeEnvironment::printOptions();
+        return 0;
+    }
     
     fs::path inputFilename;
-    
-    if (RuntimeEnvironment::hasValue("robot"))
     {
         std::string robFile = RuntimeEnvironment::getValue("robot");
 
@@ -62,11 +61,6 @@ int main(int argc, char* argv[])
         {
             std::cout << "Something is wrong with " << robFile;
         }
-    }
-    else
-    {
-        printUsage(argv[0]);
-        return 0;
     }
     
     const fs::path outputDir = RuntimeEnvironment::checkParameter(
@@ -82,13 +76,13 @@ int main(int argc, char* argv[])
     }
     catch (const std::out_of_range&)
     {
-        std::cout << "No actuator '" << actuatorTypeStr << "'" << std::endl;
+        std::cout << "No actuator type '" << actuatorTypeStr << "'" << std::endl;
         std::cout << "Avaliable: motor|position|velocity" << std::endl;
         return -1;
     }
     
-    const bool mocap = RuntimeEnvironment::checkParameter("mocap", "n") == "y";
-    const bool verbose = RuntimeEnvironment::checkParameter("verbose", "n") == "y";
+    const bool mocap = RuntimeEnvironment::hasFlag("mocap");
+    const bool verbose = RuntimeEnvironment::hasFlag("verbose");
     
     auto parseFloatParameter = [](const std::string& key, const std::string& default_)
     {
@@ -105,14 +99,14 @@ int main(int argc, char* argv[])
         }
     };
     
-    float lengthScale;
-    float meshScale;
-    float massScale;
+    float scaleLength;
+    float scaleMesh;
+    float scaleMass;
     try
     {
-        lengthScale = parseFloatParameter("scale_length", "1");
-        meshScale = parseFloatParameter("mesh_length", "1");
-        massScale = parseFloatParameter("scale_mass", "1");
+        scaleLength = parseFloatParameter("scale_length", "1");
+        scaleMesh = parseFloatParameter("mesh_length", "1");
+        scaleMass = parseFloatParameter("scale_mass", "1");
     }
     catch (const std::invalid_argument&)
     {
@@ -123,14 +117,20 @@ int main(int argc, char* argv[])
     std::cout << "Input file:      " << inputFilename << std::endl;
     std::cout << "Output dir:      " << outputDir << std::endl;
     std::cout << "Output mesh dir: " << outputDir / meshRelDir << std::endl;
-    //std::cout << "Actuator type: " << actuatorType << std::endl;
-    std::cout << "With mocap body: " << (mocap ? "yes" : "no ");
+    std::cout << "Actuator type:   " << actuatorTypeStr << std::endl;
+    std::cout << "Mocap body:      " << (mocap ? "yes" : "no ") << std::endl;
+    
+    std::cout << "Scaling: " <<  std::endl
+              << "  - length: " << scaleLength << std::endl
+              << "  - mesh:   " << scaleMesh << std::endl
+              << "  - mass:   " << scaleMass << std::endl;
 
     std::cout << "Loading robot ..." << std::endl;
     
     RobotPtr robot;
     try
     {
+        std::cout << "Loading robot from " << inputFilename << " ..." << std::endl;
         robot = RobotIO::loadRobot(inputFilename.string(), RobotIO::eFull);
         assert(robot);
     }
@@ -150,9 +150,9 @@ int main(int argc, char* argv[])
         mujoco::MujocoIO mujocoIO(robot);
         mujocoIO.setActuatorType(actuatorType);
         mujocoIO.setWithMocapBody(mocap);
-        mujocoIO.setLengthScale(lengthScale);
-        mujocoIO.setMeshScale(meshScale);
-        mujocoIO.setMassScale(massScale);
+        mujocoIO.setLengthScale(scaleLength);
+        mujocoIO.setMeshScale(scaleMesh);
+        mujocoIO.setMassScale(scaleMass);
         mujocoIO.setVerbose(verbose);
         mujocoIO.saveMJCF(inputFilename.filename().string(), outputDir.string(), meshRelDir);
     }
