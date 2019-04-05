@@ -24,10 +24,13 @@
 
 #include "VirtualRobot.h"
 
+#include <map>
+#include <set>
 #include <string>
 #include <vector>
-#include <map>
+
 #include <Eigen/Core>
+
 
 namespace VirtualRobot
 {
@@ -45,6 +48,9 @@ namespace VirtualRobot
         //! Return vector of all data paths.
         static std::vector< std::string > getDataPaths();
 
+        /// Set the runtime environment caption.
+        static void setCaption(const std::string& caption);
+        
         /*!
          * Add a path to global data path vector. 
          * These paths are searched within the getDataFileAbsolute() method.
@@ -95,6 +101,8 @@ namespace VirtualRobot
 
         /// Indicate whether the given flag was specified.
         static bool hasFlag(const std::string& flag);
+        /// Indicate whether the 'help' flag was specified.
+        static bool hasHelpFlag();
         
         //! Return all key value pairs
         static std::map<std::string, std::string> getKeyValuePairs();
@@ -131,8 +139,12 @@ namespace VirtualRobot
          */
         static std::string checkParameter(const std::string& key, const std::string& standardValue = "");
 
-        //! Print status
+        //! Print status.
         static void print();
+        
+        //! Print the command line options (as printed by boost::program_options) to os.
+        static void printOptions(std::ostream& os = std::cout);
+        
 
         /*!
          * \brief Free all resources. 
@@ -140,14 +152,21 @@ namespace VirtualRobot
          */
         static void cleanup();
         
+        
     protected:
 
         RuntimeEnvironment() {}
         virtual ~RuntimeEnvironment() {}
+        
         static bool pathInitialized;
+        
         static void init();
+        /// Make the options description based on the added keys and flags.
+        static boost::program_options::options_description makeOptionsDescription();
+        static void processParsedOptions(const boost::program_options::parsed_options& parsed);
 
-
+        static std::string caption;
+        
         /// Pairs of (key, description). If not given, description is empty.
         static std::vector< std::pair<std::string, std::string> > processKeys;
         /// Pairs of (flag, description). If not given, description is empty.
@@ -158,6 +177,7 @@ namespace VirtualRobot
 
         static std::map< std::string, std::string > keyValues;
         static std::set< std::string > flags;
+        static bool helpFlag;
     };
 
 } // namespace
