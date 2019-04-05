@@ -526,19 +526,22 @@ void MujocoIO::addActuators()
     
     for (auto joint : jointElements)
     {
-        const std::string name = joint.name;
+        mjcf::AnyElement actuator;
+        
+        const std::string jointName = joint.name;
         switch (actuatorType)
         {
             case ActuatorType::MOTOR:
             {
-                mjcf::ActuatorMotor act = document->actuator().addMotor(name);
-                act.name = joint.name;
+                mjcf::ActuatorMotor act = document->actuator().addMotor(jointName);
+                
+                actuator = act;
                 break;
             }
                 
             case ActuatorType::POSITION:
             {
-                mjcf::ActuatorPosition act = document->actuator().addPosition(name);
+                mjcf::ActuatorPosition act = document->actuator().addPosition(jointName);
                 act.name = joint.name;
                 
                 if (joint.limited)
@@ -550,10 +553,18 @@ void MujocoIO::addActuators()
                 break;
                 
             case ActuatorType::VELOCITY:
-                mjcf::ActuatorVelocity act = document->actuator().addVelocity(name);
+                mjcf::ActuatorVelocity act = document->actuator().addVelocity(jointName);
                 act.name = joint.name;
                 break;
         }
+        
+        std::stringstream actuatorName;
+        actuatorName << joint.name;
+        if (addActuatorTypeSuffix)
+        {
+            actuatorName << actuatorTypeSuffixes.at(actuatorType);
+        }
+        actuator.setAttribute("name", actuatorName.str());
     }
 }
 
@@ -627,6 +638,16 @@ void MujocoIO::setMassScale(float value)
 void MujocoIO::setActuatorType(ActuatorType value)
 {
     this->actuatorType = value;
+}
+
+void MujocoIO::setAddActuatorTypeSuffix(bool enable)
+{
+    this->addActuatorTypeSuffix = enable;
+}
+
+void MujocoIO::setActuatorTypeSuffixes(const std::map<ActuatorType, std::string>& suffixes)
+{
+    this->actuatorTypeSuffixes = suffixes;
 }
 
 void MujocoIO::setWithMocapBody(bool enabled)

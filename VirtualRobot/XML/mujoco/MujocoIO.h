@@ -40,15 +40,18 @@ namespace mujoco
         
         /// Set the scaling for lengths.
         void setLengthScale(float value);
-        
         /// Set the scaling for meshes.
         void setMeshScale(float value);
-        
         /// Set the scaling for mass (to kg).
         void setMassScale(float value);
 
         /// Set the actuator type.
         void setActuatorType(ActuatorType value);
+        /// Set whether a type suffix shall be added to actuator names.
+        void setAddActuatorTypeSuffix(bool enable);
+        /// Set suffixes appended to actuator names if adding actuator type suffixes is enabled.
+        void setActuatorTypeSuffixes(const std::map<ActuatorType, std::string>& suffixes);
+        
         
         /**
          * @brief Enable or disable adding of a mocap body controlling the robot pose.
@@ -121,6 +124,16 @@ namespace mujoco
         
         /// The actuator type.
         ActuatorType actuatorType = ActuatorType::MOTOR;
+        
+        /// Whether to add type suffix to actuator names
+        bool addActuatorTypeSuffix = false;
+        /// The suffixes added if addActuatorTypeSuffix is true.
+        std::map<ActuatorType, std::string> actuatorTypeSuffixes = {
+            { ActuatorType::MOTOR, "_motor" },
+            { ActuatorType::POSITION, "_position" },
+            { ActuatorType::VELOCITY, "_velocity" },
+        };
+        
         
         /// Add a mocap
         bool withMocapBody = false;
