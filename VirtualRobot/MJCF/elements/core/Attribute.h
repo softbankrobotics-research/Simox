@@ -73,7 +73,7 @@ namespace mjcf
         }
         
         /// Conversion operator to AttrT for reading.
-        operator AttrT()
+        operator AttrT() const
         {
             return this->get();
         }
