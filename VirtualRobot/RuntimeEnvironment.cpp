@@ -347,14 +347,12 @@ namespace VirtualRobot
 
     float RuntimeEnvironment::toFloat(const std::string& s)
     {
-        float a = (float)atof(s.c_str());
-        return a;
+        return std::stof(s);
     }
 
     int RuntimeEnvironment::toInt(const std::string& s)
     {
-        int a = (int)atoi(s.c_str());
-        return a;
+        return std::stoi(s);
     }
 
     bool RuntimeEnvironment::toVector3f(const std::string& s, Eigen::Vector3f& storeResult)
