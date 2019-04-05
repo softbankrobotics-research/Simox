@@ -32,33 +32,33 @@
 namespace VirtualRobot
 {
     /*!
-        The runtime environment holds data paths and program arguments.
-        Data files can be located by the getDataFileAbsolute method.
-        Here, the environment variable SIMOX_DATA_PATH and VIRTUAL_ROBOT_DATA_PATH are considered.
-        In addition, the install data directory is added at the end of the list of data paths for convenient access.
+     * The runtime environment holds data paths and program arguments.
+     * Data files can be located by the getDataFileAbsolute method.
+     * Here, the environment variable SIMOX_DATA_PATH and VIRTUAL_ROBOT_DATA_PATH are considered.
+     * In addition, the install data directory is added at the end of the list of data paths for convenient access.
     */
     class VIRTUAL_ROBOT_IMPORT_EXPORT RuntimeEnvironment
     {
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-        /*!
-            Return vector of all data paths.
-        */
+        //! Return vector of all data paths.
         static std::vector< std::string > getDataPaths();
 
         /*!
-            Add a path to global data path vector. These paths are searched within the getDataFileAbsolute() method.
-            Only valid paths are processed.
-            \param path The path to add.
-            \param quiet If set, invalid paths are quietly ignored. Otherwise an error is printed.
-            \return true on success (path has to be a directory or a symlink).
-        */
+         * Add a path to global data path vector. 
+         * These paths are searched within the getDataFileAbsolute() method.
+         * Only valid paths are processed.
+         * \param path The path to add.
+         * \param quiet If set, invalid paths are quietly ignored. Otherwise an error is printed.
+         * \return true on success (path has to be a directory or a symlink).
+         */
         static bool addDataPath(const std::string& path, bool quiet = false);
 
         /*!
-            Enable the command line search for given key. Only keys that are enabled can later be accessed with the getValue() method.
-        */
+         * \brief Enable the command line search for given key. 
+         * Only keys that are enabled can later be accessed with the getValue() method.
+         */
         static void considerKey(const std::string& key);
 
         /*!
@@ -69,21 +69,17 @@ namespace VirtualRobot
         static bool getDataFileAbsolute(std::string& fileName);
 
         /*!
-            The command line parameters can be passed in order to generate a map of key/value pairs.
-            All "--key value" pairs for which the key was enabled with the allowCommandLineOption() method are processed and stored as std::strings in a std::map.
-            In addition, all "--data-path <path>" entries are extracted and the according data paths are stored.
-            All unrecognized options are also stored.
-        */
+         * The command line parameters can be passed in order to generate a map of key/value pairs.
+         * All "--key value" pairs for which the key was enabled with the allowCommandLineOption() method are processed and stored as std::strings in a std::map.
+         * In addition, all "--data-path <path>" entries are extracted and the according data paths are stored.
+         * All unrecognized options are also stored.
+         */
         static void processCommandLine(int argc, char* argv[]);
 
-        /*!
-            Manually add a key/value pair.
-        */
+        //! Manually add a key/value pair.
         static void addKeyValuePair(const std::string& key, const std::string& value);
 
-        /*!
-            Return the corresponding vale to key. If key cannot be found, defaultValue is returned.
-        */
+        //! Return the corresponding vale to key. If key cannot be found, defaultValue is returned.
         static std::string getValue(const std::string& key, const std::string& defaultValue = "");
         template<class T>
         static T getValue(const std::string& key, const T& defaultValue)
@@ -92,52 +88,48 @@ namespace VirtualRobot
         }
         static bool hasValue(const std::string& key);
 
-        //! return all key value pairs
-        static std::map< std::string, std::string > getKeyValuePairs();
+        //! Return all key value pairs
+        static std::map<std::string, std::string> getKeyValuePairs();
 
-        //! return all unrecognized options
-        static std::vector< std::string > getUnrecognizedOptions();
+        //! Return all unrecognized options
+        static std::vector<std::string> getUnrecognizedOptions();
 
-        /*!
-            Converts strings as '(a,b,c)' to 3dim Vectors.
-        */
+        //! Convert strings as '(a,b,c)' to a 3 dimensional vector.
         static bool toVector3f(const std::string& s, Eigen::Vector3f& storeResult);
 
-        /*!
-         * \brief toFloat Get command line parameter as float
-         * \param s
-         * \return
-         */
+        //! Get the given string as float.
         static float toFloat(const std::string& s);
+        //! Get the given string as int.
         static int toInt(const std::string& s);
 
 
         /*!
-            Check if command line parameters specify a valid filename and
-            in case the key is not present in the command line arguments or the file was not found, the standardFilename is used.
-            Additionally the absolute filenames are considered by calling getDataFileAbsolute().
-            \param key  The key which is checked for a filename. It is checked if the key is present and if so, it is tried to
-                        construct a valid filename with getDataFileAbsolute().
-            \param standardFilename In case a valid file could not be determined, this file will be returned
-                                    (additionally it is made absolute by calling getDataFileAbsolute().
-                                    Hence, a filename with a relative path can be passed
-                                    and all datapaths are searched for it.
-            \return A valid filename if it can be found, otherwise the standardFilename is returned.
+         * Check if command line parameters specify a valid filename and
+         * in case the key is not present in the command line arguments or the file was not found, the standardFilename is used.
+         * Additionally the absolute filenames are considered by calling getDataFileAbsolute().
+         * \param key  The key which is checked for a filename. It is checked if the key is present and if so, it is tried to
+         *             construct a valid filename with getDataFileAbsolute().
+         * \param standardFilename In case a valid file could not be determined, this file will be returned
+         *                         (additionally it is made absolute by calling getDataFileAbsolute().
+         *                         Hence, a filename with a relative path can be passed
+         *                         and all datapaths are searched for it.
+         * \return A valid filename if it can be found, otherwise the standardFilename is returned.
         */
         static std::string checkValidFileParameter(const std::string& key, const std::string& standardFilename);
 
         /*!
-            Checks command line arguments for parameter key. iF present the corresponding value is returned,
-            otherwise standardValue will be returned.
-        */
+         * Checks command line arguments for parameter key.
+         * If present the corresponding value is returned, otherwise standardValue will be returned.
+         */
         static std::string checkParameter(const std::string& key, const std::string& standardValue = "");
 
         //! Print status
         static void print();
 
         /*!
-            Free all resources. Usually not not needed, since on application exit all resources are freed automatically.
-        */
+         * \brief Free all resources. 
+         * Usually not not needed, since on application exit all resources are freed automatically.
+         */
         static void cleanup();
     protected:
 
