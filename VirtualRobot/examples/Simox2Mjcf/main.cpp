@@ -19,7 +19,7 @@ namespace fs = boost::filesystem;
  */
 int main(int argc, char* argv[])
 {
-    RuntimeEnvironment::setCaption("Convert Simox XML to MJCF (Mujoco XML).");
+    RuntimeEnvironment::setCaption("Convert Simox XML to MJCF (Mujoco XML)");
     
     RuntimeEnvironment::considerKey(
                 "robot", "The Simox robot model to convert. (required)");
@@ -31,12 +31,17 @@ int main(int argc, char* argv[])
                 "actuator", "The actuator type to add (motor, position, velocity). (default: motor)");
     RuntimeEnvironment::considerFlag(
                 "mocap", "Add a mocap body to which the robot root body is welded.");
+    
     RuntimeEnvironment::considerKey(
                 "scale_length", "Scaling of lengths and distances (to m). For meshes, see 'scale_mesh'. (default: 1.0)");
     RuntimeEnvironment::considerKey(
                 "scale_mesh", "Scaling of meshes (to m). (default: 1.0)");
     RuntimeEnvironment::considerKey(
                 "scale_mass", "Scaling of masses (to kg). (default: 1.0)");
+    
+    RuntimeEnvironment::considerFlag(
+                "actuator_suffix", "Add a type suffix to actuator names.");
+    
     RuntimeEnvironment::considerFlag(
                 "verbose", "Enable verbose output.");
     
@@ -83,6 +88,7 @@ int main(int argc, char* argv[])
     
     const bool mocap = RuntimeEnvironment::hasFlag("mocap");
     const bool verbose = RuntimeEnvironment::hasFlag("verbose");
+    const bool addActuatorSuffix = RuntimeEnvironment::hasFlag("actuator_suffix");
     
     auto parseFloatParameter = [](const std::string& key, const std::string& default_)
     {
@@ -148,12 +154,15 @@ int main(int argc, char* argv[])
     {
         // direct API
         mujoco::MujocoIO mujocoIO(robot);
+        
         mujocoIO.setActuatorType(actuatorType);
         mujocoIO.setWithMocapBody(mocap);
         mujocoIO.setLengthScale(scaleLength);
         mujocoIO.setMeshScale(scaleMesh);
         mujocoIO.setMassScale(scaleMass);
         mujocoIO.setVerbose(verbose);
+        mujocoIO.setAddActuatorTypeSuffix(addActuatorSuffix);
+        
         mujocoIO.saveMJCF(inputFilename.filename().string(), outputDir.string(), meshRelDir);
     }
 }
