@@ -530,10 +530,10 @@ void MujocoIO::addMocapContactExcludes(mjcf::Body mocap)
 
 void MujocoIO::addActuators()
 {
-    std::vector<mjcf::Joint> jointElements = mjcf::Collector<mjcf::Joint>::collect(
+    const std::vector<mjcf::Joint> jointElements = mjcf::Collector<mjcf::Joint>::collect(
                 *document, document->worldbody());
     
-    for (auto joint : jointElements)
+    for (const auto& joint : jointElements)
     {
         mjcf::AnyElement actuator;
         
@@ -543,7 +543,6 @@ void MujocoIO::addActuators()
             case ActuatorType::MOTOR:
             {
                 mjcf::ActuatorMotor act = document->actuator().addMotor(jointName);
-                
                 actuator = act;
                 break;
             }
@@ -551,7 +550,7 @@ void MujocoIO::addActuators()
             case ActuatorType::POSITION:
             {
                 mjcf::ActuatorPosition act = document->actuator().addPosition(jointName);
-                act.name = joint.name;
+                actuator = act;
                 
                 if (joint.limited)
                 {
@@ -562,8 +561,7 @@ void MujocoIO::addActuators()
                 break;
                 
             case ActuatorType::VELOCITY:
-                mjcf::ActuatorVelocity act = document->actuator().addVelocity(jointName);
-                act.name = joint.name;
+                actuator = document->actuator().addVelocity(jointName);
                 break;
         }
         
