@@ -110,6 +110,11 @@ void MujocoIO::saveMJCF(const std::string& filename, const std::string& basePath
     document->saveFile((outputDirectory / outputFileName).string());
 }
 
+void MujocoIO::setUseRelativePaths(bool useRelative)
+{
+    this->useRelativePaths = useRelative;
+}
+
 void MujocoIO::setPaths(const std::string& filename, const std::string& basePath, const std::string& meshRelDir)
 {
     outputDirectory = basePath;
@@ -333,15 +338,15 @@ void MujocoIO::addNodeBodyMeshes()
         
         std::cout << t << "Node " << node->getName() << ":\t";
         
-        fs::path srcMeshPath = visualization->getFilename();
+        const fs::path srcMeshPath = visualization->getFilename();
         
         fs::path dstMeshFileName = srcMeshPath.filename();
         dstMeshFileName.replace_extension("stl");
-        fs::path dstMeshPath = outputMeshDirectory() / dstMeshFileName;
+        const fs::path dstMeshPath = outputMeshDirectory() / dstMeshFileName;
         
         if (!fs::exists(dstMeshPath))
         {
-            if (srcMeshPath.extension().string() != "stl")
+            if (srcMeshPath.extension().string() != ".stl")
             {
                 std::cout << "Converting to .stl: " << srcMeshPath << std::endl;
                 
@@ -392,7 +397,11 @@ void MujocoIO::addNodeBodyMeshes()
         
         // add asset
         const std::string meshName = node->getName();
-        document->asset().addMesh(meshName, fs::absolute(dstMeshPath).string());
+        const fs::path meshPath = useRelativePaths 
+                ? outputMeshRelDirectory / dstMeshFileName
+                : fs::absolute(dstMeshPath);
+        
+        document->asset().addMesh(meshName, meshPath.string());
         
         // add geom to body
         mjcf::Body& body = nodeBodies.at(node->getName());

@@ -38,6 +38,10 @@ namespace mujoco
                       const std::string& meshRelDir);
         
         
+        /// Set whether paths (e.g. meshes) shall be relative instead of absolute.
+        /// This can cause problems when including the generated model from another directory.
+        void setUseRelativePaths(bool useRelative);
+        
         /// Set the scaling for lengths.
         void setLengthScale(float value);
         /// Set the scaling for meshes.
@@ -114,6 +118,8 @@ namespace mujoco
         
         
         // Paremeters
+        
+        bool useRelativePaths = false;
         
         /// Scaling for lengths, such as positions and translations (to m).
         float lengthScale = 0.001f;

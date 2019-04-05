@@ -26,11 +26,15 @@ int main(int argc, char* argv[])
     RuntimeEnvironment::considerKey(
                 "outdir", "The output directory. (default: 'mjcf')");
     RuntimeEnvironment::considerKey(
-                "meshRelDir", "The mesh directory relative to outdir. (default: 'mesh')");
+                "mesh_rel_dir", "The mesh directory relative to outdir. (default: 'mesh')");
     RuntimeEnvironment::considerKey(
                 "actuator", "The actuator type to add (motor, position, velocity). (default: motor)");
     RuntimeEnvironment::considerFlag(
                 "mocap", "Add a mocap body to which the robot root body is welded.");
+    
+    RuntimeEnvironment::considerFlag(
+                "rel_paths", "Store relative mesh paths instead of absolute ones. (This can "
+                             "cause problems when including the generated model from another directory.)");
     
     RuntimeEnvironment::considerKey(
                 "scale_length", "Scaling of lengths and distances (to m). For meshes, see 'scale_mesh'. (default: 1.0)");
@@ -70,7 +74,7 @@ int main(int argc, char* argv[])
     
     const fs::path outputDir = RuntimeEnvironment::checkParameter(
                 "outdir", (inputFilename.parent_path() / "mjcf").string());
-    const std::string meshRelDir = RuntimeEnvironment::checkParameter("meshRelDir", "mesh");
+    const std::string meshRelDir = RuntimeEnvironment::checkParameter("mesh_rel_dir", "mesh");
     
     
     const std::string actuatorTypeStr = RuntimeEnvironment::checkParameter("actuator", "motor");
@@ -90,6 +94,9 @@ int main(int argc, char* argv[])
     const bool verbose = RuntimeEnvironment::hasFlag("verbose");
     const bool addActuatorSuffix = RuntimeEnvironment::hasFlag("actuator_suffix");
     
+    const bool useRelativePaths = RuntimeEnvironment::hasFlag("rel_paths");
+    
+  
     auto parseFloatParameter = [](const std::string& key, const std::string& default_)
     {
         const std::string string = RuntimeEnvironment::checkParameter(key, default_);
@@ -156,12 +163,16 @@ int main(int argc, char* argv[])
         mujoco::MujocoIO mujocoIO(robot);
         
         mujocoIO.setActuatorType(actuatorType);
+        mujocoIO.setAddActuatorTypeSuffix(addActuatorSuffix);
+        
+        mujocoIO.setUseRelativePaths(useRelativePaths);
         mujocoIO.setWithMocapBody(mocap);
+        
         mujocoIO.setLengthScale(scaleLength);
         mujocoIO.setMeshScale(scaleMesh);
         mujocoIO.setMassScale(scaleMass);
+        
         mujocoIO.setVerbose(verbose);
-        mujocoIO.setAddActuatorTypeSuffix(addActuatorSuffix);
         
         mujocoIO.saveMJCF(inputFilename.filename().string(), outputDir.string(), meshRelDir);
     }
