@@ -10,7 +10,7 @@
 using namespace VirtualRobot;
 using namespace mjcf;
 namespace tx = tinyxml2; 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 
 

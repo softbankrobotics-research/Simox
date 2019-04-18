@@ -88,11 +88,11 @@ namespace VirtualRobot
             // last chance, check for inbuild paths
             if (!pathFound)
             {
-                boost::filesystem::path p(boost::filesystem::current_path());
-                boost::filesystem::path p1 = boost::filesystem::operator/(p, "../VirtualRobot/data");
-                boost::filesystem::path p2 = boost::filesystem::operator/(p, "../../VirtualRobot/data");
-                boost::filesystem::path p3 = boost::filesystem::operator/(p, "../../../VirtualRobot/data");
-                boost::filesystem::path p4 = boost::filesystem::operator/(p, "../../../../VirtualRobot/data");
+                std::filesystem::path p(std::filesystem::current_path());
+                std::filesystem::path p1 = std::filesystem::operator/(p, "../VirtualRobot/data");
+                std::filesystem::path p2 = std::filesystem::operator/(p, "../../VirtualRobot/data");
+                std::filesystem::path p3 = std::filesystem::operator/(p, "../../../VirtualRobot/data");
+                std::filesystem::path p4 = std::filesystem::operator/(p, "../../../../VirtualRobot/data");
                 pathFound = pathFound | addDataPath(p1.string(), true);
                 pathFound = pathFound | addDataPath(p2.string(), true);
                 pathFound = pathFound | addDataPath(p3.string(), true);
@@ -108,18 +108,18 @@ namespace VirtualRobot
             init();
         }
 
-        boost::filesystem::path fn(fileName);
+        std::filesystem::path fn(fileName);
 
         try
         {
             // first check current path
-            if (boost::filesystem::exists(fn) && boost::filesystem::is_regular_file(fn))
+            if (std::filesystem::exists(fn) && std::filesystem::is_regular_file(fn))
             {
                 fileName = fn.string();
                 return true;
             }
         }
-        catch (...)//const boost::filesystem::filesystem_error& /*ex*/)
+        catch (...)//const std::filesystem::filesystem_error& /*ex*/)
         {
             //cout << ex.what() << '\n';
             // silently skip this error (e.g. device not ready, permission denied etc)
@@ -127,23 +127,23 @@ namespace VirtualRobot
 
         for (auto& dataPath : dataPaths)
         {
-            boost::filesystem::path p(dataPath);
+            std::filesystem::path p(dataPath);
 
-            boost::filesystem::path fnComplete = boost::filesystem::operator/(p, fn);
+            std::filesystem::path fnComplete = std::filesystem::operator/(p, fn);
 
             try
             {
-                if (boost::filesystem::exists(fnComplete) && boost::filesystem::is_regular_file(fnComplete))
+                if (std::filesystem::exists(fnComplete) && std::filesystem::is_regular_file(fnComplete))
                 {
                     // check for permissions (todo)
-                    //boost::filesystem::file_status s = boost::filesystem::status(fnComplete);
+                    //std::filesystem::file_status s = std::filesystem::status(fnComplete);
                     //printf("%o\n",s.permissions());
 
                     fileName = fnComplete.string();
                     return true;
                 }
             }
-            catch (...)//const boost::filesystem::filesystem_error& ex)
+            catch (...)//const std::filesystem::filesystem_error& ex)
             {
                 //cout << "EX:" << ex.what() << '\n';
                 // silently skip this error (e.g. device not ready, permission denied etc)
@@ -265,9 +265,9 @@ namespace VirtualRobot
     {
         try
         {
-            boost::filesystem::path p(path);
+            std::filesystem::path p(path);
 
-            if (boost::filesystem::is_directory(p) || boost::filesystem::is_symlink(p))
+            if (std::filesystem::is_directory(p) || std::filesystem::is_symlink(p))
             {
                 dataPaths.push_back(path);
                 return true;

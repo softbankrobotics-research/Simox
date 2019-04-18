@@ -89,7 +89,7 @@
 #include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
 #include <Inventor/VRMLnodes/SoVRMLAppearance.h>
 
-namespace filesystem = boost::filesystem;
+namespace filesystem = std::filesystem;
 
 
 namespace VirtualRobot
@@ -384,8 +384,8 @@ namespace VirtualRobot
         visualizationNode.reset(new CoinVisualizationNode(coinVisualization));
         if (freeDuplicateTextures)
         {
-            boost::filesystem::path p(soInput.getCurFileName());
-            boost::filesystem::path dir = p.parent_path();
+            std::filesystem::path p(soInput.getCurFileName());
+            std::filesystem::path dir = p.parent_path();
 
             RemoveDuplicateTextures(coinVisualization, dir.string());
         }

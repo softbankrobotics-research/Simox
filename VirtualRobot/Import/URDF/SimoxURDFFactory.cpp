@@ -37,8 +37,8 @@ namespace VirtualRobot
         RobotPtr result;
         urdf::ModelInterfaceSharedPtr urdf_model = urdf::parseURDFFile(filename.c_str());
 
-        boost::filesystem::path filenameBaseComplete(filename);
-        boost::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
+        std::filesystem::path filenameBaseComplete(filename);
+        std::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
         std::string basePath = filenameBasePath.string();
 
         if (!urdf_model)
@@ -169,8 +169,8 @@ namespace VirtualRobot
         {
             // No ROS package structure, just try to find the file in the data directory
 
-            boost::filesystem::path p_base(basePath);
-            boost::filesystem::path p_f(f);
+            std::filesystem::path p_base(basePath);
+            std::filesystem::path p_f(f);
             result = (p_base / p_f).string();
 
             if (!VirtualRobot::RuntimeEnvironment::getDataFileAbsolute(result))
@@ -195,8 +195,8 @@ namespace VirtualRobot
                 package_base = basePath.substr(0, basePath.rfind(package_name));
             }
 
-            boost::filesystem::path p_f(result);
-            boost::filesystem::path p_base(package_base);
+            std::filesystem::path p_f(result);
+            std::filesystem::path p_base(package_base);
             result = (p_base / p_f).string();
         }
         return result;

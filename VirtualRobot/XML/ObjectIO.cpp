@@ -32,8 +32,8 @@ namespace VirtualRobot
 
         THROW_VR_EXCEPTION_IF(!in.is_open(), "Could not open XML file:" << xmlFile);
 
-        boost::filesystem::path filenameBaseComplete(xmlFile);
-        boost::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
+        std::filesystem::path filenameBaseComplete(xmlFile);
+        std::filesystem::path filenameBasePath = filenameBaseComplete.parent_path();
         std::string basePath = filenameBasePath.string();
         VirtualRobot::ObstaclePtr res = loadObstacle(in, basePath);
         THROW_VR_EXCEPTION_IF(!res, "Error while parsing file " << xmlFile);
@@ -63,8 +63,8 @@ namespace VirtualRobot
 
         THROW_VR_EXCEPTION_IF(!in.is_open(), "Could not open XML file:" << xmlFile);
 
-        boost::filesystem::path filenameBaseComplete(xmlFile);
-        boost::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
+        std::filesystem::path filenameBaseComplete(xmlFile);
+        std::filesystem::path filenameBasePath = filenameBaseComplete.parent_path();
         std::string basePath = filenameBasePath.string();
         VirtualRobot::ManipulationObjectPtr res = loadManipulationObject(in, basePath);
         THROW_VR_EXCEPTION_IF(!res, "Error while parsing file " << xmlFile);
@@ -562,8 +562,8 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!object, "NULL object");
 
-        boost::filesystem::path filenameBaseComplete(xmlFile);
-        boost::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
+        std::filesystem::path filenameBaseComplete(xmlFile);
+        std::filesystem::path filenameBasePath = filenameBaseComplete.parent_path();
         std::string basePath = filenameBasePath.string();
 
         std::string xmlString = object->toXML(basePath);

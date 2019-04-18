@@ -828,15 +828,15 @@ namespace VirtualRobot
 
             for (auto & i : childrenFromRobot)
             {
-                boost::filesystem::path filenameNew(i.filename);
-                boost::filesystem::path filenameBasePath(basePath);
+                std::filesystem::path filenameNew(i.filename);
+                std::filesystem::path filenameBasePath(basePath);
 
-                boost::filesystem::path filenameNewComplete = boost::filesystem::operator/(filenameBasePath, filenameNew);
+                std::filesystem::path filenameNewComplete = std::filesystem::operator/(filenameBasePath, filenameNew);
                 VR_INFO << "Searching robot: " << filenameNewComplete.string() << endl;
 
                 try
                 {
-                    THROW_VR_EXCEPTION_IF(!boost::filesystem::exists(filenameNewComplete), "File <" << filenameNewComplete.string() << "> does not exist." << endl);
+                    THROW_VR_EXCEPTION_IF(!std::filesystem::exists(filenameNewComplete), "File <" << filenameNewComplete.string() << "> does not exist." << endl);
                 }
                 catch (...)
                 {
@@ -1443,8 +1443,8 @@ namespace VirtualRobot
         std::stringstream buffer;
         buffer << in.rdbuf();
         std::string robotXML(buffer.str());
-        boost::filesystem::path filenameBaseComplete(xmlFile);
-        boost::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
+        std::filesystem::path filenameBaseComplete(xmlFile);
+        std::filesystem::path filenameBasePath = filenameBaseComplete.parent_path();
         std::string basePath = filenameBasePath.string();
 
         in.close();
@@ -1467,21 +1467,21 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!robot, "NULL data");
 
 
-        boost::filesystem::path p(basePath);
-        boost::filesystem::path fn(filename);
-        boost::filesystem::path pModelDir(modelDir);
-        boost::filesystem::path fnComplete = boost::filesystem::operator/(p, fn);
-        boost::filesystem::path modelDirComplete = boost::filesystem::operator/(p, pModelDir);
+        std::filesystem::path p(basePath);
+        std::filesystem::path fn(filename);
+        std::filesystem::path pModelDir(modelDir);
+        std::filesystem::path fnComplete = std::filesystem::operator/(p, fn);
+        std::filesystem::path modelDirComplete = std::filesystem::operator/(p, pModelDir);
 
-        if (boost::filesystem::exists(modelDirComplete) && !boost::filesystem::is_directory(modelDirComplete))
+        if (std::filesystem::exists(modelDirComplete) && !std::filesystem::is_directory(modelDirComplete))
         {
             VR_ERROR << "Could not create model directory (existing & !dir)  " << pModelDir.string() << endl;
             return false;
         }
 
-        if (!boost::filesystem::is_directory(modelDirComplete))
+        if (!std::filesystem::is_directory(modelDirComplete))
         {
-            if (!boost::filesystem::create_directories(modelDirComplete))
+            if (!std::filesystem::create_directories(modelDirComplete))
             {
                 VR_ERROR << "Could not create model dir  " << modelDirComplete.string() << endl;
                 return false;

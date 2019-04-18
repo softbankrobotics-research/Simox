@@ -764,10 +764,10 @@ namespace VirtualRobot
             return;
         }
 
-        boost::filesystem::path filenameNew(filename);
-        boost::filesystem::path filenameBasePath(basePath);
+        std::filesystem::path filenameNew(filename);
+        std::filesystem::path filenameBasePath(basePath);
 
-        boost::filesystem::path filenameNewComplete = boost::filesystem::operator/(filenameBasePath, filenameNew);
+        std::filesystem::path filenameNewComplete = std::filesystem::operator/(filenameBasePath, filenameNew);
         filename = filenameNewComplete.string();
     }
 
@@ -780,17 +780,17 @@ namespace VirtualRobot
 
 #if (BOOST_VERSION>=104800)
         // canonical needs boost version >=1.48
-        namespace fs = boost::filesystem;
+        namespace fs = std::filesystem;
 
         fs::path filepath;
 
-        if (fs::path(filename).is_absolute() && boost::filesystem::exists(fs::path(basePath) / fs::path(filename)))
+        if (fs::path(filename).is_absolute() && std::filesystem::exists(fs::path(basePath) / fs::path(filename)))
         {
             return;
         }
         else if (fs::path(filename).is_absolute())
         {
-            if (boost::filesystem::exists(fs::path(filename)))
+            if (std::filesystem::exists(fs::path(filename)))
             {
                 filepath = fs::canonical(fs::path(filename));
             }
@@ -833,8 +833,8 @@ namespace VirtualRobot
 #else
         // version compatible with boost below version 1.48,
         // may be buggy in some cases...
-        boost::filesystem::path diffpath;
-        boost::filesystem::path tmppath = filename;
+        std::filesystem::path diffpath;
+        std::filesystem::path tmppath = filename;
 
         while (tmppath != basePath)
         {
@@ -1454,11 +1454,11 @@ namespace VirtualRobot
         {
 
             // check file absolute
-            boost::filesystem::path fn(fileName);
+            std::filesystem::path fn(fileName);
 
             try
             {
-                if (boost::filesystem::exists(fn))
+                if (std::filesystem::exists(fn))
                 {
                     return fileName;
                 }
@@ -1472,7 +1472,7 @@ namespace VirtualRobot
 
             try
             {
-                if (boost::filesystem::exists(fn))
+                if (std::filesystem::exists(fn))
                 {
                     return absFileName;
                 }
@@ -1791,7 +1791,7 @@ namespace VirtualRobot
     {
         try
         {
-            if (!overwrite && boost::filesystem::exists(filename))
+            if (!overwrite && std::filesystem::exists(filename))
             {
                 return false;
             }

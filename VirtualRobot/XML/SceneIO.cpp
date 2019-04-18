@@ -29,8 +29,8 @@ namespace VirtualRobot
         std::stringstream buffer;
         buffer << in.rdbuf();
         std::string robotXML(buffer.str());
-        boost::filesystem::path filenameBaseComplete(xmlFile);
-        boost::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
+        std::filesystem::path filenameBaseComplete(xmlFile);
+        std::filesystem::path filenameBasePath = filenameBaseComplete.parent_path();
         std::string basePath = filenameBasePath.string();
 
         in.close();
@@ -398,9 +398,9 @@ namespace VirtualRobot
             return false;
         }
 
-        boost::filesystem::path filenameBaseComplete(xmlFile);
-        filenameBaseComplete = boost::filesystem::system_complete(filenameBaseComplete);
-        boost::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
+        std::filesystem::path filenameBaseComplete(xmlFile);
+        filenameBaseComplete = std::filesystem::absolute(filenameBaseComplete);
+        std::filesystem::path filenameBasePath = filenameBaseComplete.parent_path();
         std::string basePath = filenameBasePath.string();
 
         std::string xmlString = s->getXMLString(basePath);
