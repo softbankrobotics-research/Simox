@@ -367,7 +367,7 @@ void GraspPlannerWindow::plan()
 
     float timeout = UI.spinBoxTimeOut->value() * 1000.0f;
     bool forceClosure = UI.checkBoxFoceClosure->isChecked();
-    float quality = (float)UI.doubleSpinBoxQuality->value();
+    float quality = static_cast<float>(UI.doubleSpinBoxQuality->value());
     int nrGrasps = UI.spinBoxGraspNumber->value();
     if (planner)
     {
@@ -380,7 +380,7 @@ void GraspPlannerWindow::plan()
 
     int nr = planner->plan(nrGrasps, timeout);
     VR_INFO << " Grasp planned:" << nr << endl;
-    int start = (int)grasps->getSize() - nrGrasps - 1;
+    int start = static_cast<int>(grasps->getSize()) - nrGrasps - 1;
 
     if (start < 0)
     {
@@ -389,7 +389,7 @@ void GraspPlannerWindow::plan()
 
     grasps->setPreshape(preshape);
 
-    for (int i = start; i < (int)grasps->getSize() - 1; i++)
+    for (int i = start; i < static_cast<int>(grasps->getSize()) - 1; i++)
     {
         Eigen::Matrix4f m = grasps->getGrasp(i)->getTcpPoseGlobal(object->getGlobalPose());
         SoSeparator* sep1 = new SoSeparator();
@@ -609,8 +609,8 @@ void GraspPlannerWindow::planObjectBatch()
                         continue;
                     }
                     VR_INFO << "Grasp " << graspSum << "/" << planner->getPlannedGrasps().size() << std::endl;
-                    histogramFC.at(std::min<int>((int)(result.forceClosureRate * bins), bins - 1))++;
-                    histogramFCWithCollisions.at(std::min<int>((int)((double)(result.numForceClosurePoses) / result.numPosesTested * bins), bins - 1))++;
+                    histogramFC.at(std::min<int>(static_cast<int>(result.forceClosureRate * bins), bins - 1))++;
+                    histogramFCWithCollisions.at(std::min<int>(static_cast<int>(static_cast<double>(result.numForceClosurePoses) / result.numPosesTested * bins), bins - 1))++;
                     avgRate += result.avgQuality;
                     avgForceClosureRate += result.forceClosureRate;
                     avgRateCol += result.avgQualityCol;
@@ -630,13 +630,13 @@ void GraspPlannerWindow::planObjectBatch()
                 int i = 0;
                 for (auto bin : histogramFC)
                 {
-                    fs  <<  ", " << (double)(bin) / graspSum;
-                    cout << i << ": " << bin << ", " << graspSum << ", " << (double)(bin) / graspSum << std::endl;
+                    fs  <<  ", " << static_cast<double>(bin) / graspSum;
+                    cout << i << ": " << bin << ", " << graspSum << ", " << static_cast<double>(bin) / graspSum << std::endl;
                     i++;
                 }
                 for (auto bin : histogramFCWithCollisions)
                 {
-                    fs  <<  ", " << (double)(bin) / graspSum;
+                    fs  <<  ", " << static_cast<double>(bin) / graspSum;
                 }
                 fs << std::endl;
             }
