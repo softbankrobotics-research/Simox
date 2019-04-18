@@ -29,10 +29,10 @@ namespace VirtualRobot
     std::map<std::string, int> RobotIO::robot_name_counter;
 
     RobotIO::RobotIO()
-    = default;
+        = default;
 
     RobotIO::~RobotIO()
-    = default;
+        = default;
 
 
 
@@ -89,7 +89,7 @@ namespace VirtualRobot
      *
      * The values are stored in \p jointLimitLo and \p jointLimitHi
      */
-    void RobotIO::processLimitsNode(rapidxml::xml_node<char>* limitsXMLNode, float& jointLimitLo, float& jointLimitHi, bool &limitless)
+    void RobotIO::processLimitsNode(rapidxml::xml_node<char>* limitsXMLNode, float& jointLimitLo, float& jointLimitHi, bool& limitless)
     {
         THROW_VR_EXCEPTION_IF(!limitsXMLNode, "NULL data for limitsXMLNode in processLimitsNode()");
 
@@ -333,7 +333,7 @@ namespace VirtualRobot
                 Units uLength("m");
                 Units uAngle("rad");
 
-                for (auto & i : unitsAttr)
+                for (auto& i : unitsAttr)
                 {
                     if (i.isTime())
                     {
@@ -386,7 +386,7 @@ namespace VirtualRobot
                 Units uLength("m");
                 Units uAngle("rad");
 
-                for (auto & i : unitsAttr)
+                for (auto& i : unitsAttr)
                 {
                     if (i.isTime())
                     {
@@ -436,7 +436,7 @@ namespace VirtualRobot
                 std::vector< Units > unitsAttr = getUnitsAttributes(node);
                 Units uLength("m");
 
-                for (auto & i : unitsAttr)
+                for (auto& i : unitsAttr)
                 {
                     if (i.isLength())
                     {
@@ -736,7 +736,7 @@ namespace VirtualRobot
         robotNode = processJointNode(jointNodeXML, robotNodeName, robo, visualizationNode, collisionModel, physics, rntype, transformMatrix);
 
         // process sensors
-        for (auto & sensorTag : sensorTags)
+        for (auto& sensorTag : sensorTags)
         {
             processSensor(robotNode, sensorTag, loadMode, basePath);
         }
@@ -826,7 +826,7 @@ namespace VirtualRobot
             std::vector< ChildFromRobotDef > childrenFromRobot = iter->second;
             RobotNodePtr node = iter->first;
 
-            for (auto & i : childrenFromRobot)
+            for (auto& i : childrenFromRobot)
             {
                 std::filesystem::path filenameNew(i.filename);
                 std::filesystem::path filenameBasePath(basePath);
@@ -854,7 +854,7 @@ namespace VirtualRobot
                 std::vector<EndEffectorPtr> eefs;
                 r->getEndEffectors(eefs);
 
-                for (auto & eef : eefs)
+                for (auto& eef : eefs)
                 {
                     eef->clone(robo);
                 }
@@ -862,7 +862,7 @@ namespace VirtualRobot
                 std::vector<RobotNodeSetPtr> nodeSets;
                 r->getRobotNodeSets(nodeSets);
 
-                for (auto & nodeSet : nodeSets)
+                for (auto& nodeSet : nodeSets)
                 {
                     nodeSet->clone(robo);
                 }
@@ -875,7 +875,7 @@ namespace VirtualRobot
         }
 
         //std::vector<RobotNodeSetPtr> robotNodeSets
-        for (auto & endeffectorNode : endeffectorNodes)
+        for (auto& endeffectorNode : endeffectorNodes)
         {
             EndEffectorPtr eef = processEndeffectorNode(endeffectorNode, robo);
             robo->registerEndEffector(eef);
@@ -883,7 +883,7 @@ namespace VirtualRobot
 
         int rnsCounter = 0;
 
-        for (auto & robotNodeSetNode : robotNodeSetNodes)
+        for (auto& robotNodeSetNode : robotNodeSetNodes)
         {
             RobotNodeSetPtr rns = processRobotNodeSet(robotNodeSetNode, robo, robotRoot, rnsCounter);
             //nodeSets.push_back(rns);
@@ -893,7 +893,7 @@ namespace VirtualRobot
         robo->getRobotNodes(nodes);
         RobotNodePtr root = robo->getRootNode();
 
-        for (auto & node : nodes)
+        for (auto& node : nodes)
         {
             if (node != root && !(node->getParent()))
             {
@@ -985,7 +985,7 @@ namespace VirtualRobot
                                          const std::string& robotRoot,
                                          const std::string& basePath,
                                          std::map < RobotNodePtr,
-                                         std::vector<ChildFromRobotDef> > & childrenFromRobotFilesMap,
+                                         std::vector<ChildFromRobotDef> >& childrenFromRobotFilesMap,
                                          std::vector<rapidxml::xml_node<char>* >& robotNodeSetNodes,
                                          std::vector<rapidxml::xml_node<char>* >& endeffectorNodes,
                                          RobotDescription loadMode)
@@ -1036,7 +1036,7 @@ namespace VirtualRobot
                 else
                 {
                     // double name check
-                    for (auto & robotNode : robotNodes)
+                    for (auto& robotNode : robotNodes)
                     {
                         THROW_VR_EXCEPTION_IF((robotNode->getName() == n->getName()), "At least two RobotNodes with name <" << n->getName() << "> defined in robot definition");
                     }
@@ -1066,7 +1066,7 @@ namespace VirtualRobot
             {
                 endeffectorNodes.push_back(XMLNode);
             }
-            else if("robotinfo" == nodeName)
+            else if ("robotinfo" == nodeName)
             {
                 //skip
             }
@@ -1504,7 +1504,7 @@ namespace VirtualRobot
         {
             std::vector<RobotNodePtr> nodes = robot->getRobotNodes();
 
-            for (auto & node : nodes)
+            for (auto& node : nodes)
             {
                 node->saveModelFiles(modelDirComplete.string(), true);
             }
@@ -1512,8 +1512,8 @@ namespace VirtualRobot
 
         return true;
     }
-    
-    void RobotIO::saveMJCF(RobotPtr robot, const std::string& filename, 
+
+    void RobotIO::saveMJCF(RobotPtr robot, const std::string& filename,
                            const std::string& basePath, const std::string& meshDir)
     {
         mjcf::MujocoIO mujocoIO(robot);

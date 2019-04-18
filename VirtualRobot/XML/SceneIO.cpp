@@ -14,10 +14,10 @@ namespace VirtualRobot
 
 
     SceneIO::SceneIO()
-    = default;
+        = default;
 
     SceneIO::~SceneIO()
-    = default;
+        = default;
 
     VirtualRobot::ScenePtr SceneIO::loadScene(const std::string& xmlFile)
     {
@@ -121,7 +121,7 @@ namespace VirtualRobot
         // create & register node sets
         int rnsNr = 0;
 
-        for (auto & rnsNode : rnsNodes)
+        for (auto& rnsNode : rnsNodes)
         {
             // registers rns to robot
             RobotNodeSetPtr r = processRobotNodeSet(rnsNode, robot, robot->getRootNode()->getName(), rnsNr);
@@ -314,7 +314,7 @@ namespace VirtualRobot
         }
 
         // process all sceneSetNodes
-        for (auto & sceneSetNode : sceneSetNodes)
+        for (auto& sceneSetNode : sceneSetNodes)
         {
             bool r = processSceneObjectSet(sceneSetNode, scene);
 
@@ -327,7 +327,7 @@ namespace VirtualRobot
 
 
         // process all trajectories
-        for (auto & trajectoryNode : trajectoryNodes)
+        for (auto& trajectoryNode : trajectoryNodes)
         {
             bool r = processSceneTrajectory(trajectoryNode, scene);
 
