@@ -40,7 +40,7 @@ using namespace std;
 using namespace VirtualRobot;
 using namespace GraspStudio;
 
-float TIMER_MS = 30.0f;
+//float TIMER_MS = 30.0f;
 
 GraspPlannerWindow::GraspPlannerWindow(std::string& robFile, std::string& eefName, std::string& preshape, std::string& objFile)
     : QMainWindow(nullptr)
