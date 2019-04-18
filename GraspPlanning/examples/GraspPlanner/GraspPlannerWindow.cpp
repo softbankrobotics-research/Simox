@@ -543,7 +543,7 @@ void GraspPlannerWindow::planObjectBatch()
         return;
     }
     QStringList paths;
-    for (boost::filesystem::recursive_directory_iterator end, dir(fi.toUtf8().data(), boost::filesystem::symlink_option::recurse);
+    for (std::filesystem::recursive_directory_iterator end, dir(fi.toUtf8().data(), std::filesystem::directory_options::follow_directory_symlink);
          dir != end ; ++dir)
     {
         //std::string path(dir->path().c_str());
@@ -559,8 +559,8 @@ void GraspPlannerWindow::planObjectBatch()
     }
     paths.removeDuplicates();
     VR_INFO << "Found:  " << paths.join(", ").toStdString() << std::endl;
-    boost::filesystem::path resultsCSVPath("genericgraspplanningresults-" + robot->getName() + ".csv");
-    resultsCSVPath = boost::filesystem::absolute(resultsCSVPath);
+    std::filesystem::path resultsCSVPath("genericgraspplanningresults-" + robot->getName() + ".csv");
+    resultsCSVPath = std::filesystem::absolute(resultsCSVPath);
     std::ofstream fs(resultsCSVPath.string().c_str(), std::ofstream::out);
     fs << "object," << planner->getEvaluation().GetCSVHeader() << ",RobustnessAvgQualityNoCol,RobustnessAvgForceClosureRateNoCol,RobustnessAvgQualityCol,RobustnessAvgForceClosureRateCol";
     QProgressDialog progress("Calculating grasps...", "Abort", 0, paths.size(), this);
@@ -589,7 +589,7 @@ void GraspPlannerWindow::planObjectBatch()
             {
                 //planner->setRetreatOnLowContacts(false);
                 plan();
-                //                save(boost::filesystem::path(path.toStdString()).replace_extension(".moxml").string());
+                //                save(std::filesystem::path(path.toStdString()).replace_extension(".moxml").string());
                 float avgRate = 0;
                 float avgForceClosureRate = 0;
                 float avgRateCol = 0;
