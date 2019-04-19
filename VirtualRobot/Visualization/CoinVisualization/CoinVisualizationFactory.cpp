@@ -84,7 +84,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 
 #include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
 #include <Inventor/VRMLnodes/SoVRMLAppearance.h>
