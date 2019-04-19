@@ -13,8 +13,9 @@ IF(NOT CMAKE_BUILD_TYPE)
         FORCE)
 ENDIF()
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# cmake 3.10 does not understand c++2a, so we tell it we will handle the standard flag
+set(CMAKE_CXX_STANDARD_DEFAULT)
+add_definitions(-std=c++2a)
 
 list(APPEND CMAKE_MODULE_PATH ${Simox_SOURCE_DIR}/CMakeModules)
 MESSAGE (STATUS "** Module path: "  ${CMAKE_MODULE_PATH})
