@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
 #include <VirtualRobot/Robot.h>
 #include <VirtualRobot/MJCF/Document.h>
@@ -10,6 +10,7 @@
 
 namespace VirtualRobot
 {
+
 namespace mujoco
 {
 
@@ -150,10 +151,10 @@ namespace mujoco
         
         // Paths
         
-        boost::filesystem::path outputDirectory;
-        boost::filesystem::path outputFileName;
-        boost::filesystem::path outputMeshRelDirectory;
-        boost::filesystem::path outputMeshDirectory() { return outputDirectory / outputMeshRelDirectory; }
+        std::filesystem::path outputDirectory;
+        std::filesystem::path outputFileName;
+        std::filesystem::path outputMeshRelDirectory;
+        std::filesystem::path outputMeshDirectory() { return outputDirectory / outputMeshRelDirectory; }
         
         
         // Input
@@ -182,5 +183,4 @@ namespace mujoco
     };
     
     
-}
-}
+}}

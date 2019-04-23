@@ -205,7 +205,7 @@ namespace VirtualRobot
     std::string VisualizationNode::toXML(const std::string& basePath, int tabs)
     {
         std::string visualizationFilename = getFilename();
-        boost::filesystem::path fn(visualizationFilename);
+        std::filesystem::path fn(visualizationFilename);
         return toXML(basePath, fn.string(), tabs);
     }
 
@@ -258,17 +258,17 @@ namespace VirtualRobot
 
     bool VisualizationNode::saveModel(const std::string& modelPath, const std::string& filename)
     {
-        const boost::filesystem::path completePath(modelPath);
+        const std::filesystem::path completePath(modelPath);
 
-        if (!boost::filesystem::is_directory(completePath))
+        if (!std::filesystem::is_directory(completePath))
         {
-            if (!boost::filesystem::create_directories(completePath))
+            if (!std::filesystem::create_directories(completePath))
             {
                 VR_ERROR << "Could not create model dir  " << completePath.string() << endl;
                 return false;
             }
         }
-        const auto completeFile = boost::filesystem::absolute(completePath / filename).replace_extension("off");
+        const auto completeFile = std::filesystem::absolute(completePath / filename).replace_extension("off");
 
         const auto& t = *getTriMeshModel();
         VR_INFO << "writing " << completeFile.string() << std::endl;

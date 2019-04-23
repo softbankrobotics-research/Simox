@@ -10,7 +10,7 @@
 #include <VirtualRobot/XML/RobotIO.h>
 
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 
 namespace VirtualRobot::mujoco

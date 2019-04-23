@@ -10,6 +10,9 @@ target_include_directories(VirtualRobot PUBLIC
 
 target_compile_options(VirtualRobot PUBLIC ${Simox_OS_compile_options})
 
+target_link_libraries(VirtualRobot PUBLIC
+        stdc++fs
+)
 #######################################################################
 # Setup dependencies
 #######################################################################
@@ -48,11 +51,10 @@ MESSAGE (STATUS "Boost found at: ${Boost_INCLUDE_DIR}")
 target_include_directories(VirtualRobot PUBLIC ${Boost_INCLUDE_DIR})
 target_link_libraries(VirtualRobot PUBLIC 
         Boost::boost
-        Boost::filesystem
-        Boost::system
         Boost::program_options
         Boost::thread
 )
+
 # disable boost auto linking
 if (Boost_USE_STATIC_LIBS)
     target_compile_definitions(VirtualRobot PUBLIC -DBOOST_ALL_NO_LIB -DBOOST_TEST_MAIN)

@@ -1,4 +1,4 @@
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
 #include <VirtualRobot/RuntimeEnvironment.h>
 
@@ -9,7 +9,7 @@
 using namespace VirtualRobot;
 using VirtualRobot::RuntimeEnvironment;
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 
 /**

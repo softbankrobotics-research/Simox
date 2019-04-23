@@ -135,7 +135,7 @@ EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Vector3i)
 #include <boost/thread/shared_mutex.hpp>
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/bind.hpp>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <boost/mem_fn.hpp>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
