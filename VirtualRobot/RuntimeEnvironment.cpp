@@ -456,58 +456,55 @@ namespace VirtualRobot
         return std::stoi(s);
     }
 
-    bool RuntimeEnvironment::toVector3f(const std::string& s, Eigen::Vector3f& storeResult)
+    bool RuntimeEnvironment::toVector3f(const std::string& string, Eigen::Vector3f& storeResult)
     {
-        if (s.length() < 3)
+        if (string.length() < 3)
         {
             return false;
         }
 
-        if (s[0] != '(' || s[s.length() - 1] != ')')
+        if (string[0] != '(' || string[string.length() - 1] != ')')
         {
-            VR_WARNING << "Expecting string to start and end with brackets (): " << s << endl;
+            VR_WARNING << "Expecting string to start and end with brackets (): " << string << endl;
             return false;
         }
 
-        std::string s2 = s;
-        s2.erase(s2.begin(), s2.begin() + 1);
-        s2.erase(s2.end() - 1, s2.end());
-        std::vector<std::string> strs;
-        std::string del(",");
+        const std::string stringTrimmed = string.substr(1, string.size() - 1);
+        const std::string delimiter = ",";
 
-        boost::split(strs, s2, boost::is_any_of(del));
+        std::vector<std::string> stringSplit;
+        boost::split(stringSplit, stringTrimmed, boost::is_any_of(delimiter));
 
-        if (strs.size() != 3)
+        if (stringSplit.size() != 3)
         {
-            VR_WARNING << "Expecting values of string to be separated with a ',': " << s << endl;
+            VR_WARNING << "Expecting values of string to be separated with a ',': " << string << endl;
             return false;
         }
 
-        float a = (float)atof(strs[0].c_str());
-        float b = (float)atof(strs[1].c_str());
-        float c = (float)atof(strs[2].c_str());
-
-        if (boost::math::isinf(a) || boost::math::isinf(-a) || boost::math::isnan(a))
+        Eigen::Vector3f result;
+        
+        for (int i = 0; i < result.SizeAtCompileTime; ++i)
         {
-            VR_WARNING << "Could not convert " << strs[0] << " to a number" << endl;
-            return false;
+            const std::string& string = stringSplit[static_cast<std::size_t>(i)];
+            bool error = false;
+            float a;
+            try
+            {
+                a = std::stof(string);
+            }
+            catch (const std::invalid_argument&)
+            {
+                error = true;
+            }
+            if (error || boost::math::isinf(a) || boost::math::isinf(-a) || boost::math::isnan(a))
+            {
+                VR_WARNING << "Could not convert '" << string << "' to a number." << endl;
+                return false;
+            }
+            result(i) = a;
         }
-
-        if (boost::math::isinf(b) || boost::math::isinf(-b) || boost::math::isnan(b))
-        {
-            VR_WARNING << "Could not convert " << strs[1] << " to a number" << endl;
-            return false;
-        }
-
-        if (boost::math::isinf(c) || boost::math::isinf(-c) || boost::math::isnan(c))
-        {
-            VR_WARNING << "Could not convert " << strs[2] << " to a number" << endl;
-            return false;
-        }
-
-        storeResult(0) = a;
-        storeResult(1) = b;
-        storeResult(2) = c;
+        
+        storeResult = result;
         return true;
     }
 
