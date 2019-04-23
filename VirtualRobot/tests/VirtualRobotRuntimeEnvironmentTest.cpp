@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(test_toVector3f_valid_input)
     BOOST_CHECK_EQUAL(vector, Eigen::Vector3f(-1, 2, 5));
     
     BOOST_CHECK(VirtualRobot::RuntimeEnvironment::toVector3f("(-3.14, 0, 9.99)", vector));
-    BOOST_CHECK_EQUAL(vector, Eigen::Vector3f(-3.14f, 2, 9.99f));
+    BOOST_CHECK_EQUAL(vector, Eigen::Vector3f(-3.14f, 0, 9.99f));
 }
 
 
