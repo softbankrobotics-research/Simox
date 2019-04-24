@@ -1,11 +1,12 @@
 #pragma once
 
-#include "MjcfDocument.h"
+#include <VirtualRobot/Robot.h>
+#include <VirtualRobot/MJCF/Document.h>
 
 
 namespace VirtualRobot
 {
-namespace mjcf 
+namespace mujoco
 {
 
     class MergedBodySet
@@ -35,9 +36,9 @@ namespace mjcf
     {
     public:
         
-        MasslessBodySanitizer(DocumentPtr& document, RobotPtr& robot);
+        MasslessBodySanitizer(RobotPtr& robot);
         
-        void sanitize();
+        void sanitize(mjcf::Body root);
         
         const std::vector<MergedBodySet>& getMergedBodySets() const;
 
@@ -48,22 +49,14 @@ namespace mjcf
         
     private:
         
-        void sanitizeRecursion(mjcf::XMLElement* body);
-        void sanitizeLeafBody(mjcf::XMLElement* body);
+        void sanitizeRecursion(mjcf::Body body);
+        void sanitizeLeafBody(mjcf::Body body);
         
-        void mergeBodies(XMLElement* body, XMLElement* childBody, Eigen::Matrix4f& accChildPose);
-        
-        void updateChildPos(XMLElement* elem, const Eigen::Matrix4f& accChildPose);
-        void updateChildQuat(XMLElement* elem, const Eigen::Matrix3f& accChildOri);
-        void updateChildAxis(XMLElement* elem, const Eigen::Matrix3f& accChildOri, 
-                             const char* attrName = "axis");
-        
-        
+        void mergeBodies(mjcf::Body body, mjcf::Body childBody, Eigen::Matrix4f& accChildPose);
         
         const std::string t = "| ";
         
         
-        DocumentPtr& document;
         RobotPtr& robot;
         
         std::vector<MergedBodySet> mergedBodySets;
