@@ -22,6 +22,16 @@
 #include <fstream>
 #include <iostream>
 
+namespace
+{
+    namespace fs = std::filesystem;
+    inline fs::path remove_trailing_separator(fs::path p)
+    {
+        p /= "dummy";
+        return p.parent_path();
+    }
+}
+
 namespace VirtualRobot
 {
 
@@ -1467,11 +1477,11 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!robot, "NULL data");
 
 
-        std::filesystem::path p(basePath);
-        std::filesystem::path fn(filename);
-        std::filesystem::path pModelDir(modelDir);
-        std::filesystem::path fnComplete = std::filesystem::operator/(p, fn);
-        std::filesystem::path modelDirComplete = std::filesystem::operator/(p, pModelDir);
+        std::filesystem::path p = remove_trailing_separator(basePath);
+        std::filesystem::path fn = remove_trailing_separator(filename);
+        std::filesystem::path pModelDir = remove_trailing_separator(modelDir);
+        std::filesystem::path fnComplete = p / fn;
+        std::filesystem::path modelDirComplete = p / pModelDir;
 
         if (std::filesystem::exists(modelDirComplete) && !std::filesystem::is_directory(modelDirComplete))
         {
