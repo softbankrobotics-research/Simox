@@ -13,6 +13,18 @@
 namespace fs = std::filesystem;
 
 
+namespace
+{
+    namespace fs = std::filesystem;
+    inline fs::path removeTrailingSeparator(fs::path p)
+    {
+        p /= "dummy";
+        return p.parent_path();
+    }
+}
+
+
+
 namespace VirtualRobot::mujoco
 {
 
@@ -131,7 +143,7 @@ void MujocoIO::ensureDirectoriesExist()
         if (!fs::is_directory(dir))
         {
             std::cout << "Creating directory: " << dir << std::endl;
-            bool success = fs::create_directories(dir);
+            bool success = fs::create_directories(removeTrailingSeparator(dir));
             THROW_VR_EXCEPTION_IF(!success, "Could not create " << errMsgName << ": " << dir);
         }
     };

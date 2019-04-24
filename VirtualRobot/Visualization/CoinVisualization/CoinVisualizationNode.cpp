@@ -27,6 +27,15 @@
 #include <Inventor/VRMLnodes/SoVRMLGroup.h>
 
 
+namespace
+{
+    namespace fs = std::filesystem;
+    inline fs::path remove_trailing_separator(fs::path p)
+    {
+        p /= "dummy";
+        return p.parent_path();
+    }
+}
 
 
 namespace VirtualRobot
@@ -435,8 +444,8 @@ namespace VirtualRobot
         std::string outFile = filename;
         bool vrml = true; // may be changed later according to file extension
 
-        std::filesystem::path completePath(modelPath);
-        std::filesystem::path fn(outFile);
+        auto completePath = remove_trailing_separator(modelPath);
+        auto fn = remove_trailing_separator(outFile);
 
         if (!std::filesystem::is_directory(completePath))
         {
