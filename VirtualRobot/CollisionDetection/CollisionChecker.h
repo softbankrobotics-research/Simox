@@ -101,6 +101,8 @@ namespace VirtualRobot
         */
         //bool CheckContinuousCollision (CollisionModelPtr model1, SbMatrix &mGoalPose1, CollisionModelPtr model2, SbMatrix &mGoalPose2, float &fSToreTOC);
 
+        MultiCollisionResult checkMultipleCollisions(CollisionModelPtr const& model1, CollisionModelPtr const& model2);
+
 
         inline bool isInitialized()
         {
