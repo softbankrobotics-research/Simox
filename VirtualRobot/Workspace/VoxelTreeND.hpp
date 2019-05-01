@@ -312,7 +312,6 @@ namespace VirtualRobot
                     idElementMapping[(unsigned int)(i + 1)] = e; // we start with 1, but root is already created!
                 }
 
-                VR_ASSERT(tree->currentElementID == (unsigned int)expectedID);
 
                 FileIO::readString(tmpString, file);
                 THROW_VR_EXCEPTION_IF(tmpString != "DATA_START", "Bad file format, expecting DATA_START");
