@@ -419,46 +419,8 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
     {
         VERBOSE_OUT << "Additional child: " << node->getName() << " - " << node->getMass() << " kg" << endl;
     }
-//    auto physics = computeCombinedPhysics(relevantChildNodes, node);
     auto combinedBody = computeCombinedBody(relevantChildNodes, node);
-//    double mass = std::get<2>(physics);
-//    Eigen::Vector3d comGlobal= std::get<1>(physics);
-//    Vector3d com = node->toLocalCoordinateSystemVec(comGlobal.cast<float>()).cast<double>() / 1000; // divide by 1000 because Simox defines lengths in mm while the RBDL defines lengths in m
-//    Matrix3d inertia = std::get<0>(physics).cast<double>();
-//    VERBOSE_OUT << "mass " << mass << std::endl;
-//    VERBOSE_OUT << "com " << com << std::endl;
-//    VERBOSE_OUT << "inertia " << inertia << std::endl;
-//    {
-//        float mass = node->getMass();
-//        Vector3d com = node->getCoMLocal().cast<double>() / 1000; // divide by 1000 because Simox defines lengths in mm while the RBDL defines lengths in m
-//        Matrix3d inertia = node->getInertiaMatrix().cast<double>();
-//        VERBOSE_OUT << "mass2 " << mass << std::endl;
-//        VERBOSE_OUT << "com2 " << com << std::endl;
-//        VERBOSE_OUT << "inertia2 " << inertia << std::endl;
-//    }
 
-
-//    // if mass is 0, check children for translational joint. In case there is one, take its mass, com and inertia. Probably a bit hacky right now!
-//    if (fabs(mass) < 0.000001)
-//    {
-//        // todo: throw an error, when multiple connected masses are present, currently just the first is chosen...
-//        RobotNodePtr childPtr = checkForConnectedMass(node);
-
-//        if (childPtr)
-//        {
-//            VERBOSE_OUT << "Joint without mass (" << node->getName() << "), using mass of " << childPtr->getName() << endl;
-//            //Vector3d fromNode = childPtr->getTransformationFrom(node).col(3).head(3).cast<double>() / 1000;
-//            mass = childPtr->getMass();
-//            com = node->toLocalCoordinateSystemVec(childPtr->getCoMGlobal()).cast<double>() / 1000;//childPtr->getCoMLocal().cast<double>() / 1000 + fromNode; // take pre-joint transformation of translational joint into consideration!
-
-//            // convert inertia from child to current frame (I_new = R * I_old * R^T)
-//            Eigen::Matrix3f trafo = node->toLocalCoordinateSystem(childPtr->getGlobalPose()).block(0, 0, 3, 3);
-//            Eigen::Matrix3f inertia2 = trafo * childPtr->getInertiaMatrix() * trafo.transpose();
-//            inertia = inertia2.cast<double>();
-
-//            physicsFromChild = childPtr;
-//        }
-//    }
 
     Body body = combinedBody; //Body(mass, com, inertia);
 
@@ -469,30 +431,17 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
     if (parentNode)
     {
         trafo = node->getTransformationFrom(parentNode).cast<double>();
-        //VERBOSE_OUT <<"parent Node: "<< parentNode->getName()<<endl;
-        //VERBOSE_OUT << "transformation RBDL" << endl << trafo << endl;
     }
     else if (!parentNode)
     {
         trafo = node->getTransformationFrom(rns->getKinematicRoot()).cast<double>();
-        /*
-        if (node->getParent())
-            trafo = node->getParent()->getGlobalPose().cast<double>();
-        else if (node->getRobot())
-            trafo = node->getRobot()->getGlobalPose().cast<double>();*/
     }
 
     Matrix3d spatial_rotation = trafo.block(0, 0, 3, 3);
     Vector3d spatial_translation = trafo.col(3).head(3) / 1000;
 
     VERBOSE_OUT << "****** spatial_translation: " << spatial_translation.transpose() << endl;
-//    VERBOSE_OUT << "RPY:\n" << MathTools::eigen4f2rpy(trafo.cast<float>()) << endl;
-//    Eigen::Vector3f rpy = MathTools::eigen4f2rpy(trafo.cast<float>());
-////    rpy(0)*=-1;
-//    rpy(1)*=-1;
-//    rpy(2)*=-1;
 
-//    SpatialTransform spatial_transform = SpatialTransform(MathTools::rpy2eigen3f(rpy(0),rpy(1),rpy(2)).cast<double>().transpose(), spatial_translation);
     SpatialTransform spatial_transform = SpatialTransform(spatial_rotation.transpose(), spatial_translation);
 
     // last, joint
@@ -524,15 +473,14 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
         nodeID = model->AddBody(parentID, spatial_transform, joint, body, node->getName());
         this->identifierMap[node->getName()] = nodeID;
         Eigen::VectorXd QDDot = Eigen::VectorXd::Zero(identifierMap.size());
-//        RigidBodyDynamics::ForwardDynamics(*model, Eigen::VectorXd::Zero(identifierMap.size()), Eigen::VectorXd::Zero(identifierMap.size()), Eigen::VectorXd::Zero(identifierMap.size()), QDDot);
         Eigen::Vector3d bodyPosition = RigidBodyDynamics::CalcBodyToBaseCoordinates(*model, Eigen::VectorXd::Zero(identifierMap.size()), nodeID, Eigen::Vector3d::Zero(), true);
 
         VERBOSE_OUT << "New body:" << node->getName() << ", " << nodeID << " :" << endl; // Debugging Info
-//        VERBOSE_OUT << "** SPATIAL TRAFO: " << endl << spatial_transform.r << endl << spatial_transform.E << endl;
-//        VERBOSE_OUT << "** MASS: " << body.mMass << endl;
-//        VERBOSE_OUT << "** COM: " << body.mCenterOfMass.transpose() << endl;
-//        VERBOSE_OUT << "** INERTIA: " << endl << body.mInertia << endl;
-//        VERBOSE_OUT << "** mIsVirtual: " << body.mIsVirtual << endl;
+        VERBOSE_OUT << "** SPATIAL TRAFO: " << endl << spatial_transform.r << endl << spatial_transform.E << endl;
+        VERBOSE_OUT << "** MASS: " << body.mMass << endl;
+        VERBOSE_OUT << "** COM: " << body.mCenterOfMass.transpose() << endl;
+        VERBOSE_OUT << "** INERTIA: " << endl << body.mInertia << endl;
+        VERBOSE_OUT << "** mIsVirtual: " << body.mIsVirtual << endl;
         Eigen::Vector3f zeroVec;
         zeroVec.setZero();
         Eigen::Vector3f positionInVirtualRobot = rns->getKinematicRoot()->transformTo(node, zeroVec);
