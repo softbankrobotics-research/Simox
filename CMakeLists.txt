@@ -35,6 +35,9 @@ add_compile_options(-Wextra)
 add_compile_options(-Wpedantic)
 #turn warnings about dangerous stuff into errors
 add_compile_options(-Werror)
+add_compile_options(-Wno-error=unused-but-set-variable)
+add_compile_options(-Wno-error=unused-variable)
+
 #######################################################################################
 #options
 OPTION (Simox_USE_RBDL "Use RBDL" OFF)
