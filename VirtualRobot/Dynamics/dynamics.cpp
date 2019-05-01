@@ -372,7 +372,7 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
 
     cout << "****** spatial_translation: " << spatial_translation.transpose() << endl;
 
-    SpatialTransform spatial_transform = SpatialTransform(spatial_rotation, spatial_translation);
+    SpatialTransform spatial_transform = SpatialTransform(spatial_rotation.transpose(), spatial_translation);
 
     // last, joint
     Joint joint = Joint(JointTypeFixed);
