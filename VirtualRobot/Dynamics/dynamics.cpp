@@ -1,3 +1,4 @@
+
 #include <rbdl/rbdl.h>
 #include "dynamics.h"
 #include <VirtualRobot/Robot.h>
@@ -8,6 +9,7 @@
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
 #include <VirtualRobot/Units.h>
+#include <VirtualRobot/MathTools.h>
 
 #include <Eigen/Dense>
 
@@ -17,6 +19,9 @@
 #include <iostream>
 
 #include <rbdl/rbdl_utils.h>
+
+#define VERBOSE_OUT if(verbose) std::cout
+
 
 
 using std::cout;
@@ -30,37 +35,39 @@ using namespace RigidBodyDynamics::Math;
 
 
 
-VirtualRobot::Dynamics::Dynamics(RobotNodeSetPtr rns) : rns(rns)
+VirtualRobot::Dynamics::Dynamics(RobotNodeSetPtr rns, RobotNodeSetPtr rnsBodies) : rns(rns), rnsBodies(rnsBodies)
 {
     if (!rns)
     {
         THROW_VR_EXCEPTION("RobotNodeSetPtr is zero pointer");
     }
-
+    VERBOSE_OUT << "joint values:\n" << rns->getJointValuesEigen() << endl;
     gravity = Vector3d(0, 0, -9.81);
     model = boost::shared_ptr<RigidBodyDynamics::Model>(new Model());
 
     model->gravity = gravity;
 
     if (!rns->isKinematicChain())
+    {
         THROW_VR_EXCEPTION("RobotNodeSet is not a kinematic chain!")
+    }
 
-        RobotNodePtr root = rns->getKinematicRoot();
+    RobotNodePtr root = rns->getKinematicRoot();
 
-    //cout << "Root name: "<<root->getName()<<endl;
+    //VERBOSE_OUT << "Root name: "<<root->getName()<<endl;
 
     //Dynamics::toRBDLRecursive(model, root, root->getGlobalPose(), Eigen::Matrix4f::Identity());
-    Dynamics::toRBDL(model, root);
+    Dynamics::toRBDL(model, rns->getNode(0), rns);
 }
 
-Eigen::VectorXd Dynamics::getInverseDynamics(Eigen::VectorXd q, Eigen::VectorXd qdot, Eigen::VectorXd qddot)
+Eigen::VectorXd Dynamics::getInverseDynamics(const Eigen::VectorXd& q, const Eigen::VectorXd& qdot, const Eigen::VectorXd& qddot)
 {
     Eigen::VectorXd tau = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
     InverseDynamics(*model.get(), q, qdot, qddot, tau);
     return tau;
 }
 
-Eigen::VectorXd Dynamics::getForwardDynamics(Eigen::VectorXd q, Eigen::VectorXd qdot, Eigen::VectorXd tau)
+Eigen::VectorXd Dynamics::getForwardDynamics(const Eigen::VectorXd &q, const Eigen::VectorXd &qdot, Eigen::VectorXd tau)
 {
     Eigen::VectorXd qddot = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
     ForwardDynamics(*model.get(), q, qdot, tau, qddot);
@@ -68,7 +75,7 @@ Eigen::VectorXd Dynamics::getForwardDynamics(Eigen::VectorXd q, Eigen::VectorXd 
 }
 
 
-Eigen::VectorXd Dynamics::getGravityMatrix(Eigen::VectorXd q, int nDof)
+Eigen::VectorXd Dynamics::getGravityMatrix(const Eigen::VectorXd &q, int nDof)
 {
 
     Eigen::VectorXd qdot = Eigen::VectorXd::Zero(nDof);
@@ -79,7 +86,7 @@ Eigen::VectorXd Dynamics::getGravityMatrix(Eigen::VectorXd q, int nDof)
     return tauGravity;
 }
 
-Eigen::VectorXd Dynamics::getCoriolisMatrix(Eigen::VectorXd q, Eigen::VectorXd qdot, int nDof)
+Eigen::VectorXd Dynamics::getCoriolisMatrix(const Eigen::VectorXd &q, const Eigen::VectorXd &qdot, int nDof)
 {
 
     Eigen::VectorXd qddot = Eigen::VectorXd::Zero(nDof);
@@ -94,14 +101,14 @@ Eigen::VectorXd Dynamics::getCoriolisMatrix(Eigen::VectorXd q, Eigen::VectorXd q
 
 
 
-Eigen::MatrixXd Dynamics::getInertiaMatrix(Eigen::VectorXd q)
+Eigen::MatrixXd Dynamics::getInertiaMatrix(const Eigen::VectorXd &q)
 {
     Eigen::MatrixXd inertia = Eigen::MatrixXd::Zero(model->dof_count, model->dof_count);
     CompositeRigidBodyAlgorithm(*model.get(), q, inertia);
     return inertia;
 }
 
-void Dynamics::setGravity(Eigen::Vector3d gravity)
+void Dynamics::setGravity(const Eigen::Vector3d &gravity)
 {
     model->gravity = gravity;
 }
@@ -122,6 +129,69 @@ void Dynamics::print()
     result = RigidBodyDynamics::Utils::GetModelDOFOverview(*model.get());
     cout << "RBDL DoF of RNS:" << rns->getName() << endl;
     cout << result;
+}
+
+std::tuple<Eigen::Matrix3d, Eigen::Vector3d, double> Dynamics::computeCombinedPhysics(const std::set<RobotNodePtr> &nodes,
+                                                                                      const RobotNodePtr & referenceNode)
+{
+    Eigen::Matrix3f combinedInertia;
+    combinedInertia.setZero();
+    Eigen::Vector3f combinedCoM ;
+    combinedCoM.setZero();
+    double massSum = referenceNode->getMass();
+    for(auto& node : nodes)
+    {
+        massSum = node->getMass();
+    }
+
+    Eigen::Matrix3f rotation = referenceNode->getGlobalPose().block<3,3>(0,0);
+    Eigen::Vector3f comGlobalMeters = referenceNode->getCoMGlobal()/1000;
+    Eigen::Matrix3f inertiaInGlobal = referenceNode->getInertiaMatrix(comGlobalMeters, rotation);
+    combinedInertia += inertiaInGlobal;
+    combinedCoM += referenceNode->getCoMGlobal() * referenceNode->getMass()/massSum;
+
+    for(auto& node : nodes)
+    {
+        Eigen::Matrix3f rotation = node->getGlobalPose().block<3,3>(0,0);
+        Eigen::Vector3f comGlobalMeters = node->getCoMGlobal()/1000;
+        Eigen::Matrix3f inertiaInGlobal = node->getInertiaMatrix(comGlobalMeters, rotation);
+        combinedInertia += inertiaInGlobal;
+        combinedCoM += node->getCoMGlobal() * node->getMass()/massSum;
+    }
+    combinedInertia = SceneObject::shiftInertia(combinedInertia, -combinedCoM/1000, massSum);
+    rotation = referenceNode->getGlobalPose().block<3,3>(0,0).inverse();
+    combinedInertia = rotation * combinedInertia * rotation.transpose();
+    return std::make_tuple(combinedInertia.cast<double>(), combinedCoM.cast<double>(), massSum);
+}
+
+Body Dynamics::computeCombinedBody(const std::set<RobotNodePtr> &nodes, const RobotNodePtr &referenceNode)
+{
+//    VR_ASSERT(!nodes.empty());
+    Eigen::Vector3d CoM = referenceNode->getCoMLocal().cast<double>()/1000;
+    Matrix3d inertia = referenceNode->getInertiaMatrix().cast<double>();
+    auto mainBody = Body(referenceNode->getMass(), CoM, inertia);
+
+    for(auto node : nodes)
+    {
+        Eigen::Vector3d CoM = node->getCoMLocal().cast<double>()/1000;
+        Matrix3d inertia = node->getInertiaMatrix().cast<double>();
+
+        auto otherBody = Body(node->getMass(), CoM, inertia);
+        Eigen::Matrix4f transform = referenceNode->getTransformationTo(node);
+        SpatialTransform rbdlTransform(transform.block<3,3>(0,0).cast<double>(), transform.block<3,1>(0,3).cast<double>()/1000);
+        mainBody.Join(rbdlTransform, otherBody);
+    }
+    return mainBody;
+}
+
+bool Dynamics::getVerbose() const
+{
+    return verbose;
+}
+
+void Dynamics::setVerbose(bool value)
+{
+    verbose = value;
 }
 
 // this method just selects the first node with an attached mass that is no Joint
@@ -160,6 +230,30 @@ RobotNodePtr Dynamics::checkForConnectedMass(RobotNodePtr node)
         }
     }
     return RobotNodePtr();
+}
+
+std::set<RobotNodePtr> Dynamics::getChildrenWithMass(const RobotNodePtr &node, const RobotNodeSetPtr &nodeSet) const
+{
+    std::set<RobotNodePtr> result;
+    for(auto& obj : node->getChildren())
+    {
+        auto node = boost::dynamic_pointer_cast<VirtualRobot::RobotNode>(obj);
+
+        if(node && nodeSet->hasRobotNode(node))
+        {
+            continue;
+        }
+        if(node && obj->getMass() > 0.01 && (!rnsBodies || rnsBodies->hasRobotNode(node)))
+        {
+            result.insert(node);
+        }
+        if(node)
+        {
+            auto tmp = getChildrenWithMass(node, nodeSet);
+            result.insert(tmp.begin(), tmp.end());
+        }
+    }
+    return result;
 }
 
 // rbdl: (trafo->joint->body) -> (trafo->joint->body) -> (trafo->joint->body) ...
@@ -215,7 +309,7 @@ void Dynamics::toRBDLRecursive(boost::shared_ptr<RigidBodyDynamics::Model> model
         Matrix3d spatial_rotation = accumulatedTransformPreJoint.block(0, 0, 3, 3).cast<double>();
         Vector3d spatial_translation = accumulatedTransformPreJoint.col(3).head(3).cast<double>() / 1000.0;
         SpatialTransform spatial_transform = SpatialTransform(spatial_rotation, spatial_translation);
-        cout << "****** spatial_translation: " << spatial_translation.transpose() << endl;
+        VERBOSE_OUT << "****** spatial_translation: " << spatial_translation.transpose() << endl;
 
         // joint
         Joint joint = Joint(JointTypeFixed);
@@ -256,25 +350,25 @@ void Dynamics::toRBDLRecursive(boost::shared_ptr<RigidBodyDynamics::Model> model
         nodeID = model->AddBody(parentID, spatial_transform, joint, body, nodeName);
         this->identifierMap[nodeName] = nodeID;
 
-        cout << "New body:" << node->getName() << ", " << nodeID << " :" << endl; // Debugging Info
-        cout << "** SPATIAL TRAFO: " << endl << spatial_transform.toMatrix() << endl;
-        cout << "** MASS: " << body.mMass << endl;
-        cout << "** COM: " << body.mCenterOfMass.transpose() << endl;
-        cout << "** INERTIA: " << endl << body.mInertia << endl;
-        cout << "** mIsVirtual: " << body.mIsVirtual << endl;
+        VERBOSE_OUT << "New body:" << node->getName() << ", " << nodeID << " :" << endl; // Debugging Info
+        VERBOSE_OUT << "** SPATIAL TRAFO: " << endl << spatial_transform.toMatrix() << endl;
+        VERBOSE_OUT << "** MASS: " << body.mMass << endl;
+        VERBOSE_OUT << "** COM: " << body.mCenterOfMass.transpose() << endl;
+        VERBOSE_OUT << "** INERTIA: " << endl << body.mInertia << endl;
+        VERBOSE_OUT << "** mIsVirtual: " << body.mIsVirtual << endl;
 
         if (jointNode)
         {
-            cout << "** Joint: " << jointNode->getName() << endl;
+            VERBOSE_OUT << "** Joint: " << jointNode->getName() << endl;
         }
         else
         {
-            cout << "** Joint: none" << endl;
+            VERBOSE_OUT << "** Joint: none" << endl;
         }
 
         if (joint.mJointAxes)
         {
-            cout << "** JOINT AXES " << endl << *(joint.mJointAxes) << endl;
+            VERBOSE_OUT << "** JOINT AXES " << endl << *(joint.mJointAxes) << endl;
         }
 
         // reset pre and post trafos and jointNode
@@ -312,40 +406,61 @@ void Dynamics::toRBDLRecursive(boost::shared_ptr<RigidBodyDynamics::Model> model
 
 
 
-void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr node, RobotNodePtr parentNode, int parentID)
+void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNodePtr node, RobotNodeSetPtr nodeSet, RobotNodePtr parentNode, int parentID)
 {
+    VERBOSE_OUT << "#######ADDING NODE " << node->getName();
     RobotNodePtr physicsFromChild;
     int nodeID = parentID;
     // need to define body, joint and spatial transform
     // body first
-    float mass = node->getMass();
-    Vector3d com = node->getCoMLocal().cast<double>() / 1000; // divide by 1000 because Simox defines lengths in mm while the RBDL defines lengths in m
-    Matrix3d inertia = node->getInertiaMatrix().cast<double>();
-
-
-    // if mass is 0, check children for translational joint. In case there is one, take its mass, com and inertia. Probably a bit hacky right now!
-    if (fabs(mass) < 0.000001)
+    VERBOSE_OUT << node->getName() << std::endl;
+    auto relevantChildNodes = getChildrenWithMass(node, nodeSet);
+    for(auto node : relevantChildNodes)
     {
-        // todo: throw an error, when multiple connected masses are present, currently just the first is chosen...
-        RobotNodePtr childPtr = checkForConnectedMass(node);
-
-        if (childPtr)
-        {
-            cout << "Joint without mass (" << node->getName() << "), using mass of " << childPtr->getName() << endl;
-            //Vector3d fromNode = childPtr->getTransformationFrom(node).col(3).head(3).cast<double>() / 1000;
-            mass = childPtr->getMass();
-            com = node->toLocalCoordinateSystemVec(childPtr->getCoMGlobal()).cast<double>() / 1000;//childPtr->getCoMLocal().cast<double>() / 1000 + fromNode; // take pre-joint transformation of translational joint into consideration!
-
-            // convert inertia from child to current frame (I_new = R * I_old * R^T)
-            Eigen::Matrix3f trafo = node->toLocalCoordinateSystem(childPtr->getGlobalPose()).block(0, 0, 3, 3);
-            Eigen::Matrix3f inertia2 = trafo * childPtr->getInertiaMatrix() * trafo.transpose();
-            inertia = inertia2.cast<double>();
-
-            physicsFromChild = childPtr;
-        }
+        VERBOSE_OUT << "Additional child: " << node->getName() << " - " << node->getMass() << " kg" << endl;
     }
+//    auto physics = computeCombinedPhysics(relevantChildNodes, node);
+    auto combinedBody = computeCombinedBody(relevantChildNodes, node);
+//    double mass = std::get<2>(physics);
+//    Eigen::Vector3d comGlobal= std::get<1>(physics);
+//    Vector3d com = node->toLocalCoordinateSystemVec(comGlobal.cast<float>()).cast<double>() / 1000; // divide by 1000 because Simox defines lengths in mm while the RBDL defines lengths in m
+//    Matrix3d inertia = std::get<0>(physics).cast<double>();
+//    VERBOSE_OUT << "mass " << mass << std::endl;
+//    VERBOSE_OUT << "com " << com << std::endl;
+//    VERBOSE_OUT << "inertia " << inertia << std::endl;
+//    {
+//        float mass = node->getMass();
+//        Vector3d com = node->getCoMLocal().cast<double>() / 1000; // divide by 1000 because Simox defines lengths in mm while the RBDL defines lengths in m
+//        Matrix3d inertia = node->getInertiaMatrix().cast<double>();
+//        VERBOSE_OUT << "mass2 " << mass << std::endl;
+//        VERBOSE_OUT << "com2 " << com << std::endl;
+//        VERBOSE_OUT << "inertia2 " << inertia << std::endl;
+//    }
 
-    Body body = Body(mass, com, inertia);
+
+//    // if mass is 0, check children for translational joint. In case there is one, take its mass, com and inertia. Probably a bit hacky right now!
+//    if (fabs(mass) < 0.000001)
+//    {
+//        // todo: throw an error, when multiple connected masses are present, currently just the first is chosen...
+//        RobotNodePtr childPtr = checkForConnectedMass(node);
+
+//        if (childPtr)
+//        {
+//            VERBOSE_OUT << "Joint without mass (" << node->getName() << "), using mass of " << childPtr->getName() << endl;
+//            //Vector3d fromNode = childPtr->getTransformationFrom(node).col(3).head(3).cast<double>() / 1000;
+//            mass = childPtr->getMass();
+//            com = node->toLocalCoordinateSystemVec(childPtr->getCoMGlobal()).cast<double>() / 1000;//childPtr->getCoMLocal().cast<double>() / 1000 + fromNode; // take pre-joint transformation of translational joint into consideration!
+
+//            // convert inertia from child to current frame (I_new = R * I_old * R^T)
+//            Eigen::Matrix3f trafo = node->toLocalCoordinateSystem(childPtr->getGlobalPose()).block(0, 0, 3, 3);
+//            Eigen::Matrix3f inertia2 = trafo * childPtr->getInertiaMatrix() * trafo.transpose();
+//            inertia = inertia2.cast<double>();
+
+//            physicsFromChild = childPtr;
+//        }
+//    }
+
+    Body body = combinedBody; //Body(mass, com, inertia);
 
 
     // spatial transform next
@@ -354,12 +469,12 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
     if (parentNode)
     {
         trafo = node->getTransformationFrom(parentNode).cast<double>();
-        //cout <<"parent Node: "<< parentNode->getName()<<endl;
-        //cout << "transformation RBDL" << endl << trafo << endl;
+        //VERBOSE_OUT <<"parent Node: "<< parentNode->getName()<<endl;
+        //VERBOSE_OUT << "transformation RBDL" << endl << trafo << endl;
     }
     else if (!parentNode)
     {
-        trafo = node->getGlobalPose().cast<double>();
+        trafo = node->getTransformationFrom(rns->getKinematicRoot()).cast<double>();
         /*
         if (node->getParent())
             trafo = node->getParent()->getGlobalPose().cast<double>();
@@ -370,8 +485,14 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
     Matrix3d spatial_rotation = trafo.block(0, 0, 3, 3);
     Vector3d spatial_translation = trafo.col(3).head(3) / 1000;
 
-    cout << "****** spatial_translation: " << spatial_translation.transpose() << endl;
+    VERBOSE_OUT << "****** spatial_translation: " << spatial_translation.transpose() << endl;
+//    VERBOSE_OUT << "RPY:\n" << MathTools::eigen4f2rpy(trafo.cast<float>()) << endl;
+//    Eigen::Vector3f rpy = MathTools::eigen4f2rpy(trafo.cast<float>());
+////    rpy(0)*=-1;
+//    rpy(1)*=-1;
+//    rpy(2)*=-1;
 
+//    SpatialTransform spatial_transform = SpatialTransform(MathTools::rpy2eigen3f(rpy(0),rpy(1),rpy(2)).cast<double>().transpose(), spatial_translation);
     SpatialTransform spatial_transform = SpatialTransform(spatial_rotation.transpose(), spatial_translation);
 
     // last, joint
@@ -385,7 +506,7 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
 
         joint = Joint(joint_type, joint_axis);
 
-        cout << "Rotational Joint added:" << endl;
+        VERBOSE_OUT << "Rotational Joint added:" << endl;
     }
     else if (node->isTranslationalJoint())
     {
@@ -395,55 +516,70 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
 
         joint = Joint(joint_type, joint_axis);
 
-        cout << "translational Joint added" << endl;
+        VERBOSE_OUT << "translational Joint added" << endl;
     }
 
     if (joint.mJointType != JointTypeFixed)
     {
         nodeID = model->AddBody(parentID, spatial_transform, joint, body, node->getName());
         this->identifierMap[node->getName()] = nodeID;
+        Eigen::VectorXd QDDot = Eigen::VectorXd::Zero(identifierMap.size());
+//        RigidBodyDynamics::ForwardDynamics(*model, Eigen::VectorXd::Zero(identifierMap.size()), Eigen::VectorXd::Zero(identifierMap.size()), Eigen::VectorXd::Zero(identifierMap.size()), QDDot);
+        Eigen::Vector3d bodyPosition = RigidBodyDynamics::CalcBodyToBaseCoordinates(*model, Eigen::VectorXd::Zero(identifierMap.size()), nodeID, Eigen::Vector3d::Zero(), true);
 
-        cout << "New body:" << node->getName() << ", " << nodeID << " :" << endl; // Debugging Info
-        cout << "** SPATIAL TRAFO: " << endl << spatial_transform.toMatrix() << endl;
-        cout << "** MASS: " << body.mMass << endl;
-        cout << "** COM: " << body.mCenterOfMass.transpose() << endl;
-        cout << "** INERTIA: " << endl << body.mInertia << endl;
-        cout << "** mIsVirtual: " << body.mIsVirtual << endl;
+        VERBOSE_OUT << "New body:" << node->getName() << ", " << nodeID << " :" << endl; // Debugging Info
+//        VERBOSE_OUT << "** SPATIAL TRAFO: " << endl << spatial_transform.r << endl << spatial_transform.E << endl;
+//        VERBOSE_OUT << "** MASS: " << body.mMass << endl;
+//        VERBOSE_OUT << "** COM: " << body.mCenterOfMass.transpose() << endl;
+//        VERBOSE_OUT << "** INERTIA: " << endl << body.mInertia << endl;
+//        VERBOSE_OUT << "** mIsVirtual: " << body.mIsVirtual << endl;
+        Eigen::Vector3f zeroVec;
+        zeroVec.setZero();
+        Eigen::Vector3f positionInVirtualRobot = rns->getKinematicRoot()->transformTo(node, zeroVec);
+        VR_ASSERT((positionInVirtualRobot/1000.f - bodyPosition.cast<float>()).norm() < 0.01);
+//        VERBOSE_OUT << "** position:\n" << bodyPosition << "\nposition in virtual robot:\n" << positionInVirtualRobot << endl << endl;
 
         if (joint.mJointAxes)
         {
-            cout << "** JOINT AXES " << endl << *(joint.mJointAxes) << endl;
+            VERBOSE_OUT << "** JOINT AXES " << endl << *(joint.mJointAxes) << endl;
         }
     }
 
-    std::vector<SceneObjectPtr> children;
-
-
-    // pick correct children to proceed the recursion
-    if (physicsFromChild != 0)
-    {
-        children = physicsFromChild->getChildren();
-    }
-    else
-    {
-        children = node->getChildren();
-    }
-
-    BOOST_FOREACH(SceneObjectPtr child, children)
-    {
-        boost::shared_ptr<RobotNode> childRobotNode = boost::dynamic_pointer_cast<RobotNode>(child);
-
-        if (childRobotNode != 0 && Dynamics::rns->hasRobotNode(childRobotNode)) // if cast returns 0 pointer, child is a sensor and can be omitted. also, child must be contained in the robotnodeset
+    for (size_t i = 0; i < nodeSet->getSize(); ++i) {
+        if(nodeSet->getNode(i) == node && i+1 < nodeSet->getSize())
         {
-            if (joint.mJointType == JointTypeFixed) // if current node is fixed, make its parent the parent of the next recursion step and thereby skip it
-            {
-                node = parentNode;
-            }
-
-            toRBDL(model, childRobotNode, node, nodeID);
-
+            toRBDL(model, nodeSet->getNode(i+1), rns, node, nodeID);
         }
     }
+
+//    std::vector<SceneObjectPtr> children;
+
+
+//    // pick correct children to proceed the recursion
+//    if (physicsFromChild != 0)
+//    {
+//        children = physicsFromChild->getChildren();
+//    }
+//    else
+//    {
+//        children = node->getChildren();
+//    }
+
+//    BOOST_FOREACH(SceneObjectPtr child, children)
+//    {
+//        boost::shared_ptr<RobotNode> childRobotNode = boost::dynamic_pointer_cast<RobotNode>(child);
+
+//        if (childRobotNode && Dynamics::rns->hasRobotNode(childRobotNode)) // if cast returns 0 pointer, child is a sensor and can be omitted. also, child must be contained in the robotnodeset
+//        {
+//            if (joint.mJointType == JointTypeFixed) // if current node is fixed, make its parent the parent of the next recursion step and thereby skip it
+//            {
+//                node = parentNode;
+//            }
+
+//            toRBDL(model, childRobotNode, rns, node, nodeID);
+
+//        }
+//    }
 
     return;
 }
