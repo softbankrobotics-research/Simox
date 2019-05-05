@@ -176,6 +176,10 @@
             <MaxVelocity unit="radian" value="1"/>
             <MaxAcceleration value="10"/>
         </Joint>
+        <Physics>
+            <CoM location="VisualizationBBoxCenter"/>
+            <Mass value="0.2" units="kg" /><!-- just guessed -->
+        </Physics>
 
         <Visualization enable="true">
 			<CoordinateAxis type="Inventor" enable="false" scaling="8"/>
