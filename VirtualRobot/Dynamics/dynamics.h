@@ -21,9 +21,10 @@ namespace VirtualRobot
         /// The rns has to be completely connected (avoid missing RobotNodes).
         /// The rns should end with a RobotNode that has a mass>0 specified, otherwise the last joint can not be added to the internal RBDL model
         ///
-        Dynamics(RobotNodeSetPtr rns, RobotNodeSetPtr rnsBodies = RobotNodeSetPtr());
+        Dynamics(RobotNodeSetPtr rns, RobotNodeSetPtr rnsBodies = RobotNodeSetPtr(), bool verbose = false);
         /// Calculates the Inverse Dynamics for given motion state defined by q, qdot and qddot
         Eigen::VectorXd getInverseDynamics(const Eigen::VectorXd& q, const Eigen::VectorXd& qdot, const Eigen::VectorXd& qddot);
+        void getInverseDynamics(const Eigen::VectorXd& q, const Eigen::VectorXd& qdot, const Eigen::VectorXd& qddot, Eigen::VectorXd& tau);
         /// Calculates the joint space inertia matrix given a joint position vector q
         Eigen::VectorXd getGravityMatrix(const Eigen::VectorXd&q, int nDof);
         /// Calculates the joint space Gravity Matrix given a joint position vector q and Number of DOF
@@ -49,7 +50,7 @@ namespace VirtualRobot
          * @return tuple of new InertiaMatrix relative to new CoM, new global CoM and sum of masses
          */
         static std::tuple<Eigen::Matrix3d, Eigen::Vector3d, double> computeCombinedPhysics(const std::set<RobotNodePtr>& nodes, const RobotNodePtr &referenceNode);
-        static RigidBodyDynamics::Body computeCombinedBody(const std::set<RobotNodePtr>& nodes, const RobotNodePtr &referenceNode);
+        RigidBodyDynamics::Body computeCombinedBody(const std::set<RobotNodePtr>& nodes, const RobotNodePtr &referenceNode) const;
         bool getVerbose() const;
         void setVerbose(bool value);
 
