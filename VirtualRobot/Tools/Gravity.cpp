@@ -56,6 +56,29 @@ void Gravity::computeGravityTorque(std::vector<float> &storeValues)
     }
 }
 
+
+
+std::map<std::string, float> Gravity::getMasses()
+{
+    std::map<std::string, float> result;
+    std::list<GravityDataPtr> children;
+    children.push_front(gravityDataHelperRoot);
+    while(!children.empty())
+    {
+        auto obj = children.front();
+        children.pop_front();
+        if(obj->massSum > 0)
+        {
+            result[obj->node->getName()] = obj->massSum;
+        }
+        for(auto& pair: obj->children)
+        {
+            children.push_back(pair.second);
+        }
+    }
+    return result;
+}
+
 std::map<std::string, float> Gravity::computeGravityTorque()
 {
     std::vector<float> storeValues;
@@ -128,8 +151,8 @@ void Gravity::GravityData::init(SceneObjectPtr node, const std::vector<RobotNode
         }
     }
 
-    for (const auto & bodie : bodies) {
-        if(thisNode == bodie){
+    for (const auto & body : bodies) {
+        if(thisNode == body){
             computeCoM = true;
             //            VR_INFO << "Computing com for " << thisNode->getName() << std::endl;
         }
@@ -147,8 +170,8 @@ void Gravity::GravityData::init(SceneObjectPtr node, const std::vector<RobotNode
         //                    VR_INFO << "adding child mass sum: " << child->getName() << " : " << data->massSum << std::endl;
         massSum += data->massSum;
     }
-    //    if(computeCoM)
-    //        VR_INFO << node->getName() << " - body mass: " << node->getMass() << " sum: " << massSum<< std::endl;
+//    if(computeCoM)
+//        VR_INFO << node->getName() << " - body mass: " << node->getMass() << " sum: " << massSum<< std::endl;
 
 
 }
@@ -174,8 +197,8 @@ void Gravity::GravityData::computeCoMAndTorque(Eigen::Vector3f &comPositionGloba
         }
     }
     //    BOOST_ASSERT_MSG(fabs(validationSum-massSum) < 0.001, std::string(name + ":" + std::to_string(validationSum) + " vs. " + std::to_string(massSum)).c_str());
-    //    if(computeCoM && massSum > 0)
-    //        VR_INFO << "CoM of " << name << ": " << node->getCoMGlobal() << " accumulated CoM: " << comPositionGlobal << "\nmass: " << node->getMass() << " massSum: " << massSum << std::endl;
+//    if(computeCoM && massSum > 0)
+//        VR_INFO << "CoM of " << node->getName() << ": " << node->getCoMGlobal() << " accumulated CoM: " << comPositionGlobal << "\nmass: " << node->getMass() << " massSum: " << massSum << std::endl;
     if(computeTorque)
     {
         VirtualRobot::RobotNodeRevolutePtr rnRevolute = boost::dynamic_pointer_cast<VirtualRobot::RobotNodeRevolute>(node);

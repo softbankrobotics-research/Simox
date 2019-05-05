@@ -40,6 +40,9 @@ namespace VirtualRobot
         std::map<std::string, float> computeGravityTorque();
 
         void computeGravityTorque(std::vector<float> &storeValues);
+        Eigen::Vector3f getGravityVec() const;
+        void setGravityVec(const Eigen::Vector3f &value);
+        std::map<std::string, float> getMasses();
     protected:
         struct GravityData;
         typedef boost::shared_ptr<GravityData> GravityDataPtr;
