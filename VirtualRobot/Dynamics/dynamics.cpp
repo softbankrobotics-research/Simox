@@ -39,7 +39,7 @@ VirtualRobot::Dynamics::Dynamics(RobotNodeSetPtr rns, RobotNodeSetPtr rnsBodies,
 {
     if (!rns)
     {
-        THROW_VR_EXCEPTION("RobotNodeSetPtr is zero pointer");
+        THROW_VR_EXCEPTION("RobotNodeSetPtr for the joints is zero pointer");
     }
     VERBOSE_OUT << "joint values:\n" << rns->getJointValuesEigen() << endl;
     gravity = Vector3d(0, 0, -9.81);
@@ -177,7 +177,7 @@ Body Dynamics::computeCombinedBody(const std::set<RobotNodePtr> &nodes, const Ro
     Eigen::Vector3d CoM = referenceNode->getCoMLocal().cast<double>()/1000;
     Matrix3d inertia = referenceNode->getInertiaMatrix().cast<double>();
 
-    auto mainBody = rnsBodies->hasRobotNode(referenceNode)?Body(referenceNode->getMass(), CoM, inertia):
+    auto mainBody = rnsBodies && rnsBodies->hasRobotNode(referenceNode)?Body(referenceNode->getMass(), CoM, inertia):
                                                            Body();
 
     for(auto node : nodes)
