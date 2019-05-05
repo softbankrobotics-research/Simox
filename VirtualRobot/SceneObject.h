@@ -296,6 +296,15 @@ namespace VirtualRobot
 
         void setInertiaMatrix(const Eigen::Matrix3f& im);
 
+        /**
+         * @brief The shift is done using the parallel axis theorem (https://en.wikipedia.org/wiki/Parallel_axis_theorem)
+         * @param inertiaMatrix
+         * @param shift
+         * @param mass
+         * @return
+         */
+        static Eigen::Matrix3f shiftInertia(const Eigen::Matrix3f inertiaMatrix, const Eigen::Vector3f& shift, float mass);
+
         float getFriction();
         void setFriction(float friction);
 

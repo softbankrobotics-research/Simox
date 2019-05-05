@@ -988,13 +988,18 @@ namespace VirtualRobot
         return physics.inertiaMatrix;
     }
 
-    Eigen::Matrix3f SceneObject::getInertiaMatrix(const Eigen::Vector3f& shift)
+    Eigen::Matrix3f SceneObject::shiftInertia(const Eigen::Matrix3f inertiaMatrix, const Eigen::Vector3f &shift, float mass)
     {
         Eigen::Matrix3f skew;
         skew << 0, -shift(2), +shift(1),
              +shift(2), 0, -shift(0),
              -shift(1), +shift(0), 0;
-        return getInertiaMatrix() + getMass() * skew.transpose() * skew;
+        return inertiaMatrix - mass * skew.transpose() * skew;
+    }
+
+    Eigen::Matrix3f SceneObject::getInertiaMatrix(const Eigen::Vector3f& shift)
+    {
+        return shiftInertia(getInertiaMatrix(), shift, getMass());
     }
 
     Eigen::Matrix3f SceneObject::getInertiaMatrix(const Eigen::Vector3f& shift, const Eigen::Matrix3f& rotation)
@@ -1078,6 +1083,8 @@ namespace VirtualRobot
     {
         physics.inertiaMatrix = im;
     }
+
+
 
     SceneObject::Physics SceneObject::getPhysics()
     {
