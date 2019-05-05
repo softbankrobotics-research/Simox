@@ -82,9 +82,10 @@ Eigen::VectorXd Dynamics::getForwardDynamics(const Eigen::VectorXd &q, const Eig
 }
 
 
-Eigen::VectorXd Dynamics::getGravityMatrix(const Eigen::VectorXd &q, int nDof)
+Eigen::VectorXd Dynamics::getGravityMatrix(const Eigen::VectorXd &q)
 {
-
+    auto nDof = q.rows();
+    VR_ASSERT(nDof == Dynamics::model->dof_count);
     Eigen::VectorXd qdot = Eigen::VectorXd::Zero(nDof);
     Eigen::VectorXd qddot = Eigen::VectorXd::Zero(nDof);
 
@@ -93,11 +94,10 @@ Eigen::VectorXd Dynamics::getGravityMatrix(const Eigen::VectorXd &q, int nDof)
     return tauGravity;
 }
 
-Eigen::VectorXd Dynamics::getCoriolisMatrix(const Eigen::VectorXd &q, const Eigen::VectorXd &qdot, int nDof)
+Eigen::VectorXd Dynamics::getCoriolisMatrix(const Eigen::VectorXd &q, const Eigen::VectorXd &qdot)
 {
-
-    Eigen::VectorXd qddot = Eigen::VectorXd::Zero(nDof);
-    Eigen::VectorXd tauGravity = getGravityMatrix(q, nDof);
+    Eigen::VectorXd qddot = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
+    Eigen::VectorXd tauGravity = getGravityMatrix(q);
     Eigen::VectorXd tau = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
 
     Eigen::MatrixXd tauCoriolis = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
@@ -201,6 +201,11 @@ bool Dynamics::getVerbose() const
 void Dynamics::setVerbose(bool value)
 {
     verbose = value;
+}
+
+boost::shared_ptr<RigidBodyDynamics::Model> Dynamics::getModel() const
+{
+    return model;
 }
 
 // this method just selects the first node with an attached mass that is no Joint

@@ -26,9 +26,9 @@ namespace VirtualRobot
         Eigen::VectorXd getInverseDynamics(const Eigen::VectorXd& q, const Eigen::VectorXd& qdot, const Eigen::VectorXd& qddot);
         void getInverseDynamics(const Eigen::VectorXd& q, const Eigen::VectorXd& qdot, const Eigen::VectorXd& qddot, Eigen::VectorXd& tau);
         /// Calculates the joint space inertia matrix given a joint position vector q
-        Eigen::VectorXd getGravityMatrix(const Eigen::VectorXd&q, int nDof);
+        Eigen::VectorXd getGravityMatrix(const Eigen::VectorXd&q);
         /// Calculates the joint space Gravity Matrix given a joint position vector q and Number of DOF
-        Eigen::VectorXd getCoriolisMatrix(const Eigen::VectorXd& q, const Eigen::VectorXd& qdot, int nDof);
+        Eigen::VectorXd getCoriolisMatrix(const Eigen::VectorXd& q, const Eigen::VectorXd& qdot);
         /// Calculates the coriolis matrix given position vector q, velocity vector qdot and Number of DOF
         Eigen::VectorXd getForwardDynamics(const Eigen::VectorXd& q, const Eigen::VectorXd& qdot, Eigen::VectorXd tau);
         /// Calculates forward dynamics given position vector q velocity vector qdot and joint torques tau
@@ -53,6 +53,8 @@ namespace VirtualRobot
         RigidBodyDynamics::Body computeCombinedBody(const std::set<RobotNodePtr>& nodes, const RobotNodePtr &referenceNode) const;
         bool getVerbose() const;
         void setVerbose(bool value);
+
+        boost::shared_ptr<RigidBodyDynamics::Model> getModel() const;
 
     protected:
         RobotNodeSetPtr rns;
