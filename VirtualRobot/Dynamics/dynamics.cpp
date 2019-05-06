@@ -63,7 +63,7 @@ VirtualRobot::Dynamics::Dynamics(RobotNodeSetPtr rns, RobotNodeSetPtr rnsBodies,
 Eigen::VectorXd Dynamics::getInverseDynamics(const Eigen::VectorXd& q, const Eigen::VectorXd& qdot, const Eigen::VectorXd& qddot)
 {
     Eigen::VectorXd tau = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
-    InverseDynamics(*model.get(), q, qdot, qddot, tau);
+    getInverseDynamics(q, qdot, qddot, tau);
     return tau;
 }
 
