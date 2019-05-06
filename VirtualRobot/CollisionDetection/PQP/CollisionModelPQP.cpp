@@ -59,6 +59,9 @@ namespace VirtualRobot
         pqpModel.reset(new PQP::PQP_Model());
         pqpModel->BeginModel(modelData->faces.size());
 
+        // If no external ID is set, we use the id as triangle face index
+        bool useIndividualID = (id == 666);
+
         for (unsigned int i = 0; i < modelData->faces.size(); i++)
         {
             a[0] = modelData->vertices[modelData->faces[i].id1][0];
@@ -70,7 +73,8 @@ namespace VirtualRobot
             c[0] = modelData->vertices[modelData->faces[i].id3][0];
             c[1] = modelData->vertices[modelData->faces[i].id3][1];
             c[2] = modelData->vertices[modelData->faces[i].id3][2];
-            pqpModel->AddTri(a, b, c, this->id);
+            int storeID = useIndividualID ? i : this->id;
+            pqpModel->AddTri(a, b, c, storeID);
         }
 
         pqpModel->EndModel();

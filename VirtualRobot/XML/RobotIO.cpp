@@ -15,12 +15,22 @@
 #include "../RobotConfig.h"
 #include "../RuntimeEnvironment.h"
 #include "rapidxml.hpp"
-#include "mjcf/MujocoIO.h"
+#include "mujoco/MujocoIO.h"
 
 
 #include <vector>
 #include <fstream>
 #include <iostream>
+
+namespace
+{
+    namespace fs = std::filesystem;
+    inline fs::path remove_trailing_separator(fs::path p)
+    {
+        p /= "dummy";
+        return p.parent_path();
+    }
+}
 
 namespace VirtualRobot
 {
@@ -29,10 +39,10 @@ namespace VirtualRobot
     std::map<std::string, int> RobotIO::robot_name_counter;
 
     RobotIO::RobotIO()
-    = default;
+        = default;
 
     RobotIO::~RobotIO()
-    = default;
+        = default;
 
 
 
@@ -89,7 +99,7 @@ namespace VirtualRobot
      *
      * The values are stored in \p jointLimitLo and \p jointLimitHi
      */
-    void RobotIO::processLimitsNode(rapidxml::xml_node<char>* limitsXMLNode, float& jointLimitLo, float& jointLimitHi, bool &limitless)
+    void RobotIO::processLimitsNode(rapidxml::xml_node<char>* limitsXMLNode, float& jointLimitLo, float& jointLimitHi, bool& limitless)
     {
         THROW_VR_EXCEPTION_IF(!limitsXMLNode, "NULL data for limitsXMLNode in processLimitsNode()");
 
@@ -281,7 +291,7 @@ namespace VirtualRobot
         float maxVelocity = -1.0f; // m/s
         float maxAcceleration = -1.0f; // m/s^2
         float maxTorque = -1.0f; // Nm
-        float scaleVisu = false;
+        bool scaleVisu = false;
         Eigen::Vector3f scaleVisuFactor = Eigen::Vector3f::Zero();
 
         while (node)
@@ -333,7 +343,7 @@ namespace VirtualRobot
                 Units uLength("m");
                 Units uAngle("rad");
 
-                for (auto & i : unitsAttr)
+                for (auto& i : unitsAttr)
                 {
                     if (i.isTime())
                     {
@@ -386,7 +396,7 @@ namespace VirtualRobot
                 Units uLength("m");
                 Units uAngle("rad");
 
-                for (auto & i : unitsAttr)
+                for (auto& i : unitsAttr)
                 {
                     if (i.isTime())
                     {
@@ -436,7 +446,7 @@ namespace VirtualRobot
                 std::vector< Units > unitsAttr = getUnitsAttributes(node);
                 Units uLength("m");
 
-                for (auto & i : unitsAttr)
+                for (auto& i : unitsAttr)
                 {
                     if (i.isLength())
                     {
@@ -736,7 +746,7 @@ namespace VirtualRobot
         robotNode = processJointNode(jointNodeXML, robotNodeName, robo, visualizationNode, collisionModel, physics, rntype, transformMatrix);
 
         // process sensors
-        for (auto & sensorTag : sensorTags)
+        for (auto& sensorTag : sensorTags)
         {
             processSensor(robotNode, sensorTag, loadMode, basePath);
         }
@@ -826,17 +836,17 @@ namespace VirtualRobot
             std::vector< ChildFromRobotDef > childrenFromRobot = iter->second;
             RobotNodePtr node = iter->first;
 
-            for (auto & i : childrenFromRobot)
+            for (auto& i : childrenFromRobot)
             {
-                boost::filesystem::path filenameNew(i.filename);
-                boost::filesystem::path filenameBasePath(basePath);
+                std::filesystem::path filenameNew(i.filename);
+                std::filesystem::path filenameBasePath(basePath);
 
-                boost::filesystem::path filenameNewComplete = boost::filesystem::operator/(filenameBasePath, filenameNew);
+                std::filesystem::path filenameNewComplete = std::filesystem::operator/(filenameBasePath, filenameNew);
                 VR_INFO << "Searching robot: " << filenameNewComplete.string() << endl;
 
                 try
                 {
-                    THROW_VR_EXCEPTION_IF(!boost::filesystem::exists(filenameNewComplete), "File <" << filenameNewComplete.string() << "> does not exist." << endl);
+                    THROW_VR_EXCEPTION_IF(!std::filesystem::exists(filenameNewComplete), "File <" << filenameNewComplete.string() << "> does not exist." << endl);
                 }
                 catch (...)
                 {
@@ -854,7 +864,7 @@ namespace VirtualRobot
                 std::vector<EndEffectorPtr> eefs;
                 r->getEndEffectors(eefs);
 
-                for (auto & eef : eefs)
+                for (auto& eef : eefs)
                 {
                     eef->clone(robo);
                 }
@@ -862,7 +872,7 @@ namespace VirtualRobot
                 std::vector<RobotNodeSetPtr> nodeSets;
                 r->getRobotNodeSets(nodeSets);
 
-                for (auto & nodeSet : nodeSets)
+                for (auto& nodeSet : nodeSets)
                 {
                     nodeSet->clone(robo);
                 }
@@ -875,7 +885,7 @@ namespace VirtualRobot
         }
 
         //std::vector<RobotNodeSetPtr> robotNodeSets
-        for (auto & endeffectorNode : endeffectorNodes)
+        for (auto& endeffectorNode : endeffectorNodes)
         {
             EndEffectorPtr eef = processEndeffectorNode(endeffectorNode, robo);
             robo->registerEndEffector(eef);
@@ -883,7 +893,7 @@ namespace VirtualRobot
 
         int rnsCounter = 0;
 
-        for (auto & robotNodeSetNode : robotNodeSetNodes)
+        for (auto& robotNodeSetNode : robotNodeSetNodes)
         {
             RobotNodeSetPtr rns = processRobotNodeSet(robotNodeSetNode, robo, robotRoot, rnsCounter);
             //nodeSets.push_back(rns);
@@ -893,7 +903,7 @@ namespace VirtualRobot
         robo->getRobotNodes(nodes);
         RobotNodePtr root = robo->getRootNode();
 
-        for (auto & node : nodes)
+        for (auto& node : nodes)
         {
             if (node != root && !(node->getParent()))
             {
@@ -985,7 +995,7 @@ namespace VirtualRobot
                                          const std::string& robotRoot,
                                          const std::string& basePath,
                                          std::map < RobotNodePtr,
-                                         std::vector<ChildFromRobotDef> > & childrenFromRobotFilesMap,
+                                         std::vector<ChildFromRobotDef> >& childrenFromRobotFilesMap,
                                          std::vector<rapidxml::xml_node<char>* >& robotNodeSetNodes,
                                          std::vector<rapidxml::xml_node<char>* >& endeffectorNodes,
                                          RobotDescription loadMode)
@@ -1036,7 +1046,7 @@ namespace VirtualRobot
                 else
                 {
                     // double name check
-                    for (auto & robotNode : robotNodes)
+                    for (auto& robotNode : robotNodes)
                     {
                         THROW_VR_EXCEPTION_IF((robotNode->getName() == n->getName()), "At least two RobotNodes with name <" << n->getName() << "> defined in robot definition");
                     }
@@ -1066,7 +1076,7 @@ namespace VirtualRobot
             {
                 endeffectorNodes.push_back(XMLNode);
             }
-            else if("robotinfo" == nodeName)
+            else if ("robotinfo" == nodeName)
             {
                 //skip
             }
@@ -1443,8 +1453,8 @@ namespace VirtualRobot
         std::stringstream buffer;
         buffer << in.rdbuf();
         std::string robotXML(buffer.str());
-        boost::filesystem::path filenameBaseComplete(xmlFile);
-        boost::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
+        std::filesystem::path filenameBaseComplete(xmlFile);
+        std::filesystem::path filenameBasePath = filenameBaseComplete.parent_path();
         std::string basePath = filenameBasePath.string();
 
         in.close();
@@ -1467,21 +1477,21 @@ namespace VirtualRobot
         THROW_VR_EXCEPTION_IF(!robot, "NULL data");
 
 
-        boost::filesystem::path p(basePath);
-        boost::filesystem::path fn(filename);
-        boost::filesystem::path pModelDir(modelDir);
-        boost::filesystem::path fnComplete = boost::filesystem::operator/(p, fn);
-        boost::filesystem::path modelDirComplete = boost::filesystem::operator/(p, pModelDir);
+        std::filesystem::path p = remove_trailing_separator(basePath);
+        std::filesystem::path fn = remove_trailing_separator(filename);
+        std::filesystem::path pModelDir = remove_trailing_separator(modelDir);
+        std::filesystem::path fnComplete = p / fn;
+        std::filesystem::path modelDirComplete = p / pModelDir;
 
-        if (boost::filesystem::exists(modelDirComplete) && !boost::filesystem::is_directory(modelDirComplete))
+        if (std::filesystem::exists(modelDirComplete) && !std::filesystem::is_directory(modelDirComplete))
         {
             VR_ERROR << "Could not create model directory (existing & !dir)  " << pModelDir.string() << endl;
             return false;
         }
 
-        if (!boost::filesystem::is_directory(modelDirComplete))
+        if (!std::filesystem::is_directory(modelDirComplete))
         {
-            if (!boost::filesystem::create_directories(modelDirComplete))
+            if (!std::filesystem::create_directories(modelDirComplete))
             {
                 VR_ERROR << "Could not create model dir  " << modelDirComplete.string() << endl;
                 return false;
@@ -1504,7 +1514,7 @@ namespace VirtualRobot
         {
             std::vector<RobotNodePtr> nodes = robot->getRobotNodes();
 
-            for (auto & node : nodes)
+            for (auto& node : nodes)
             {
                 node->saveModelFiles(modelDirComplete.string(), true);
             }
@@ -1512,12 +1522,12 @@ namespace VirtualRobot
 
         return true;
     }
-    
-    void RobotIO::saveMJCF(RobotPtr robot, const std::string& filename, 
+
+    void RobotIO::saveMJCF(RobotPtr robot, const std::string& filename,
                            const std::string& basePath, const std::string& meshDir)
     {
-        mjcf::MujocoIO mujocoIO(robot);
-        mujocoIO.setActuatorType(mjcf::ActuatorType::MOTOR);
+        mujoco::MujocoIO mujocoIO(robot);
+        mujocoIO.setActuatorType(mujoco::ActuatorType::MOTOR);
         mujocoIO.saveMJCF(filename, basePath, meshDir);
     }
 

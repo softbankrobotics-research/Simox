@@ -1042,16 +1042,16 @@ namespace VirtualRobot
             ss << physics.toXML(2);
         }
 
-        boost::filesystem::path pBase(basePath);
+        std::filesystem::path pBase(basePath);
 
         if (visualizationModel && visualizationModel->getTriMeshModel() && visualizationModel->getTriMeshModel()->faces.size() > 0)
         {
             std::string visuFile = getFilenameReplacementVisuModel();
 
-            boost::filesystem::path pModel(modelPathRelative);
-            boost::filesystem::path modelDirComplete = boost::filesystem::operator/(pBase, pModel);
-            boost::filesystem::path fn(visuFile);
-            boost::filesystem::path modelFileComplete = boost::filesystem::operator/(modelDirComplete, fn);
+            std::filesystem::path pModel(modelPathRelative);
+            std::filesystem::path modelDirComplete = std::filesystem::operator/(pBase, pModel);
+            std::filesystem::path fn(visuFile);
+            std::filesystem::path modelFileComplete = std::filesystem::operator/(modelDirComplete, fn);
 
             ss << visualizationModel->toXML(pBase.string(), modelFileComplete.string(), 2);
         }
@@ -1059,10 +1059,10 @@ namespace VirtualRobot
         if (collisionModel && collisionModel->getTriMeshModel() && collisionModel->getTriMeshModel()->faces.size() > 0)
         {
             std::string colFile = getFilenameReplacementColModel();
-            boost::filesystem::path pModel(modelPathRelative);
-            boost::filesystem::path modelDirComplete = boost::filesystem::operator/(pBase, pModel);
-            boost::filesystem::path fn(colFile);
-            boost::filesystem::path modelFileComplete = boost::filesystem::operator/(modelDirComplete, fn);
+            std::filesystem::path pModel(modelPathRelative);
+            std::filesystem::path modelDirComplete = std::filesystem::operator/(pBase, pModel);
+            std::filesystem::path fn(colFile);
+            std::filesystem::path modelFileComplete = std::filesystem::operator/(modelDirComplete, fn);
             ss << collisionModel->toXML(pBase.string(), modelFileComplete.string(), 2);
         }
 

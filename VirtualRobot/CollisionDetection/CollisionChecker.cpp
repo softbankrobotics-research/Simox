@@ -790,6 +790,11 @@ namespace VirtualRobot
         }
     }
 
+    MultiCollisionResult CollisionChecker::checkMultipleCollisions(const CollisionModelPtr& model1, const CollisionModelPtr& model2)
+    {
+        return collisionCheckerImplementation->checkMultipleCollisions(model1, model2);
+    }
+
     /*
     bool CollisionChecker::checkContinuousCollision( CollisionModelPtr model1, SbMatrix &mGoalPose1, CollisionModelPtr model2, SbMatrix &mGoalPose2, float &fStoreTOC )
     {

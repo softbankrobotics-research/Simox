@@ -27,6 +27,15 @@
 #include <Inventor/VRMLnodes/SoVRMLGroup.h>
 
 
+namespace
+{
+    namespace fs = std::filesystem;
+    inline fs::path remove_trailing_separator(fs::path p)
+    {
+        p /= "dummy";
+        return p.parent_path();
+    }
+}
 
 
 namespace VirtualRobot
@@ -435,19 +444,19 @@ namespace VirtualRobot
         std::string outFile = filename;
         bool vrml = true; // may be changed later according to file extension
 
-        boost::filesystem::path completePath(modelPath);
-        boost::filesystem::path fn(outFile);
+        auto completePath = remove_trailing_separator(modelPath);
+        auto fn = remove_trailing_separator(outFile);
 
-        if (!boost::filesystem::is_directory(completePath))
+        if (!std::filesystem::is_directory(completePath))
         {
-            if (!boost::filesystem::create_directories(completePath))
+            if (!std::filesystem::create_directories(completePath))
             {
                 VR_ERROR << "Could not create model dir  " << completePath.string() << endl;
                 return false;
             }
         }
 
-        boost::filesystem::path completeFile = boost::filesystem::operator/(completePath, fn);
+        std::filesystem::path completeFile = std::filesystem::operator/(completePath, fn);
 
         SoOutput* so = new SoOutput();
 
@@ -456,7 +465,7 @@ namespace VirtualRobot
             VR_ERROR << "Could not open file " << completeFile.string() << " for writing." << endl;
         }
 
-        boost::filesystem::path extension = completeFile.extension();
+        std::filesystem::path extension = completeFile.extension();
         std::string extStr = extension.string();
         BaseIO::getLowerCase(extStr);
 

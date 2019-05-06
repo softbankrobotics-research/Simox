@@ -613,10 +613,10 @@ void showRobotWindow::saveRobot()
     std::string outFile = fileName.toLocal8Bit().constData();
     //std::string outFile("robot.xml");
     //store robot to file
-    boost::filesystem::path relOutFile(outFile);
-    boost::filesystem::path outFilename = relOutFile.filename();
-    boost::filesystem::path relOutDir = relOutFile.parent_path();
-    boost::filesystem::path absOutFile = boost::filesystem::absolute(relOutDir);
+    std::filesystem::path relOutFile(outFile);
+    std::filesystem::path outFilename = relOutFile.filename();
+    std::filesystem::path relOutDir = relOutFile.parent_path();
+    std::filesystem::path absOutFile = std::filesystem::absolute(relOutDir);
     std::string modelDir;
     modelDir = outFilename.stem().string();
     modelDir += "_models";
@@ -628,7 +628,7 @@ void showRobotWindow::saveRobot()
 
 
 
-    if (!boost::filesystem::is_directory(absOutFile))
+    if (!std::filesystem::is_directory(absOutFile))
     {
         cout << "Not a valid directory:" << absOutFile.string() << endl;
         return;

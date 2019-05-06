@@ -16,23 +16,7 @@ MACRO(ADD_GRASPSTUDIO_TEST TEST_NAME)
 ENDMACRO(ADD_GRASPSTUDIO_TEST)
 
 
-########### QHULL #################
-IF(NOT BUILD_qhull)
-    find_package(QHULL QUIET)
-    IF (NOT QHULL_FOUND)
-		MESSAGE (STATUS "Could not find QHULL, building internal version simox-qhull")
-		SET (BUILD_qhull ON)
-		SET (BUILD_qhull ON PARENT_SCOPE)
-    ENDIF()
-ENDIF()
-
-IF(BUILD_qhull)
-    ADD_SUBDIRECTORY(ExternalDependencies/qhull-2003.1)
-    set(QHULL_LIBRARIES simox-qhull)
-else()
-    find_package(QHULL REQUIRED)
-endif()
-########### END QHULL #################
+find_package(QHULL REQUIRED)
 
 
 SET(SOURCES
@@ -90,11 +74,7 @@ endif ()
 
 ADD_LIBRARY (GraspStudio SHARED ${SOURCES} ${INCLUDES})
 
-IF(BUILD_qhull)
-    target_include_directories(GraspStudio PUBLIC "ExternalDependencies/qhull-2003.1/include/")
-else()
-    target_include_directories(GraspStudio PUBLIC ${QHULL_INCLUDE_DIRS})
-endif()
+target_include_directories(GraspStudio PUBLIC ${QHULL_INCLUDE_DIRS})
 
 TARGET_LINK_LIBRARIES (GraspStudio PUBLIC Saba VirtualRobot ${QHULL_LIBRARIES})
 

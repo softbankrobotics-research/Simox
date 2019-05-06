@@ -1236,8 +1236,8 @@ namespace VirtualRobot
             else
             {
                 std::string fnV = visualizationModel->getFilename();
-                boost::filesystem::path fn(fnV);
-                boost::filesystem::path filnameNoPath = fn.filename();
+                std::filesystem::path fn(fnV);
+                std::filesystem::path filnameNoPath = fn.filename();
                 newFilename = filnameNoPath.string();
             }
 
@@ -1257,8 +1257,8 @@ namespace VirtualRobot
             else
             {
                 std::string fnV = collisionModel->getVisualization()->getFilename();
-                boost::filesystem::path fn(fnV);
-                boost::filesystem::path filnameNoPath = fn.filename();
+                std::filesystem::path fn(fnV);
+                std::filesystem::path filnameNoPath = fn.filename();
                 newFilename = filnameNoPath.string();
             }
 
@@ -1271,9 +1271,9 @@ namespace VirtualRobot
     std::string SceneObject::getFilenameReplacementVisuModel(const std::string standardExtension)
     {
         std::string fnV = visualizationModel->getFilename();
-        boost::filesystem::path fn(fnV);
-        boost::filesystem::path filnameNoPath = fn.filename();
-        boost::filesystem::path extension = fn.extension();
+        std::filesystem::path fn(fnV);
+        std::filesystem::path filnameNoPath = fn.filename();
+        std::filesystem::path extension = fn.extension();
         std::string extStr = extension.string();
 
         if (extStr.empty())
@@ -1295,8 +1295,8 @@ namespace VirtualRobot
 
         if (collisionModel && collisionModel->getVisualization())
         {
-            boost::filesystem::path fn(collisionModel->getVisualization()->getFilename());
-            boost::filesystem::path extension = fn.extension();
+            std::filesystem::path fn(collisionModel->getVisualization()->getFilename());
+            std::filesystem::path extension = fn.extension();
             extStr = extension.string();
         }
 

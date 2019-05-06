@@ -13,6 +13,15 @@
 #include "VirtualRobot/VirtualRobotException.h"
 #include "VirtualRobot/XML/BaseIO.h"
 
+namespace
+{
+    namespace fs = std::filesystem;
+    inline fs::path remove_trailing_separator(fs::path p)
+    {
+        p /= "dummy";
+        return p.parent_path();
+    }
+}
 
 namespace VirtualRobot
 {
@@ -205,7 +214,7 @@ namespace VirtualRobot
     std::string VisualizationNode::toXML(const std::string& basePath, int tabs)
     {
         std::string visualizationFilename = getFilename();
-        boost::filesystem::path fn(visualizationFilename);
+        std::filesystem::path fn(visualizationFilename);
         return toXML(basePath, fn.string(), tabs);
     }
 
@@ -258,17 +267,17 @@ namespace VirtualRobot
 
     bool VisualizationNode::saveModel(const std::string& modelPath, const std::string& filename)
     {
-        const boost::filesystem::path completePath(modelPath);
+        const auto completePath = remove_trailing_separator(modelPath);
 
-        if (!boost::filesystem::is_directory(completePath))
+        if (!std::filesystem::is_directory(completePath))
         {
-            if (!boost::filesystem::create_directories(completePath))
+            if (!std::filesystem::create_directories(completePath))
             {
                 VR_ERROR << "Could not create model dir  " << completePath.string() << endl;
                 return false;
             }
         }
-        const auto completeFile = boost::filesystem::absolute(completePath / filename).replace_extension("off");
+        const auto completeFile = std::filesystem::absolute(completePath / filename).replace_extension("off");
 
         const auto& t = *getTriMeshModel();
         VR_INFO << "writing " << completeFile.string() << std::endl;
