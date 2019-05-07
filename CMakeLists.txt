@@ -67,7 +67,7 @@ endif()
 
 SET(Simox_LIB_DIR ${Simox_BINARY_DIR}/lib)
 SET(Simox_BIN_DIR ${Simox_BINARY_DIR}/bin)
-SET(Simox_DATA_DIR ${CurrentSimoxPath}/VirtualRobot/data)
+SET(Simox_DATA_DIR ${Simox_SOURCE_DIR}/VirtualRobot/data)
 
 MESSAGE (STATUS "** SIMOX LIB DIR: ${Simox_LIB_DIR}")
 MESSAGE (STATUS "** SIMOX BIN DIR: ${Simox_BIN_DIR}")
