@@ -1,9 +1,11 @@
-#include <VirtualRobot/Dynamics/dynamics.h>
+#include <VirtualRobot/Dynamics/Dynamics.h>
 #include <VirtualRobot/Robot.h>
 #include <VirtualRobot/Nodes/RobotNode.h>
 #include <VirtualRobot/XML/RobotIO.h>
 #include <VirtualRobot/RuntimeEnvironment.h>
-
+#include <chrono>
+#include <VirtualRobot/Tools/Gravity.h>
+#include <rbdl/Kinematics.h>
 using std::cout;
 using namespace VirtualRobot;
 

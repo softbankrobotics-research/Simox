@@ -602,12 +602,12 @@ SET(INCLUDES
 if (Simox_USE_RBDL)
     SET(SOURCES
         ${SOURCES}
-        Dynamics/dynamics.cpp
+        Dynamics/Dynamics.cpp
     )
 
     SET(INCLUDES
         ${INCLUDES}
-        Dynamics/dynamics.h
+        Dynamics/Dynamics.h
     )
 
     if(BUILD_TESTING)
