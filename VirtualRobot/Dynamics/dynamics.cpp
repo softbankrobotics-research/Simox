@@ -58,6 +58,7 @@ VirtualRobot::Dynamics::Dynamics(RobotNodeSetPtr rns, RobotNodeSetPtr rnsBodies,
 
     //Dynamics::toRBDLRecursive(model, root, root->getGlobalPose(), Eigen::Matrix4f::Identity());
     Dynamics::toRBDL(model, rns->getNode(0), rns);
+    zeroVec = Eigen::VectorXd::Zero(model->dof_count);
 }
 
 Eigen::VectorXd Dynamics::getInverseDynamics(const Eigen::VectorXd& q, const Eigen::VectorXd& qdot, const Eigen::VectorXd& qddot)
@@ -84,24 +85,25 @@ Eigen::VectorXd Dynamics::getForwardDynamics(const Eigen::VectorXd &q, const Eig
 
 Eigen::VectorXd Dynamics::getGravityMatrix(const Eigen::VectorXd &q)
 {
-    auto nDof = q.rows();
-    VR_ASSERT(nDof == Dynamics::model->dof_count);
-    Eigen::VectorXd qdot = Eigen::VectorXd::Zero(nDof);
-    Eigen::VectorXd qddot = Eigen::VectorXd::Zero(nDof);
-
     Eigen::VectorXd tauGravity = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
-    InverseDynamics(*model.get(), q, qdot, qddot, tauGravity);
+    getGravityMatrix(q, tauGravity);
     return tauGravity;
+}
+
+void Dynamics::getGravityMatrix(const Eigen::VectorXd &q, Eigen::VectorXd &tau)
+{
+    VR_ASSERT(q.rows() == Dynamics::model->dof_count);
+    InverseDynamics(*model.get(), q, zeroVec, zeroVec, tau);
 }
 
 Eigen::VectorXd Dynamics::getCoriolisMatrix(const Eigen::VectorXd &q, const Eigen::VectorXd &qdot)
 {
-    Eigen::VectorXd qddot = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
+//    Eigen::VectorXd qddot = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
     Eigen::VectorXd tauGravity = getGravityMatrix(q);
     Eigen::VectorXd tau = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
 
     Eigen::MatrixXd tauCoriolis = Eigen::VectorXd::Zero(Dynamics::model->dof_count);
-    InverseDynamics(*model.get(), q, qdot, qddot, tau);
+    InverseDynamics(*model.get(), q, qdot, zeroVec, tau);
     tauCoriolis = tau - tauGravity;
     return tauCoriolis;
 }

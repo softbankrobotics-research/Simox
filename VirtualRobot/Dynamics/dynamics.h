@@ -27,6 +27,7 @@ namespace VirtualRobot
         void getInverseDynamics(const Eigen::VectorXd& q, const Eigen::VectorXd& qdot, const Eigen::VectorXd& qddot, Eigen::VectorXd& tau);
         /// Calculates the joint space inertia matrix given a joint position vector q
         Eigen::VectorXd getGravityMatrix(const Eigen::VectorXd&q);
+        void getGravityMatrix(const Eigen::VectorXd&q,  Eigen::VectorXd&tau);
         /// Calculates the joint space Gravity Matrix given a joint position vector q and Number of DOF
         Eigen::VectorXd getCoriolisMatrix(const Eigen::VectorXd& q, const Eigen::VectorXd& qdot);
         /// Calculates the coriolis matrix given position vector q, velocity vector qdot and Number of DOF
@@ -63,6 +64,7 @@ namespace VirtualRobot
         Eigen::Vector3d gravity;
         std::map<std::string,  int> identifierMap;
         bool verbose = false;
+        Eigen::VectorXd zeroVec;
 
         RobotNodePtr checkForConnectedMass(RobotNodePtr node);
         std::set<RobotNodePtr> getChildrenWithMass(const RobotNodePtr& node, const RobotNodeSetPtr &nodeSet) const;
