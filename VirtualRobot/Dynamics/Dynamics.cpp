@@ -1,6 +1,6 @@
 
 #include <rbdl/rbdl.h>
-#include "dynamics.h"
+#include "Dynamics.h"
 #include <VirtualRobot/Robot.h>
 #include <VirtualRobot/Nodes/RobotNode.h>
 #include <VirtualRobot/Nodes/RobotNodeFactory.h>
