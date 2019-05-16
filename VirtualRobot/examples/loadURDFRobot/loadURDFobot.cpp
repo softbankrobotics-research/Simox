@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     RuntimeEnvironment::getDataFileAbsolute(urdfFile);
 
     // to ensure that 3d model files can be loaded during converting we need to add the correct data path
-    boost::filesystem::path tmppath = urdfFile;
+    std::filesystem::path tmppath = urdfFile;
     tmppath = tmppath.parent_path();
     tmppath = tmppath / "/../..";
     std::string modelsBasePath = tmppath.generic_string();
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     // load model from file and convert it to the simox robot format
     RobotPtr r = f.loadFromFile(urdfFile);
 
-    std::string outPath = boost::filesystem::initial_path().generic_string();
+    std::string outPath = std::filesystem::initial_path().generic_string();
     cout << "Saving converted file to " << outPath << "/urdf_output.xml..." << endl;
 
     RobotIO::saveXML(r, "urdf_output.xml", outPath);

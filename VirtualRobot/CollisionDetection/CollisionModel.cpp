@@ -340,7 +340,7 @@ namespace VirtualRobot
             collisionFilename = modelVisualization->getFilename();
         }
 
-        boost::filesystem::path fn(collisionFilename);
+        std::filesystem::path fn(collisionFilename);
         return toXML(basePath, fn.string(), tabs);
 
     }

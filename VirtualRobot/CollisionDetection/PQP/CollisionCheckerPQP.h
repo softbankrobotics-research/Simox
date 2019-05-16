@@ -53,6 +53,8 @@ namespace VirtualRobot
         bool checkCollision(CollisionModelPtr model1, CollisionModelPtr model2) override; //, Eigen::Vector3f *storeContact = NULL);
         bool checkCollision(CollisionModelPtr model1, const Eigen::Vector3f& point, float tolerance = 0.0f) override;
 
+        MultiCollisionResult checkMultipleCollisions(CollisionModelPtr const& model1, CollisionModelPtr const& model2);
+
         /*!
         If continuous collision detection (CCD) is supported, this method can be used to detect collisions on the path
         from the current pose of the collision models to the goal poses.

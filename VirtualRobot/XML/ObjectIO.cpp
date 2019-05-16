@@ -20,10 +20,10 @@ namespace VirtualRobot
 
 
     ObjectIO::ObjectIO()
-    = default;
+        = default;
 
     ObjectIO::~ObjectIO()
-    = default;
+        = default;
 
     VirtualRobot::ObstaclePtr ObjectIO::loadObstacle(const std::string& xmlFile)
     {
@@ -32,8 +32,8 @@ namespace VirtualRobot
 
         THROW_VR_EXCEPTION_IF(!in.is_open(), "Could not open XML file:" << xmlFile);
 
-        boost::filesystem::path filenameBaseComplete(xmlFile);
-        boost::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
+        std::filesystem::path filenameBaseComplete(xmlFile);
+        std::filesystem::path filenameBasePath = filenameBaseComplete.parent_path();
         std::string basePath = filenameBasePath.string();
         VirtualRobot::ObstaclePtr res = loadObstacle(in, basePath);
         THROW_VR_EXCEPTION_IF(!res, "Error while parsing file " << xmlFile);
@@ -63,8 +63,8 @@ namespace VirtualRobot
 
         THROW_VR_EXCEPTION_IF(!in.is_open(), "Could not open XML file:" << xmlFile);
 
-        boost::filesystem::path filenameBaseComplete(xmlFile);
-        boost::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
+        std::filesystem::path filenameBaseComplete(xmlFile);
+        std::filesystem::path filenameBasePath = filenameBaseComplete.parent_path();
         std::string basePath = filenameBasePath.string();
         VirtualRobot::ManipulationObjectPtr res = loadManipulationObject(in, basePath);
         THROW_VR_EXCEPTION_IF(!res, "Error while parsing file " << xmlFile);
@@ -133,7 +133,7 @@ namespace VirtualRobot
             // create & register configs
             std::map< std::string, float > rc;
 
-            for (auto & configDefinition : configDefinitions)
+            for (auto& configDefinition : configDefinitions)
             {
                 rc[ configDefinition.name ] = configDefinition.value;
             }
@@ -144,16 +144,18 @@ namespace VirtualRobot
         return grasp;
     }
 
-    bool ObjectIO::writeSTL(TriMeshModelPtr t, const std::string &filename, const std::string &objectName, float scaling)
+    bool ObjectIO::writeSTL(TriMeshModelPtr t, const std::string& filename, const std::string& objectName, float scaling)
     {
-        if (!t || t->faces.size()==0) {
+        if (!t || t->faces.size() == 0)
+        {
             VR_ERROR << "Wrong input" << endl;
             return false;
         }
 
         ofstream of;
-        of.open( filename.c_str());
-        if (!of) {
+        of.open(filename.c_str());
+        if (!of)
+        {
             VR_ERROR << "Could not open " << filename << " for writing" << endl;
             return false;
         }
@@ -161,7 +163,7 @@ namespace VirtualRobot
         of << "solid " << objectName << endl;
 
         // write triangles
-        for (size_t i=0; i<t->faces.size(); i++)
+        for (size_t i = 0; i < t->faces.size(); i++)
         {
             MathTools::TriangleFace& face = t->faces.at(i);
             auto& p1 = t->vertices.at(face.id1);
@@ -342,7 +344,7 @@ namespace VirtualRobot
         // build object
         ManipulationObjectPtr object(new ManipulationObject(objName, visualizationNode, collisionModel, physics));
 
-        for (const auto & graspSet : graspSets)
+        for (const auto& graspSet : graspSets)
         {
             object->addGraspSet(graspSet);
         }
@@ -562,8 +564,8 @@ namespace VirtualRobot
     {
         THROW_VR_EXCEPTION_IF(!object, "NULL object");
 
-        boost::filesystem::path filenameBaseComplete(xmlFile);
-        boost::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
+        std::filesystem::path filenameBaseComplete(xmlFile);
+        std::filesystem::path filenameBasePath = filenameBaseComplete.parent_path();
         std::string basePath = filenameBasePath.string();
 
         std::string xmlString = object->toXML(basePath);

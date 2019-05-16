@@ -52,12 +52,12 @@ BOOST_AUTO_TEST_CASE(testRobotSaveXML)
     BOOST_REQUIRE_NO_THROW(r = RobotIO::loadRobot(filename));
     BOOST_REQUIRE(r);
 
-    boost::system::error_code ec;
-    boost::filesystem::path tempDir = boost::filesystem::temp_directory_path(ec);
-    BOOST_REQUIRE(ec.value() == boost::system::errc::success);
+    std::error_code ec;
+    std::filesystem::path tempDir = std::filesystem::temp_directory_path(ec);
+    BOOST_REQUIRE(ec == std::error_code{});
 
-    boost::filesystem::path robName("ArmarIII_tmp.xml");
-    boost::filesystem::path filenameTmp = boost::filesystem::operator/(tempDir, robName);
+    std::filesystem::path robName("ArmarIII_tmp.xml");
+    std::filesystem::path filenameTmp = std::filesystem::operator/(tempDir, robName);
 
     bool saveOK;
     BOOST_REQUIRE_NO_THROW(saveOK = RobotIO::saveXML(r, robName.string(), tempDir.string()));

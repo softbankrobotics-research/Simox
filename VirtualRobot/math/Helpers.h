@@ -138,6 +138,11 @@ namespace math
         template <typename Derived>
         static Eigen::Matrix4f InvertedPose(const Eigen::MatrixBase<Derived>& pose);
         
+        /// Scale the translation/position of the given pose.
+        static void ScaleTranslation(Eigen::Matrix4f& pose, float scale);
+        /// Get the pose with its translation/position scaled.
+        static Eigen::Matrix4f ScaledTranslation(const Eigen::Matrix4f& pose, float scale);
+        
         /// Get a cartesian vector from cylinder coordinates.
         static Eigen::Vector3f CreateVectorFromCylinderCoords(float r, float angle, float z);
         /// Get a cartesian vector from cylinder coordinates.

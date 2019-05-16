@@ -33,6 +33,20 @@
 
 namespace VirtualRobot
 {
+
+    struct SingleCollisionPair
+    {
+        Eigen::Vector3f contact1 = Eigen::Vector3f::Zero();
+        Eigen::Vector3f contact2 = Eigen::Vector3f::Zero();
+        int id1 = 0;
+        int id2 = 0;
+    };
+
+    struct MultiCollisionResult
+    {
+        std::vector<SingleCollisionPair> pairs;
+    };
+
     class VIRTUAL_ROBOT_IMPORT_EXPORT CollisionCheckerImplementation
     {
     public:
