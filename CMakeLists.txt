@@ -34,10 +34,14 @@ FIND_PACKAGE(Boost COMPONENTS unit_test_framework REQUIRED)
 add_compile_options(-Wall)
 add_compile_options(-Wextra)
 add_compile_options(-Wpedantic)
-#turn warnings about dangerous stuff into errors
-add_compile_options(-Werror)
-add_compile_options(-Wno-error=unused-but-set-variable)
-add_compile_options(-Wno-error=unused-variable)
+message(STATUS "Compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
+if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 8.0)
+    #turn warnings about dangerous stuff into errors
+    add_compile_options(-Werror)
+    add_compile_options(-Wno-error=unused-but-set-variable)
+    add_compile_options(-Wno-error=unused-variable)
+    add_compile_options(-Wno-error=unused-parameter)
+endif()
 
 #######################################################################################
 #options
