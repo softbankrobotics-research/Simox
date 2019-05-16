@@ -38,7 +38,7 @@ namespace VirtualRobot
         urdf::ModelInterfaceSharedPtr urdf_model = urdf::parseURDFFile(filename.c_str());
 
         std::filesystem::path filenameBaseComplete(filename);
-        std::filesystem::path filenameBasePath = filenameBaseComplete.branch_path();
+        std::filesystem::path filenameBasePath = filenameBaseComplete.parent_path();
         std::string basePath = filenameBasePath.string();
 
         if (!urdf_model)

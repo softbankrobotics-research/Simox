@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     // load model from file and convert it to the simox robot format
     RobotPtr r = f.loadFromFile(urdfFile);
 
-    std::string outPath = std::filesystem::initial_path().generic_string();
+    std::string outPath = std::filesystem::current_path().generic_string();
     cout << "Saving converted file to " << outPath << "/urdf_output.xml..." << endl;
 
     RobotIO::saveXML(r, "urdf_output.xml", outPath);
