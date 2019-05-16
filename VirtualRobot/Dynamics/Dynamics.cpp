@@ -488,7 +488,6 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
         nodeID = model->AddBody(parentID, spatial_transform, joint, body, node->getName());
         this->identifierMap[node->getName()] = nodeID;
         Eigen::VectorXd QDDot = Eigen::VectorXd::Zero(identifierMap.size());
-        Eigen::Vector3d bodyPosition = RigidBodyDynamics::CalcBodyToBaseCoordinates(*model, Eigen::VectorXd::Zero(identifierMap.size()), nodeID, Eigen::Vector3d::Zero(), true);
 
         VERBOSE_OUT << "New body:" << node->getName() << ", " << nodeID << " :" << endl; // Debugging Info
         VERBOSE_OUT << "** SPATIAL TRAFO: " << endl << spatial_transform.r << endl << spatial_transform.E << endl;
@@ -496,11 +495,15 @@ void Dynamics::toRBDL(boost::shared_ptr<RigidBodyDynamics::Model> model, RobotNo
         VERBOSE_OUT << "** COM: " << body.mCenterOfMass.transpose() << endl;
         VERBOSE_OUT << "** INERTIA: " << endl << body.mInertia << endl;
         VERBOSE_OUT << "** mIsVirtual: " << body.mIsVirtual << endl;
-        Eigen::Vector3f zeroVec;
-        zeroVec.setZero();
+        Eigen::Vector3d bodyPosition = RigidBodyDynamics::CalcBodyToBaseCoordinates(*model, Eigen::VectorXd::Zero(identifierMap.size()), nodeID, Eigen::Vector3d::Zero(), true);
         Eigen::Vector3f positionInVirtualRobot = node->getGlobalPosition();//rns->getKinematicRoot()->transformTo(node, zeroVec);
-        VR_ASSERT((positionInVirtualRobot/1000.f - bodyPosition.cast<float>()).norm() < 0.01);
-//        VERBOSE_OUT << "** position:\n" << bodyPosition << "\nposition in virtual robot:\n" << positionInVirtualRobot << endl << endl;
+        auto diff = (positionInVirtualRobot - bodyPosition.cast<float>()*1000).norm();
+        if(diff > 0.01)
+        {
+            VR_ERROR << "forward kinematics between virtual robot and rbdl differ: " << diff << " mm";
+            throw VirtualRobotException("forward kinematics between virtual robot and rbdl differ!");
+        }
+        //        VERBOSE_OUT << "** position:\n" << bodyPosition << "\nposition in virtual robot:\n" << positionInVirtualRobot << endl << endl;
 
         if (joint.mJointAxes)
         {
