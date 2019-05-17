@@ -8,7 +8,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/l_clav.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/l_clav.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -27,7 +27,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/l_farm.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/l_farm.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -46,7 +46,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/l_foot.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/l_foot.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -65,7 +65,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/l_hand.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/l_hand.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -84,7 +84,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/l_larm.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/l_larm.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -103,7 +103,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/l_lglut.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/l_lglut.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -122,7 +122,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/l_lleg.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/l_lleg.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -141,7 +141,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/l_scap.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/l_scap.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -160,7 +160,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/l_talus.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/l_talus.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -179,7 +179,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/l_uarm.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/l_uarm.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -198,7 +198,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/l_uglut.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/l_uglut.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -217,7 +217,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/l_uleg.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/l_uleg.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -236,7 +236,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/ltorso.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/ltorso.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -255,7 +255,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/mtorso.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/mtorso.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -274,7 +274,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/pelvis.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/pelvis.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -293,7 +293,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/r_clav.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/r_clav.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -312,7 +312,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/r_farm.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/r_farm.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -331,7 +331,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/r_foot.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/r_foot.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -350,7 +350,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/r_hand.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/r_hand.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -369,7 +369,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/r_larm.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/r_larm.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -388,7 +388,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/r_lglut.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/r_lglut.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -407,7 +407,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/r_lleg.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/r_lleg.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -426,7 +426,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/r_scap.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/r_scap.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -445,7 +445,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/r_talus.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/r_talus.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -464,7 +464,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/r_uarm.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/r_uarm.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -483,7 +483,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/r_uglut.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/r_uglut.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -502,7 +502,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/r_uleg.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/r_uleg.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -522,7 +522,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/utorso.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/utorso.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -534,7 +534,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/utorso_pack.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/utorso_pack.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -554,7 +554,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/utorso.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/utorso.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
@@ -566,7 +566,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 -0 0" />
             <geometry>
-                <mesh filename="package://atlas_description/meshes_v3/utorso_pack.dae" scale="1 1 1" />
+                <mesh filename="package://atlas_description/meshes_v3/utorso_pack.stl" scale="1 1 1" />
             </geometry>
         </visual>
         <collision>
