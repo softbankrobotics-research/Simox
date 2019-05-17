@@ -157,6 +157,14 @@ namespace math
         static float Distance(const Eigen::Matrix4f& a, const Eigen::Matrix4f& b, float rad2mmFactor);
 
         static Eigen::VectorXf LimitVectorLength(const Eigen::VectorXf& vec, const Eigen::VectorXf& maxLen);
+
+
+        // Rotation vectors:
+
+        static Eigen::AngleAxisf GetAngleAxisFromTo(const Eigen::Matrix3f& start, const Eigen::Matrix3f& target);
+        static Eigen::Vector3f GetRotationVector(const Eigen::Matrix3f& start, const Eigen::Matrix3f& target);
+        static Eigen::Matrix3f RotationVectorToOrientation(const Eigen::Vector3f& rotation);
+
         
         
         /// Convert a value from radian to degree.

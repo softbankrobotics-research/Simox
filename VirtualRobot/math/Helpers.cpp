@@ -346,6 +346,27 @@ Eigen::VectorXf Helpers::LimitVectorLength(const Eigen::VectorXf& vec, const Eig
     return vec / scale;
 }
 
+Eigen::AngleAxisf Helpers::GetAngleAxisFromTo(const Eigen::Matrix3f& start, const Eigen::Matrix3f& target)
+{
+    return Eigen::AngleAxisf(target * start.inverse());
+}
+
+Eigen::Vector3f Helpers::GetRotationVector(const Eigen::Matrix3f& start, const Eigen::Matrix3f& target)
+{
+    Eigen::AngleAxisf aa = GetAngleAxisFromTo(start, target);
+    return aa.axis() * aa.angle();
+}
+
+Eigen::Matrix3f Helpers::RotationVectorToOrientation(const Eigen::Vector3f& rotation)
+{
+    if(rotation.squaredNorm() == 0)
+    {
+        return Eigen::Matrix3f::Identity();
+    }
+    Eigen::AngleAxisf aa(rotation.norm(), rotation.normalized());
+    return aa.toRotationMatrix();
+}
+
 float Helpers::rad2deg(float rad)
 {
     return rad * (180.0f / M_PI_F);
