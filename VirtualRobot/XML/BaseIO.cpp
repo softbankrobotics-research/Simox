@@ -771,86 +771,53 @@ namespace VirtualRobot
         filename = filenameNewComplete.string();
     }
 
+
+
     void BaseIO::makeRelativePath(const std::string& basePath, std::string& filename)
     {
-        if (filename.empty())
-        {
-            return;
-        }
-
-#if (BOOST_VERSION>=104800)
-        // canonical needs boost version >=1.48
         namespace fs = std::filesystem;
-
-        fs::path filepath;
-
-        if (fs::path(filename).is_absolute() && std::filesystem::exists(fs::path(basePath) / fs::path(filename)))
+        auto toStr = filename;
+        auto fromStr = basePath;
+        // Start at the root path. While they are the same, do nothing.
+        // When they first diverge, take the remainder of the two paths
+        // and replace the entire from path with ".." segments.
+        fs::path from(fromStr);
+        fs::path to(toStr);
+        fs::path::const_iterator fromIter = (from).begin();
+        fs::path::const_iterator toIter = (to).begin();
+        if (from.empty())
         {
-            return;
+            throw VirtualRobotException("From path is empty");
         }
-        else if (fs::path(filename).is_absolute())
+        if (to.empty())
         {
-            if (std::filesystem::exists(fs::path(filename)))
-            {
-                filepath = fs::canonical(fs::path(filename));
-            }
-            else
-            {
-                filepath = fs::path(filename);
-            }
+            throw VirtualRobotException("To path is empty");
         }
-        else
+        if (*fromIter != *toIter)
         {
-            // combine paths
-            //  fs::path res = fs::path(basePath) / fs::path(filename).filename();
-            //  filename = res.generic_string();
-            return;
-            //THROW_VR_EXCEPTION("Could not make path " + filename + " relative to " + basePath);
+            throw VirtualRobotException("From and to path do not have the same toplevel dir: " + fromStr + " and " + toStr);
         }
-
-        fs::path basePathDir = fs::canonical(fs::path(basePath));
-        fs::path::iterator itBasePath = basePathDir.begin();
-        fs::path::iterator itFile = filepath.begin();
-        fs::path newPath;
-
-        while (*itBasePath == *itFile)
+        // Loop through both
+        while (fromIter != from.end() && toIter != to.end() && (*toIter) == (*fromIter))
         {
-            itFile++;
-            itBasePath++;
+            ++toIter;
+            ++fromIter;
         }
 
-        for (; itBasePath != basePathDir.end(); itBasePath++)
+        fs::path finalPath;
+        while (fromIter != from.end())
         {
-            newPath /= "..";
+            finalPath /= "..";
+            ++fromIter;
         }
 
-        for (; itFile != filepath.end(); itFile++)
+        while (toIter != to.end())
         {
-            newPath /= *itFile;
+            finalPath /= *toIter;
+            ++toIter;
         }
 
-        filename = newPath.generic_string();
-#else
-        // version compatible with boost below version 1.48,
-        // may be buggy in some cases...
-        std::filesystem::path diffpath;
-        std::filesystem::path tmppath = filename;
-
-        while (tmppath != basePath)
-        {
-            diffpath = tmppath.filename() / diffpath;
-            tmppath = tmppath.parent_path();
-
-            if (tmppath.empty())
-            {
-                // no relative path found, take complete path
-                diffpath = filename;
-                break;
-            }
-        }
-
-        filename = diffpath.generic_string();
-#endif
+        filename = finalPath.string();
     }
 
 
