@@ -155,9 +155,9 @@ namespace VirtualRobot
         /*!
             Saves model file to model path.
             \param modelPath The directory.
-            \param filename The new filename without path.
+            \param filename The new filename without path. The exporter might change the filename to the ending, which the exporter exports.
         */
-        virtual bool saveModel(const std::string& modelPath, const std::string& filename);
+        virtual bool saveModel(const std::string& modelPath, std::string &filename);
 
         virtual void scale(Eigen::Vector3f& scaleFactor);
 

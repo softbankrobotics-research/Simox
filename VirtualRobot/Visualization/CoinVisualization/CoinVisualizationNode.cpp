@@ -439,7 +439,7 @@ namespace VirtualRobot
 
 
 
-    bool CoinVisualizationNode::saveModel(const std::string& modelPath, const std::string& filename)
+    bool CoinVisualizationNode::saveModel(const std::string& modelPath, std::string& filename)
     {
         std::string outFile = filename;
         bool vrml = true; // may be changed later according to file extension
@@ -458,13 +458,6 @@ namespace VirtualRobot
 
         std::filesystem::path completeFile = std::filesystem::operator/(completePath, fn);
 
-        SoOutput* so = new SoOutput();
-
-        if (!so->openFile(completeFile.string().c_str()))
-        {
-            VR_ERROR << "Could not open file " << completeFile.string() << " for writing." << endl;
-        }
-
         std::filesystem::path extension = completeFile.extension();
         std::string extStr = extension.string();
         BaseIO::getLowerCase(extStr);
@@ -475,8 +468,19 @@ namespace VirtualRobot
         }
         else
         {
+            // we are exporting as vrml...so the file should also be named wrl, no matter where it comes from
+            completeFile = completeFile.replace_extension(".wrl");
             vrml = true;
         }
+        filename = completeFile.filename();
+        SoOutput* so = new SoOutput();
+
+        if (!so->openFile(completeFile.string().c_str()))
+        {
+            VR_ERROR << "Could not open file " << completeFile.string() << " for writing." << endl;
+        }
+
+
 
 
         SoGroup* n = new SoGroup;

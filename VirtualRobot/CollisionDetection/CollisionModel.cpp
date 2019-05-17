@@ -372,7 +372,7 @@ namespace VirtualRobot
         return CollisionModelPtr(new CollisionModel(vc, "", colChecker));
     }
 
-    bool CollisionModel::saveModel(const std::string& modelPath, const std::string& filename)
+    bool CollisionModel::saveModel(const std::string& modelPath, std::string& filename)
     {
         if (visualization)
         {

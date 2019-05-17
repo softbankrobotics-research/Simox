@@ -1506,10 +1506,6 @@ namespace VirtualRobot
             return false;
         }
 
-        std::string xmlRob = robot->toXML(basePath, modelDir, storeEEF, storeRNS, storeSensors);
-        f << xmlRob;
-        f.close();
-
         if (storeModelFiles)
         {
             std::vector<RobotNodePtr> nodes = robot->getRobotNodes();
@@ -1519,6 +1515,12 @@ namespace VirtualRobot
                 node->saveModelFiles(modelDirComplete.string(), true);
             }
         }
+
+        std::string xmlRob = robot->toXML(basePath, modelDir, storeEEF, storeRNS, storeSensors);
+        f << xmlRob;
+        f.close();
+
+
 
         return true;
     }

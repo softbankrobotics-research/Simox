@@ -265,7 +265,7 @@ namespace VirtualRobot
         return bbox;
     }
 
-    bool VisualizationNode::saveModel(const std::string& modelPath, const std::string& filename)
+    bool VisualizationNode::saveModel(const std::string& modelPath, std::string& filename)
     {
         const auto completePath = remove_trailing_separator(modelPath);
 

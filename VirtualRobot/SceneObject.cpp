@@ -1235,6 +1235,8 @@ namespace VirtualRobot
             }
 
             res = res & visualizationModel->saveModel(modelPath, newFilename);
+            // the exporter can change the filename since it might export the model in a different format than the imported mesh
+            visualizationModel->setFilename(newFilename, visualizationModel->usedBoundingBoxVisu());
         }
 
         if (collisionModel && collisionModel->getTriMeshModel() && collisionModel->getTriMeshModel()->faces.size() > 0)
@@ -1256,6 +1258,9 @@ namespace VirtualRobot
             }
 
             res = res & collisionModel->saveModel(modelPath, newFilename);
+            collisionModel->getVisualization()->setFilename(newFilename, collisionModel->getVisualization()->usedBoundingBoxVisu());
+            collisionModel->getModelDataVisualization()->setFilename(newFilename, collisionModel->getModelDataVisualization()->usedBoundingBoxVisu());
+
         }
 
         return res;

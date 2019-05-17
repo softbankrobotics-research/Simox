@@ -90,9 +90,9 @@ namespace VirtualRobot
         /*!
             Saves model file to model path. By default VRML models are generated.
             \param modelPath The directory.
-            \param filename The new filename. If filename extension is ".iv", the file is stored in Open Inventor format. Otherwise the file is stored in VRML2 format (.wrl).
+            \param filename The new filename. If filename extension is ".iv", the file is stored in Open Inventor format. Otherwise the file is stored in VRML2 format (.wrl). The exporter might change the filename to the ending, which the exporter exports.
         */
-        bool saveModel(const std::string& modelPath, const std::string& filename) override;
+        bool saveModel(const std::string& modelPath, std::string &filename) override;
         void shrinkFatten(float offset) override;
         void createTriMeshModel() override;
 
