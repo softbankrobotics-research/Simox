@@ -16,7 +16,7 @@ IF (NOT Simox_CONFIGURED)
     SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CurrentSimoxPath}/CMakeModules)
     SET(Simox_BUILD_DIRECTORY ${CMAKE_BINARY_DIR})
     SET(Simox_DIR ${CurrentSimoxPath})
-    
+
     # Offer the user the choice of overriding the installation directories
     set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
     set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
@@ -32,8 +32,8 @@ IF (NOT Simox_CONFIGURED)
 
     # Almost all examples require soqt. It will be set to ON if soqt is found.
     set(Simox_BUILD_EXAMPLES OFF CACHE BOOL "Build example applications")
- 
-    # Make relative paths absolute (needed later on) 
+
+    # Make relative paths absolute (needed later on)
     # -> disabled this since it produced lots of problems with generation of SimoxCOnfig.cmake
     #foreach(p LIB BIN INCLUDE CMAKE)
     #  set(var INSTALL_${p}_DIR)
@@ -41,12 +41,12 @@ IF (NOT Simox_CONFIGURED)
     #    set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
     #  endif()
     #endforeach()
- 
+
     # set up include-directories
     include_directories(
         "${PROJECT_SOURCE_DIR}"   # to find headers
         "${PROJECT_BINARY_DIR}")  # to find config headers
-    
+
     ############################# VERSION #################################
     set(Simox_MAJOR_VERSION 2)
     set(Simox_MINOR_VERSION 3)
@@ -83,7 +83,7 @@ IF (NOT Simox_CONFIGURED)
     ADD_DEFINITIONS("-DSimox_DATA_PATH=\"${Simox_INSTALL_DATA_DIR}\"")
 
     ########################### IDE settings ################################
-    # use virtual folders for grouping projects in IDEs 
+    # use virtual folders for grouping projects in IDEs
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
     ############################# Set OS specific options #############################
@@ -93,37 +93,37 @@ IF (NOT Simox_CONFIGURED)
         IF(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
             ADD_DEFINITIONS(-fPIC)
         ENDIF(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-  
+
         IF(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
             MESSAGE(STATUS "Configuring Debug build")
             ADD_DEFINITIONS(-D_DEBUG) # -Wall -W -Werror -pedantic)
         ELSE()
             MESSAGE(STATUS "Configuring Release build")
         ENDIF()
-  
+
         # use, i.e. don't skip the full RPATH for the build tree
         SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
-  
+
         # when building, don't use the install RPATH already
         # (but later on when installing)
-        SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+        SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
         SET(CMAKE_INSTALL_RPATH "${Simox_INSTALL_LIB_DIR}")
         # add the automatically determined parts of the RPATH
         # which point to directories outside the build tree to the install RPATH
         SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-  
+
         # the RPATH to be used when installing, but only if it's not a system directory
         LIST(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${Simox_INSTALL_LIB_DIR}" isSystemDir)
         IF("${isSystemDir}" STREQUAL "-1")
             SET(CMAKE_INSTALL_RPATH "${Simox_INSTALL_LIB_DIR}")
         ENDIF("${isSystemDir}" STREQUAL "-1")
-  
+
     ELSE(UNIX)
         # We are on Windows
         SET(Simox_TEST_DIR ${Simox_BIN_DIR})
         ADD_DEFINITIONS(" -D_CRT_SECURE_NO_WARNINGS ")
         ADD_DEFINITIONS(" -DWIN32_LEAN_AND_MEAN ") # avoid errors with winsock / winsock2 includes
-  
+
         # On MSVC we compile with /MP flag (use multiple threads)
         IF(MSVC)
             ADD_DEFINITIONS(/MP)
@@ -146,7 +146,7 @@ IF (NOT Simox_CONFIGURED)
     SET (Simox_EXTERNAL_LIBRARY_DIRS "")
     SET (Simox_EXTERNAL_LIBRARY_FLAGS "")
     SET (Simox_EXTERNAL_LIBRARY_CMAKE_INCLUDE "")
-    
+
     ############################# SETUP MODULES #############################
     MESSAGE (STATUS "** Module path: "  ${CMAKE_MODULE_PATH})
 
@@ -162,9 +162,9 @@ IF (NOT Simox_CONFIGURED)
             MESSAGE(STATUS "RBDL not found!")
         endif ()
     endif()
-    
+
     #urdf
-    OPTION (Simox_USE_URDF "Use URDF" OFF)
+    OPTION (Simox_USE_URDF "Use URDF" ON)
 
     #### NLOPT
     OPTION (Simox_USE_NLOPT "Use NLOPT" ON)
@@ -184,7 +184,7 @@ IF (NOT Simox_CONFIGURED)
     if (Eigen3_FOUND)
         SET (Simox_EXTERNAL_INCLUDE_DIRS ${Simox_EXTERNAL_INCLUDE_DIRS} ${Eigen3_INCLUDE_DIR})
     endif (Eigen3_FOUND)
-    
+
     #### BOOST
     FIND_PACKAGE(Boost 1.46.0 COMPONENTS filesystem system program_options thread REQUIRED)
     if (Boost_FOUND)
@@ -194,7 +194,7 @@ IF (NOT Simox_CONFIGURED)
         SET (Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${Boost_LIBRARIES})
         FIND_PACKAGE(Boost 1.46.0 COMPONENTS unit_test_framework REQUIRED)
         SET (Boost_TEST_LIB "${Boost_LIBRARIES}")
-        # disable boost auto linking 
+        # disable boost auto linking
         if (Boost_USE_STATIC_LIBS)
             SET (Simox_EXTERNAL_LIBRARY_FLAGS "${Simox_EXTERNAL_LIBRARY_FLAGS} -DBOOST_ALL_NO_LIB -DBOOST_TEST_MAIN")
         else (Boost_USE_STATIC_LIBS)
@@ -204,10 +204,10 @@ IF (NOT Simox_CONFIGURED)
     else (Boost_FOUND)
         MESSAGE ("!! Could not find Boost !!")
     endif (Boost_FOUND)
-    
-    #### QT 
+
+    #### QT
     # QT_QMAKE_EXECUTABLE is the only relieable way of setting the qt4 path!
-    # convert env var to cmake define	
+    # convert env var to cmake define
     IF(NOT "$ENV{QT_QMAKE_EXECUTABLE}" STREQUAL "")
         MESSAGE (STATUS "USING QT-PATH from environment variable QT_QMAKE_EXECUTABLE: $ENV{QT_QMAKE_EXECUTABLE}")
         file(TO_CMAKE_PATH "$ENV{QT_QMAKE_EXECUTABLE}" QT_QMAKE_EXECUTABLE)
@@ -239,14 +239,14 @@ IF (NOT Simox_CONFIGURED)
     SET (Simox_VISUALIZATION_LIBS "")
     SET (Simox_VISUALIZATION_INCLUDE_PATHS "")
     SET (Simox_VISUALIZATION_COMPILE_FLAGS "")
-    
+
     OPTION(Simox_USE_COIN_VISUALIZATION "Use Coin3D for visualization" ON)
     OPTION(Simox_USE_OPENSCENEGRAPH_VISUALIZATION "Use OpenSceneGraph for visualization" OFF)
     #OPTION(Simox_USE_COLLADA "Enable the loading of robots from collada files" OFF)
-    
+
     if (Simox_USE_COIN_VISUALIZATION)
         MESSAGE(STATUS "Searching Coin3D, Qt and SoQt...")
-        
+
         ##### Coin3D
         FIND_PACKAGE(Coin3D REQUIRED)
         if (COIN3D_FOUND)
@@ -256,8 +256,8 @@ IF (NOT Simox_CONFIGURED)
             SET (Simox_VISUALIZATION_INCLUDE_PATHS ${COIN3D_INCLUDE_DIRS} )
             SET (Simox_VISUALIZATION_COMPILE_FLAGS "-DCOIN_DLL")
         endif (COIN3D_FOUND)
-        
-        
+
+
         if ( QT_FOUND )
             MESSAGE (STATUS "Found Qt4: " ${QT_INCLUDE_DIR})
             MESSAGE (STATUS "QT_USE_FILE: " ${QT_USE_FILE})
@@ -273,7 +273,7 @@ IF (NOT Simox_CONFIGURED)
         else ( )
             MESSAGE (STATUS "Did not find Qt. Disabling Qt/SoQt support.")
         endif ( )
-    
+
         if (QT_FOUND OR Qt5_FOUND)
             #### SoQt
             # This will set SoQt_INCLUDE_DIRS and SoQt_LIBRARIES
@@ -283,7 +283,7 @@ IF (NOT Simox_CONFIGURED)
             else (SOQT_FOUND)
                 MESSAGE (STATUS "Did not find SoQt. Disabling SoQt support.")
             endif (SOQT_FOUND)
-        
+
             if (SOQT_FOUND AND COIN3D_FOUND)
                 MESSAGE (STATUS "Enabling Coin3D/Qt/SoQt support")
                 SET (Simox_VISUALIZATION TRUE)
@@ -326,7 +326,7 @@ IF (NOT Simox_CONFIGURED)
         else ()
             MESSAGE (STATUS "Did not find Qt. Disabling Qt/OSG support.")
         endif ()
-        
+
         if ( (QT_FOUND OR Qt5_FOUND) AND OPENSCENEGRAPH_FOUND)
             MESSAGE (STATUS "Enabling OSG/Qt support")
             ### a little hack is needed here since osgQt is not supported in the FindOSG script
@@ -345,11 +345,11 @@ IF (NOT Simox_CONFIGURED)
             endif()
             MESSAGE(STATUS "OPENSCENEGRAPH_LIBRARIES: ${OPENSCENEGRAPH_LIBRARIES}")
             SET (Simox_VISUALIZATION TRUE)
-          
+
             SET (Simox_VISUALIZATION_LIBS ${OPENSCENEGRAPH_LIBRARIES} )
             SET (Simox_VISUALIZATION_INCLUDE_PATHS ${OPENSCENEGRAPH_INCLUDE_DIRS} )
             SET (Simox_VISUALIZATION_COMPILE_FLAGS "")
-        
+
             if (QT_FOUND)
                 # QT4
                 LIST (APPEND Simox_VISUALIZATION_LIBS ${QT_LIBRARIES})
@@ -364,7 +364,7 @@ IF (NOT Simox_CONFIGURED)
     else()
         MESSAGE(STATUS "Visualization disabled")
     endif()
-    
+
     if (Simox_USE_COLLADA)
         MESSAGE(STATUS "Searching for Collada...")
         FIND_PACKAGE(COLLADA_DOM REQUIRED 2.4)
@@ -387,7 +387,7 @@ IF (NOT Simox_CONFIGURED)
             SET (Simox_EXTERNAL_LIBRARY_FLAGS "${Simox_EXTERNAL_LIBRARY_FLAGS} -DDOM_DYNAMIC ")
         ENDIF()
     endif()
-    
+
     SET (Simox_EXTERNAL_INCLUDE_DIRS ${Simox_EXTERNAL_INCLUDE_DIRS} ${Simox_VISUALIZATION_INCLUDE_PATHS})
     SET (Simox_EXTERNAL_LIBRARIES ${Simox_EXTERNAL_LIBRARIES} ${Simox_VISUALIZATION_LIBS})
     SET (Simox_EXTERNAL_LIBRARY_FLAGS "${Simox_EXTERNAL_LIBRARY_FLAGS} ${Simox_VISUALIZATION_COMPILE_FLAGS}")
@@ -399,7 +399,7 @@ IF (NOT Simox_CONFIGURED)
     SET (VirtualRobot_VISUALIZATION_INCLUDE_PATHS ${Simox_VISUALIZATION_INCLUDE_PATHS})
     SET (VirtualRobot_VISUALIZATION_COMPILE_FLAGS ${Simox_VISUALIZATION_COMPILE_FLAGS})
 
-  
+
     INCLUDE_DIRECTORIES(${Simox_EXTERNAL_INCLUDE_DIRS})
     ADD_DEFINITIONS( ${Simox_EXTERNAL_LIBRARY_FLAGS} )
 

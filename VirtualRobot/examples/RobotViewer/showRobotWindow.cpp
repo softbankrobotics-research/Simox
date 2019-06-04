@@ -618,14 +618,18 @@ void showRobotWindow::selectJoint(int nr)
 
     currentRobotNode = currentRobotNodes[nr];
     currentRobotNode->showBoundingBox(true, true);
-    currentRobotNode->print();
+    // currentRobotNode->print();
     float mi = currentRobotNode->getJointLimitLo();
     float ma = currentRobotNode->getJointLimitHi();
     QString qMin = QString::number(mi);
     QString qMax = QString::number(ma);
     UI.labelMinPos->setText(qMin);
     UI.labelMaxPos->setText(qMax);
+
+    // currentRobotNode->setJointValue(ma);
+
     float j = currentRobotNode->getJointValue();
+    cout << "JointValue " << j << endl;
     UI.lcdNumberJointValue->display((double)j);
 
     if (fabs(ma - mi) > 0 && (currentRobotNode->isTranslationalJoint() || currentRobotNode->isRotationalJoint()))
@@ -856,6 +860,7 @@ void showRobotWindow::loadRobot()
         robot = importer->loadFromFile(m_sRobotFilename, RobotIO::eFull);
 
 
+
     }
     catch (VirtualRobotException& e)
     {
@@ -871,36 +876,36 @@ void showRobotWindow::loadRobot()
     }
 
     // just a simple test that inverts the kinematic structure of the robot
-#if 0
-    if (robot->hasRobotNode("Index L J1"))
-        robot = RobotFactory::cloneInversed(robot, "Index L J1");
-#endif
-
-#if 0
-    if (robot->hasRobotNodeSet("LeftArm"))
-        robot = RobotFactory::cloneSubSet(robot, robot->getRobotNodeSet("LeftArm"), "LeftArmRobot");
-#endif
-
-#if 0
-    if (robot->hasRobotNode("Wrist 2 L") && robot->hasRobotNode("Wrist 2 R"))
-    {
-        std::vector<std::string> l;
-        l.push_back("Wrist 2 L");
-        l.push_back("Wrist 2 R");
-        robot = RobotFactory::cloneUniteSubsets(robot, "RobotWithUnitedHands", l);
-    }
-    VR_INFO << "=========== PERFORMANCE orig ============" << endl;
-    testPerformance(robot, robot->getRobotNodeSet("Joints_Revolute"));
-    if (robot->hasRobotNode("LWy_joint") && robot->hasRobotNode("RWy_joint"))
-    {
-        std::vector<std::string> l;
-        l.push_back("LWy_joint");
-        l.push_back("RWy_joint");
-        robot = RobotFactory::cloneUniteSubsets(robot, "RobotWithUnitedHands", l);
-    }
-    VR_INFO << "=========== PERFORMANCE clone ============" << endl;
-    testPerformance(robot, robot->getRobotNodeSet("Joints_Revolute"));// ("BPy_joint"));
-#endif
+// #if 0
+//     if (robot->hasRobotNode("Index L J1"))
+//         robot = RobotFactory::cloneInversed(robot, "Index L J1");
+// #endif
+//
+// #if 0
+//     if (robot->hasRobotNodeSet("LeftArm"))
+//         robot = RobotFactory::cloneSubSet(robot, robot->getRobotNodeSet("LeftArm"), "LeftArmRobot");
+// #endif
+//
+// #if 0
+//     if (robot->hasRobotNode("Wrist 2 L") && robot->hasRobotNode("Wrist 2 R"))
+//     {
+//         std::vector<std::string> l;
+//         l.push_back("Wrist 2 L");
+//         l.push_back("Wrist 2 R");
+//         robot = RobotFactory::cloneUniteSubsets(robot, "RobotWithUnitedHands", l);
+//     }
+//     VR_INFO << "=========== PERFORMANCE orig ============" << endl;
+//     testPerformance(robot, robot->getRobotNodeSet("Joints_Revolute"));
+//     if (robot->hasRobotNode("LWy_joint") && robot->hasRobotNode("RWy_joint"))
+//     {
+//         std::vector<std::string> l;
+//         l.push_back("LWy_joint");
+//         l.push_back("RWy_joint");
+//         robot = RobotFactory::cloneUniteSubsets(robot, "RobotWithUnitedHands", l);
+//     }
+//     VR_INFO << "=========== PERFORMANCE clone ============" << endl;
+//     testPerformance(robot, robot->getRobotNodeSet("Joints_Revolute"));// ("BPy_joint"));
+// #endif
 
     updatRobotInfo();
 }
@@ -927,7 +932,7 @@ void showRobotWindow::updatRobotInfo()
     updateEEFBox();
     updateRNSBox();
     selectRNS(0);
-
+    cout << "---------FIN----------" <<   endl;
     if (allRobotNodes.size() == 0)
     {
         selectJoint(-1);
@@ -947,6 +952,9 @@ void showRobotWindow::updatRobotInfo()
     }
 
     displayTriangles();
+    // Force the endeffector to be in preshape PowerGrasp
+    // VirtualRobot::RobotConfigPtr c = currentEEF->getPreshape(currentEEF->getPreshapes().at(0));
+    // robot->setConfig(c);
 
 #if 0
     RobotPtr r2 = robot->clone(robot->getName(), robot->getCollisionChecker(), 2.0f);
@@ -1004,6 +1012,7 @@ void showRobotWindow::robotCoordSystems()
 
 void showRobotWindow::closeHand()
 {
+  cout << "CLOSEHAND" << endl;
     if (currentEEF)
     {
         currentEEF->closeActors();
@@ -1012,8 +1021,8 @@ void showRobotWindow::closeHand()
 
 void showRobotWindow::openHand()
 {
+  cout << "OPENHAND" << endl;
 #if 0
-
     if (robot)
     {
         std::vector<RobotNodePtr> rn = robot->getRobotNodes();
@@ -1056,6 +1065,7 @@ void showRobotWindow::openHand()
 
     if (currentEEF)
     {
+        cout << "EndEffector" << endl;
         currentEEF->openActors();
     }
 }

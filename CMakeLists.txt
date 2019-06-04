@@ -5,6 +5,15 @@ if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW) # qtmain add lib dependency (no effect in our case)
 endif()
 
+#Add for VirtualRobot example
+message("CMAKE " ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
+
+IF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.1)
+    set(CMAKE_CXX_STANDARD 11)
+ELSE (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.1)
+    add_definitions("-std=c++11")
+ENDIF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.1)
+
 MESSAGE(STATUS "******************** Configuring Simox ************************")
 set (Simox_BUILD_DIRECTORY ${CMAKE_BINARY_DIR} CACHE STRING "Simox build directory")
 #set (Simox_BUILD_VirtualRobot TRUE CACHE BOOL "Build Simox VirtualRobot")

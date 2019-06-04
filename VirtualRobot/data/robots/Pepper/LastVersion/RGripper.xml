@@ -1,0 +1,798 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Robot Type='JulietteY20MP' RootNode="RWristYaw">
+
+	<RobotNode name='RWristYaw'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='1' c2='0' c3='0' c4='150' />
+				<row2 c1='0' c2='1' c3='0' c4='0' />
+				<row3 c1='0' c2='0' c3='1' c4='0' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='-1' y='0' z='0'/>
+			<limits lo='-1.82387' hi='1.82387' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='17.3835'/>
+			<MaxTorque value='0.2014'/>
+		</Joint>
+		<Child name='r_wrist'/>
+	</RobotNode>
+
+	<RobotNode name='r_wrist'>
+		<Physics>
+			<Mass unit='kg' value='0.27555'/>
+			<CoM location='Custom' x='35.36' y='0.72' z='-2.07'/>
+			<InertiaMatrix>
+					<row1 c1='0.000151643' c2='-1.06629e-05' c3='2.89509e-06'/>
+					<row2 c1='-1.06629e-05' c2='0.000431099' c3='3.13715e-06'/>
+					<row3 c1='2.89509e-06' c2='3.13715e-06' c3='0.000456172'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/r_wrist_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/r_wrist_col.wrl</File>
+		</CollisionModel>
+		<Child name='RFinger11'/>
+		<Child name='RFinger21'/>
+		<Child name='RFinger31'/>
+		<Child name='RFinger41'/>
+		<Child name='RHand'/>
+		<Child name='RHand/Touch/Back_sensor_fixedjoint'/>
+		<Child name='RThumb1'/>
+	</RobotNode>
+<RobotNode name='RHand'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.707388' c2='-0.00112573' c3='0.706824' c4='55' />
+				<row2 c1='0' c2='-0.999999' c3='-0.00159265' c4='0' />
+				<row3 c1='0.706825' c2='0.00112662' c3='-0.707387' c4='-25' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='-1' y='0' z='0'/>
+			<limits lo='-0.98' hi='0.02' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='r_gripper'/>
+	</RobotNode>
+
+	<RobotNode name='r_gripper'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='2e-05' c2='0' c3='0'/>
+					<row2 c1='0' c2='2e-05' c3='0'/>
+					<row3 c1='0' c2='0' c3='2e-05'/>
+			</InertiaMatrix>
+		</Physics>
+	</RobotNode>
+
+	<RobotNode name='RHand/Touch/Back_sensor_fixedjoint'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='3.69549e-06' c2='1' c3='-6.31809e-06' c4='52.3' />
+				<row2 c1='0' c2='6.31809e-06' c3='1' c4='0' />
+				<row3 c1='1' c2='-3.69549e-06' c3='0' c4='30.4' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='prismatic'>
+			<translationdirection x='0' y='0' z='0'/>
+			<limits lo='-3.14159' hi='3.14159' units='mm'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='-1'/>
+			<MaxTorque value='-1'/>
+		</Joint>
+		<Child name='RHandTouchBack_frame'/>
+	</RobotNode>
+
+
+	<RobotNode name='RHandTouchBack_frame'>
+		<Physics>
+			<Mass unit='kg' value='0'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='1' c2='0' c3='0'/>
+					<row2 c1='0' c2='1' c3='0'/>
+					<row3 c1='0' c2='0' c3='1'/>
+			</InertiaMatrix>
+		</Physics>
+	</RobotNode>
+
+<RobotNode name='RThumb1'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.59584' c2='0.0826962' c3='0.798834' c4='48.2' />
+				<row2 c1='-0.352304' c2='0.920782' c3='0.167459' c4='35.7' />
+				<row3 c1='-0.721703' c2='-0.381212' c3='0.577773' c4='-19.9' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='-0.872665' hi='0' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='RThumb1_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='RThumb1_link'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='7.67905e-08' c2='0' c3='0'/>
+					<row2 c1='0' c2='1.73606e-07' c3='0'/>
+					<row3 c1='0' c2='0' c3='1.55808e-07'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/RThumb1_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/RThumb1_link_col.wrl</File>
+		</CollisionModel>
+		<Child name='RThumb2'/>
+	</RobotNode>
+
+
+	<RobotNode name='RThumb2'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.499998' c2='0.866027' c3='0' c4='22' />
+				<row2 c1='-0.866027' c2='0.499998' c3='-0' c4='0' />
+				<row3 c1='-0' c2='0' c3='1' c4='0' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='-0.872665' hi='0' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='RThumb2_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='RThumb2_link'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='0.000809686' c2='0' c3='0'/>
+					<row2 c1='0' c2='0.000113711' c3='0'/>
+					<row3 c1='0' c2='0' c3='0.000696146'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/RThumb2_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/RThumb2_link_col.wrl</File>
+		</CollisionModel>
+	</RobotNode>
+
+<RobotNode name='RFinger11'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.505386' c2='0.84358' c3='0.181545' c4='82.1' />
+				<row2 c1='0.0169031' c2='0.200672' c3='-0.979513' c4='26.8' />
+				<row3 c1='-0.862728' c2='0.4981' c3='0.0871576' c4='4' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='-0.872665' hi='0' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='RFinger11_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger11_link'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='7.67905e-08' c2='0' c3='0'/>
+					<row2 c1='0' c2='1.73606e-07' c3='0'/>
+					<row3 c1='0' c2='0' c3='1.55808e-07'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/RFinger11_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/RFinger11_link_col.wrl</File>
+		</CollisionModel>
+		<Child name='RFinger12'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger12'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.499998' c2='0.866027' c3='0' c4='18' />
+				<row2 c1='-0.866027' c2='0.499998' c3='-0' c4='0' />
+				<row3 c1='-0' c2='0' c3='1' c4='0' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='-0.872665' hi='0' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='RFinger12_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger12_link'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='7.67905e-08' c2='0' c3='0'/>
+					<row2 c1='0' c2='1.73606e-07' c3='0'/>
+					<row3 c1='0' c2='0' c3='1.55808e-07'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/RFinger12_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/RFinger12_link_col.wrl</File>
+		</CollisionModel>
+		<Child name='RFinger13'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger13'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.499998' c2='0.866027' c3='0' c4='18' />
+				<row2 c1='-0.866027' c2='0.499998' c3='-0' c4='0' />
+				<row3 c1='-0' c2='0' c3='1' c4='0' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='-0.872665' hi='0' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='RFinger13_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger13_link'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='0.000809686' c2='0' c3='0'/>
+					<row2 c1='0' c2='0.000113711' c3='0'/>
+					<row3 c1='0' c2='0' c3='0.000696146'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/RFinger13_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/RFinger13_link_col.wrl</File>
+		</CollisionModel>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger21'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.499065' c2='0.864412' c3='0.0610448' c4='87.3' />
+				<row2 c1='0.0305238' c2='0.0528656' c3='-0.998135' c4='7.3' />
+				<row3 c1='-0.866027' c2='0.499998' c3='-1.78814e-06' c4='6' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='-0.872665' hi='0' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='RFinger21_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger21_link'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='7.67905e-08' c2='0' c3='0'/>
+					<row2 c1='0' c2='1.73606e-07' c3='0'/>
+					<row3 c1='0' c2='0' c3='1.55808e-07'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/RFinger21_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/RFinger21_link_col.wrl</File>
+		</CollisionModel>
+		<Child name='RFinger22'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger22'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.499998' c2='0.866027' c3='0' c4='18' />
+				<row2 c1='-0.866027' c2='0.499998' c3='-0' c4='0' />
+				<row3 c1='-0' c2='0' c3='1' c4='0' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='-0.872665' hi='0' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='RFinger22_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger22_link'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='7.67905e-08' c2='0' c3='0'/>
+					<row2 c1='0' c2='1.73606e-07' c3='0'/>
+					<row3 c1='0' c2='0' c3='1.55808e-07'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/RFinger22_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/RFinger22_link_col.wrl</File>
+		</CollisionModel>
+		<Child name='RFinger23'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger23'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.499998' c2='0.866027' c3='0' c4='18' />
+				<row2 c1='-0.866027' c2='0.499998' c3='-0' c4='0' />
+				<row3 c1='-0' c2='0' c3='1' c4='0' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='-0.872665' hi='0' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='RFinger23_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger23_link'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='6.48322e-08' c2='0' c3='0'/>
+					<row2 c1='0' c2='1.2368e-07' c3='0'/>
+					<row3 c1='0' c2='0' c3='1.11805e-07'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/RFinger23_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/RFinger23_link_col.wrl</File>
+		</CollisionModel>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger31'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.501833' c2='0.862813' c3='-0.0609634' c4='83.3' />
+				<row2 c1='0.0147159' c2='-0.0789872' c3='-0.996767' c4='-12.3' />
+				<row3 c1='-0.864839' c2='0.499314' c3='-0.0523355' c4='4' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='-0.872665' hi='0' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='RFinger31_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger31_link'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='7.67905e-08' c2='0' c3='0'/>
+					<row2 c1='0' c2='1.73606e-07' c3='0'/>
+					<row3 c1='0' c2='0' c3='1.55808e-07'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/RFinger31_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/RFinger31_link_col.wrl</File>
+		</CollisionModel>
+		<Child name='RFinger32'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger32'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.499998' c2='0.866027' c3='0' c4='18' />
+				<row2 c1='-0.866027' c2='0.499998' c3='-0' c4='0' />
+				<row3 c1='-0' c2='0' c3='1' c4='0' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='-0.872665' hi='0' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='RFinger32_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger32_link'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='7.67905e-08' c2='0' c3='0'/>
+					<row2 c1='0' c2='1.73606e-07' c3='0'/>
+					<row3 c1='0' c2='0' c3='1.55808e-07'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/RFinger32_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/RFinger32_link_col.wrl</File>
+		</CollisionModel>
+		<Child name='RFinger33'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger33'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.499998' c2='0.866027' c3='0' c4='18' />
+				<row2 c1='-0.866027' c2='0.499998' c3='-0' c4='0' />
+				<row3 c1='-0' c2='0' c3='1' c4='0' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='-0.872665' hi='0' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='RFinger33_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger33_link'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='6.48322e-08' c2='0' c3='0'/>
+					<row2 c1='0' c2='1.2368e-07' c3='0'/>
+					<row3 c1='0' c2='0' c3='1.11805e-07'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/RFinger33_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/RFinger33_link_col.wrl</File>
+		</CollisionModel>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger41'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.504488' c2='0.836063' c3='-0.215616' c4='74' />
+				<row2 c1='-0.0345302' c2='-0.229987' c3='-0.972581' c4='-30.9' />
+				<row3 c1='-0.862728' c2='0.4981' c3='-0.0871562' c4='0' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='-0.872665' hi='0' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='RFinger41_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger41_link'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='7.67905e-08' c2='0' c3='0'/>
+					<row2 c1='0' c2='1.73606e-07' c3='0'/>
+					<row3 c1='0' c2='0' c3='1.55808e-07'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/RFinger41_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/RFinger41_link_col.wrl</File>
+		</CollisionModel>
+		<Child name='RFinger42'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger42'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.499998' c2='0.866027' c3='0' c4='18' />
+				<row2 c1='-0.866027' c2='0.499998' c3='-0' c4='0' />
+				<row3 c1='-0' c2='0' c3='1' c4='0' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='-0.872665' hi='0' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='RFinger42_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger42_link'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='7.67905e-08' c2='0' c3='0'/>
+					<row2 c1='0' c2='1.73606e-07' c3='0'/>
+					<row3 c1='0' c2='0' c3='1.55808e-07'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/RFinger42_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/RFinger42_link_col.wrl</File>
+		</CollisionModel>
+		<Child name='RFinger43'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger43'>
+		<Transform>
+			<Matrix4x4 units='mm'>
+				<row1 c1='0.499998' c2='0.866027' c3='0' c4='18' />
+				<row2 c1='-0.866027' c2='0.499998' c3='-0' c4='0' />
+				<row3 c1='-0' c2='0' c3='1' c4='0' />
+				<row4 c1='0' c2='0' c3='0' c4='1' />
+			</Matrix4x4>
+		</Transform>
+		<Joint type='revolute'>
+			<axis x='0' y='0' z='-1'/>
+			<limits lo='-0.872665' hi='0' units='radian'/>
+			<MaxAcceleration value='-1'/>
+			<MaxVelocity value='12.56'/>
+			<MaxTorque value='0.144'/>
+		</Joint>
+		<Child name='RFinger43_link'/>
+	</RobotNode>
+
+
+	<RobotNode name='RFinger43_link'>
+		<Physics>
+			<Mass unit='kg' value='0.002'/>
+			<CoM location='Custom' x='0' y='0' z='0'/>
+			<InertiaMatrix>
+					<row1 c1='6.48322e-08' c2='0' c3='0'/>
+					<row2 c1='0' c2='1.2368e-07' c3='0'/>
+					<row3 c1='0' c2='0' c3='1.11805e-07'/>
+			</InertiaMatrix>
+		</Physics>
+		<Visualization>
+			<File type='inventor'>models/RFinger43_link_visu.wrl</File>
+		</Visualization>
+		<CollisionModel>
+			<File type='inventor'>models/RFinger43_link_col.wrl</File>
+		</CollisionModel>
+	</RobotNode>
+
+<RobotNodeSet name="RightGripper" kinematicRoot="RWristYaw" tcp="r_gripper">
+		<Node name="RHand"/>
+
+		<Node name="RFinger11"/>
+		<Node name="RFinger11_link"/>
+		<Node name="RFinger12"/>
+		<Node name="RFinger12_link"/>
+		<Node name="RFinger13"/>
+		<Node name="RFinger13_link"/>
+
+		<Node name="RFinger21" />
+		<Node name="RFinger21_link" />
+		<Node name="RFinger22" />
+		<Node name="RFinger22_link" />
+		<Node name="RFinger23" />
+		<Node name="RFinger23_link" />
+
+		<Node name="RFinger31" />
+		<Node name="RFinger31_link" />
+		<Node name="RFinger32" />
+		<Node name="RFinger32_link" />
+		<Node name="RFinger33" />
+		<Node name="RFinger33_link" />
+
+		<Node name="RFinger41"/>
+		<Node name="RFinger41_link"/>
+		<Node name="RFinger42"/>
+		<Node name="RFinger42_link"/>
+		<Node name="RFinger43"/>
+		<Node name="RFinger43_link"/>
+
+		<Node name="RThumb1"/>
+		<Node name="RThumb1_link"/>
+		<Node name="RThumb2"/>
+		<Node name="RThumb2_link"/>
+
+		<Node name="RHand/Touch/Back_sensor_fixedjoint"/>
+		<Node name="RHandTouchBack_frame"/>
+		<Node name="RWristYaw"/>
+		<Node name="r_wrist"/>
+		<Node name="r_gripper"/>
+	</RobotNodeSet>
+
+	<Endeffector name="RGripper" base="RWristYaw" tcp="r_gripper">
+		<Preshape name="Power Preshape" tcp="r_gripper">
+			<Node name="RFinger11" unit="radian" value="-0.872665"/>
+			<Node name="RFinger12" unit="radian" value="-0.872665"/>
+			<Node name="RFinger13" unit="radian" value="-0.872665"/>
+
+			<Node name="RFinger21" unit="radian" value="-0.872665"/>
+			<Node name="RFinger22" unit="radian" value="-0.872665"/>
+			<Node name="RFinger23" unit="radian" value="-0.872665"/>
+
+			<Node name="RFinger31" unit="radian" value="-0.872665"/>
+			<Node name="RFinger32" unit="radian" value="-0.872665"/>
+			<Node name="RFinger33" unit="radian" value="-0.872665"/>
+
+			<Node name="RFinger41" unit="radian" value="-0.872665"/>
+			<Node name="RFinger42" unit="radian" value="-0.872665"/>
+			<Node name="RFinger43" unit="radian" value="-0.872665"/>
+
+			<Node name="RThumb1" unit="radian" value="-0.872665"/>
+			<Node name="RThumb2" unit="radian" value="-0.872665"/>
+		</Preshape>
+
+		<Preshape name="Precision Preshape" tcp="r_gripper">
+			<Node name="RFinger11" unit="radian" value="-0.872665"/>
+			<Node name="RFinger12" unit="radian" value="-0.872665"/>
+			<Node name="RFinger13" unit="radian" value="-0.872665"/>
+
+			<Node name="RFinger21" unit="radian" value="-0.872665"/>
+			<Node name="RFinger22" unit="radian" value="-0.872665"/>
+			<Node name="RFinger23" unit="radian" value="-0.872665"/>
+
+			<Node name="RFinger31" unit="radian" value="-0.872665"/>
+			<Node name="RFinger32" unit="radian" value="-0.872665"/>
+			<Node name="RFinger33" unit="radian" value="-0.872665"/>
+
+			<Node name="RFinger41" unit="radian" value="-0.872665"/>
+			<Node name="RFinger42" unit="radian" value="-0.872665"/>
+			<Node name="RFinger43" unit="radian" value="-0.872665"/>
+
+			<Node name="RThumb1" unit="radian" value="-0.872665"/>
+			<Node name="RThumb2" unit="radian" value="-0.872665"/>
+		</Preshape>
+		<Static>
+			<Node name="RHand"/>
+			<Node name="RHand/Touch/Back_sensor_fixedjoint"/>
+			<Node name="RHandTouchBack_frame"/>
+			
+			<Node name="r_wrist"/>
+			<Node name="r_gripper"/>
+		</Static>
+		<Actor name="RFinger 1">
+				<Node name="RFinger11" considerCollisions="Actors"/>
+				<Node name="RFinger11_link" considerCollisions="Actors"/>
+				<Node name="RFinger12" considerCollisions="All"/>
+				<Node name="RFinger12_link" considerCollisions="All"/>
+				<Node name="RFinger13" considerCollisions="All"/>
+				<Node name="RFinger13_link" considerCollisions="All"/>
+		</Actor>
+		<Actor name="RFinger 2">
+				<Node name="RFinger21" considerCollisions="Actors"/>
+				<Node name="RFinger21_link" considerCollisions="Actors"/>
+				<Node name="RFinger22" considerCollisions="All"/>
+				<Node name="RFinger22_link" considerCollisions="All"/>
+				<Node name="RFinger23" considerCollisions="All"/>
+				<Node name="RFinger23_link" considerCollisions="All"/>
+		</Actor>
+		<Actor name="RFinger 3">
+				<Node name="RFinger31" considerCollisions="Actors"/>
+				<Node name="RFinger31_link" considerCollisions="Actors"/>
+				<Node name="RFinger32" considerCollisions="All"/>
+				<Node name="RFinger32_link" considerCollisions="All"/>
+				<Node name="RFinger33" confsiderCollisions="All"/>
+				<Node name="RFinger33_link" considerCollisions="All"/>
+		</Actor>
+		<Actor name="RFinger 4">
+				<Node name="RFinger41" considerCollisions="Actors"/>
+				<Node name="RFinger41_link" considerCollisions="Actors"/>
+				<Node name="RFinger42" considerCollisions="All"/>
+				<Node name="RFinger42_link" considerCollisions="All"/>
+				<Node name="RFinger43" considerCollisions="All"/>
+				<Node name="RFinger43_link" considerCollisions="All"/>
+		</Actor>
+		<Actor name="RThumb">
+				<Node name="RThumb1" considerCollisions="Actors"/>
+				<Node name="RThumb1_link" considerCollisions="Actors"/>
+				<Node name="RThumb2" considerCollisions="All"/>
+				<Node name="RThumb2_link" considerCollisions="All"/>
+		</Actor>
+
+	</Endeffector>
+
+</Robot>

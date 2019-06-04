@@ -20,7 +20,10 @@ int main(int argc, char* argv[])
     SimoxURDFFactory f;
 
     // atlas file
-    std::string urdfFile = ("robots/urdf/atlas_description/urdf/atlas_v3.urdf");
+    // std::string urdfFile = ("robots/urdf/atlas_description/urdf/atlas_v3.urdf");
+    // std::string urdfFile = ("robots/urdf/Pepper_stl/urdf/pepper_stl.urdf");
+    //std::string urdfFile = ("robots/urdf/Pepper_stl_sans_obj/urdf/pepper_stl_sans_obj.urdf");
+    std::string urdfFile = ("robots/urdf/Pepper/urdf/pepperLastVersion.urdf");
     RuntimeEnvironment::getDataFileAbsolute(urdfFile);
 
     // to ensure that 3d model files can be loaded during converting we need to add the correct data path
@@ -36,5 +39,8 @@ int main(int argc, char* argv[])
     std::string outPath = boost::filesystem::initial_path().generic_string();
     cout << "Saving converted file to " << outPath << "/urdf_output.xml..." << endl;
 
-    RobotIO::saveXML(r, "urdf_output.xml", outPath);
+    // RobotIO::saveXML(r, "urdf_output.xml", outPath);
+    // RobotIO::saveXML(r, "pepper_stl.xml", outPath);
+   // RobotIO::saveXML(r, "pepper_stl_sans_obj.xml", outPath);
+    RobotIO::saveXML(r, "pepperLastVersion.xml", outPath);
 }
