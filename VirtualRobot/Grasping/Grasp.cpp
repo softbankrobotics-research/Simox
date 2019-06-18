@@ -128,6 +128,11 @@ namespace VirtualRobot
         ss << MathTools::getTransformXMLString(poseTcp, ttt);
         ss << tt << "</Transform>\n";
 
+        // Matrix transformation in object's coordinate system
+        ss << tt << "<TransformGlobalPose>\n";
+        ss << MathTools::getTransformXMLString(getTcpPoseGlobal(Eigen::Matrix4f::Identity()), ttt);
+        ss << tt << "</TransformGlobalPose>\n";
+
         if (eefConfiguration.size() > 0)
         {
             std::string tcpName;
@@ -195,5 +200,3 @@ namespace VirtualRobot
 
 
 } //  namespace
-
-
