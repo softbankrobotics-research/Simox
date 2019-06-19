@@ -212,7 +212,7 @@ IF (NOT Simox_CONFIGURED)
         MESSAGE (STATUS "USING QT-PATH from environment variable QT_QMAKE_EXECUTABLE: $ENV{QT_QMAKE_EXECUTABLE}")
         file(TO_CMAKE_PATH "$ENV{QT_QMAKE_EXECUTABLE}" QT_QMAKE_EXECUTABLE)
     ENDIF()
-    OPTION (Simox_USE_QT4 "Force Qt4 usage" OFF)
+    OPTION (Simox_USE_QT4 "Force Qt4 usage" ON)
     OPTION (Simox_USE_QT5 "Force Qt5 usage" OFF)
     if ( (NOT Simox_USE_QT4) AND (NOT Simox_USE_QT5) )
         # first check for qt5

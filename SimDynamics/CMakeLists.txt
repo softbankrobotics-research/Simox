@@ -18,7 +18,7 @@ INCLUDE (Cxx11Test)
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAG}")
 
 ############################# SETUP PHYSICS ENGINE #############################
-OPTION(SimDynamics_USE_BULLET "Use Bullet Physics Engine" ON)
+OPTION(SimDynamics_USE_BULLET "Use Bullet Physics Engine" OFF)
 SET (SimDynamics_DYNAMICSENGINE FALSE)
 SET (SimDynamics_PHYSICS_LIBRARIES "")
 
