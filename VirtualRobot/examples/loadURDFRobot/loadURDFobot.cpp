@@ -42,5 +42,5 @@ int main(int argc, char* argv[])
     // RobotIO::saveXML(r, "urdf_output.xml", outPath);
     // RobotIO::saveXML(r, "pepper_stl.xml", outPath);
    // RobotIO::saveXML(r, "pepper_stl_sans_obj.xml", outPath);
-    RobotIO::saveXML(r, "pepperLastVersion.xml", outPath);
+    RobotIO::saveXML(r, "newFile.xml", outPath);
 }
