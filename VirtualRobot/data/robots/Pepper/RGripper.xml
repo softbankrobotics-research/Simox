@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
-
-<Robot Type='RGripper' RootNode='base_link'>
+<!-- modify root node name base link by r_base_link (avoid multiple 
+nodes with same name) -->
+<Robot Type='RGripper' RootNode='r_base_link'>
 
 	<RobotNode name='RFinger11'>
 		<Transform>
@@ -634,7 +635,7 @@
 	</RobotNode>
 
 
-	<RobotNode name='base_link'>
+	<RobotNode name='r_base_link'>
 		<Physics>
 			<Mass unit='kg' value='2e-06'/>
 			<CoM location='Custom' x='0' y='0' z='0'/>
@@ -644,11 +645,11 @@
 					<row3 c1='0' c2='0' c3='2e-08'/>
 			</InertiaMatrix>
 		</Physics>
-		<Child name='base_link_joint'/>
+		<Child name='r_base_link_joint'/>
 	</RobotNode>
 
 
-	<RobotNode name='base_link_joint'>
+	<RobotNode name='r_base_link_joint'>
 		<Joint type='prismatic'>
 			<translationdirection x='0' y='0' z='0'/>
 			<limits lo='-3.14159' hi='3.14159' units='mm'/>
@@ -714,7 +715,7 @@
 
     <!-- ADD SPECIFIC ITEM TO CONFIGURE GRASP PLANNING-->
 	
-	<Endeffector name="RGripper" base="base_link" tcp="r_eef">
+	<Endeffector name="RGripper" base="r_base_link" tcp="r_eef">
 		<Preshape name="Power Preshape" tcp="r_eef">
 			<!-- set value to lo value defined below -->
 			<Node name="RFinger11" unit="radian" value="-0.872665"/>
