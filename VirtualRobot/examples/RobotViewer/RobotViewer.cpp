@@ -36,13 +36,14 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::print();
 
     cout << " --- START --- " << endl;
-    std::string filename("robots/Pepper/qibullet/pepper_rGripper.xml");
+    std::string filename("robots/Pepper/LGripper.xml");
+    // std::string filename("robots/Pepper/RGripper.xml");
 
     // std::string filename("robots/Pepper/LastVersion/pepperLastVersion.xml");
     // --robot "robots/iCub/iCub.xml"
     // std::string filename("robots/ArmarIII/ArmarIII.xml");
     //std::string filename("C:/Projects/MMM/mmmtools/data/Model/Winter/mmm.xml");
-    //std::string filename("robots/ArmarIII/ArmarIII-RightArm.xml");
+    // std::string filename("robots/ArmarIII/ArmarIII-RightHand.xml");
     //std::string filename("C:/Projects/IIT_Projects/iCubRobot/robot/iCub.xml");
     //std::string filename(DEMO_BASE_DIR "/robot/iCub_RightArm.xml");
     //std::string filename(DEMO_BASE_DIR "/robot/iCub_RightHand.xml");

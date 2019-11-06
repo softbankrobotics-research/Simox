@@ -1,0 +1,452 @@
+<?xml version="1.0" ?>
+<robot name="LGripper">
+  <link name="base_link">
+    <inertial>
+      <mass value="2e-06"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </inertial>
+  </link>
+  <joint name="base_link_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <child link="l_wrist"/>
+    <parent link="base_link"/>
+    <axis xyz="0 0 0"/>
+  </joint>
+  <link name="l_wrist">
+  <inertial>
+      <mass value="0.27555"/>
+      <inertia ixx="0.000151643" ixy="1.06629e-05" ixz="2.89509e-06" iyy="0.000431099" iyz="-3.13715e-06" izz="0.000456172"/>
+      <origin rpy="0 0 0" xyz="0.03536 -0.00072 -0.00207"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="meshes/LWristYaw_0.10.stl" scale="0.1 0.1 0.1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="meshes/LWristYaw_vahcd.wrl" scale="0.1 0.1 0.1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+  </link>
+<joint name="LHand" type="revolute">
+  <parent link="l_wrist"/>
+  <child link="l_gripper"/>
+  <origin rpy="0 0 0" xyz="0.025 0 0"/>
+  <axis xyz="1.0 0 0"/>
+  <limit effort="0.144" lower="0.02" upper="0.98" velocity="12.56"/>
+</joint>
+<link name="l_gripper">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+  </inertial>
+</link>
+<joint name="LGripperEef" type="fixed">
+  <parent link="l_gripper"/>
+  <child link="l_eef"/>
+  <origin rpy="3.14 -0.785 0" xyz="0.025 0 -0.030"/>
+  <axis xyz="0 0 0"/>
+  <limit effort="0.144" lower="0.02" upper="0.98" velocity="12.56"/>
+</joint>
+<link name="l_eef">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+  </inertial>
+</link>
+<joint name="LHand/Touch/Back_sensor_fixedjoint" type="fixed">
+  <parent link="l_wrist"/>
+  <child link="LHandTouchBack_frame"/>
+  <origin rpy="1.5708 -1.5708 -3.14159" xyz="0.0523 0 0.0304"/>
+  <axis xyz="0 0 0"/>
+</joint>
+<link name="LHandTouchBack_frame">
+  <inertial>
+    <mass value="0"/>
+    <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </inertial>
+</link>
+<link name="LFinger41_link">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </inertial>
+  <visual>
+    <geometry>
+      <mesh filename="meshes/LFinger41_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </visual>
+  <collision>
+    <geometry>
+      <mesh filename="meshes/LFinger41_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </collision>
+</link>
+<joint name="LFinger41" type="revolute">
+  <parent link="l_wrist"/>
+  <child link="LFinger41_link"/>
+  <origin rpy="1.39757 1.04064 0.0683394" xyz="0.074 0.0309 0"/>
+  <axis xyz="0 0 1.0"/>
+  <mimic joint="LHand" multiplier="0.872665" offset="0"/>
+  <limit effort="0.144" lower="0.0" upper="0.872665" velocity="12.56"/>
+</joint>
+<link name="LFinger12_link">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </inertial>
+  <visual>
+    <geometry>
+      <mesh filename="meshes/LFinger12_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </visual>
+  <collision>
+    <geometry>
+      <mesh filename="meshes/LFinger12_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </collision>
+</link>
+<joint name="LFinger12" type="revolute">
+  <parent link="LFinger11_link"/>
+  <child link="LFinger12_link"/>
+  <origin rpy="0 0 -1.0472" xyz="0.018 0 0"/>
+  <axis xyz="0 0 1.0"/>
+  <mimic joint="LHand" multiplier="0.872665" offset="0"/>
+  <limit effort="0.144" lower="0.0" upper="0.872665" velocity="12.56"/>
+</joint>
+<link name="LFinger31_link">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </inertial>
+  <visual>
+    <geometry>
+      <mesh filename="meshes/LFinger31_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </visual>
+  <collision>
+    <geometry>
+      <mesh filename="meshes/LFinger31_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </collision>
+</link>
+<joint name="LFinger31" type="revolute">
+  <parent link="l_wrist"/>
+  <child link="LFinger31_link"/>
+  <origin rpy="1.46636 1.04483 -0.029314" xyz="0.0833 0.0123 0.004"/>
+  <axis xyz="0 0 1.0"/>
+  <mimic joint="LHand" multiplier="0.872665" offset="0"/>
+  <limit effort="0.144" lower="0.0" upper="0.872665" velocity="12.56"/>
+</joint>
+<link name="LFinger32_link">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </inertial>
+  <visual>
+    <geometry>
+      <mesh filename="meshes/LFinger32_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </visual>
+  <collision>
+    <geometry>
+      <mesh filename="meshes/LFinger32_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </collision>
+</link>
+<joint name="LFinger32" type="revolute">
+  <parent link="LFinger31_link"/>
+  <child link="LFinger32_link"/>
+  <origin rpy="0 0 -1.0472" xyz="0.018 0 0"/>
+  <axis xyz="0 0 1.0"/>
+  <mimic joint="LHand" multiplier="0.872665" offset="0"/>
+  <limit effort="0.144" lower="0.0" upper="0.872665" velocity="12.56"/>
+</joint>
+<link name="LFinger22_link">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </inertial>
+  <visual>
+    <geometry>
+      <mesh filename="meshes/LFinger22_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </visual>
+  <collision>
+    <geometry>
+      <mesh filename="meshes/LFinger22_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </collision>
+</link>
+<joint name="LFinger22" type="revolute">
+  <parent link="LFinger21_link"/>
+  <child link="LFinger22_link"/>
+  <origin rpy="0 0 -1.0472" xyz="0.018 0 0"/>
+  <axis xyz="0 0 1.0"/>
+  <mimic joint="LHand" multiplier="0.872665" offset="0"/>
+  <limit effort="0.144" lower="0.0" upper="0.872665" velocity="12.56"/>
+</joint>
+<link name="LFinger13_link">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </inertial>
+  <visual>
+    <geometry>
+      <mesh filename="meshes/LFinger13_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </visual>
+  <collision>
+    <geometry>
+      <mesh filename="meshes/LFinger13_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </collision>
+</link>
+<joint name="LFinger13" type="revolute">
+  <parent link="LFinger12_link"/>
+  <child link="LFinger13_link"/>
+  <origin rpy="0 0 -1.0472" xyz="0.018 0 0"/>
+  <axis xyz="0 0 1.0"/>
+  <mimic joint="LHand" multiplier="0.872665" offset="0"/>
+  <limit effort="0.144" lower="0.0" upper="0.872665" velocity="12.56"/>
+</joint>
+<link name="LFinger21_link">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </inertial>
+  <visual>
+    <geometry>
+      <mesh filename="meshes/LFinger21_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </visual>
+  <collision>
+    <geometry>
+      <mesh filename="meshes/LFinger21_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </collision>
+</link>
+<joint name="LFinger21" type="revolute">
+  <parent link="l_wrist"/>
+  <child link="LFinger21_link"/>
+  <origin rpy="1.5708 1.0472 -0.061086" xyz="0.0873 -0.0073 0.006"/>
+  <axis xyz="0 0 1.0"/>
+  <mimic joint="LHand" multiplier="0.872665" offset="0"/>
+  <limit effort="0.144" lower="0.0" upper="0.872665" velocity="12.56"/>
+</joint>
+<link name="LFinger23_link">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </inertial>
+  <visual>
+    <geometry>
+      <mesh filename="meshes/LFinger23_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </visual>
+  <collision>
+    <geometry>
+      <mesh filename="meshes/LFinger23_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </collision>
+</link>
+<joint name="LFinger23" type="revolute">
+  <parent link="LFinger22_link"/>
+  <child link="LFinger23_link"/>
+  <origin rpy="0 0 -1.0472" xyz="0.018 0 0"/>
+  <axis xyz="0 0 1.0"/>
+  <mimic joint="LHand" multiplier="0.872665" offset="0"/>
+  <limit effort="0.144" lower="0.0" upper="0.872665" velocity="12.56"/>
+</joint>
+<link name="LFinger11_link">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </inertial>
+  <visual>
+    <geometry>
+      <mesh filename="meshes/LFinger11_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </visual>
+  <collision>
+    <geometry>
+      <mesh filename="meshes/LFinger11_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </collision>
+</link>
+<joint name="LFinger11" type="revolute">
+  <parent link="l_wrist"/>
+  <child link="LFinger11_link"/>
+  <origin rpy="1.74402 1.04064 -0.0334335" xyz="0.0821 -0.0268 0.004"/>
+  <axis xyz="0 0 1.0"/>
+  <mimic joint="LHand" multiplier="0.872665" offset="0"/>
+  <limit effort="0.144" lower="0.0" upper="0.872665" velocity="12.56"/>
+</joint>
+<link name="LFinger43_link">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </inertial>
+  <visual>
+    <geometry>
+      <mesh filename="meshes/LFinger43_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </visual>
+  <collision>
+    <geometry>
+      <mesh filename="meshes/LFinger43_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </collision>
+</link>
+<joint name="LFinger43" type="revolute">
+  <parent link="LFinger42_link"/>
+  <child link="LFinger43_link"/>
+  <origin rpy="0 0 -1.0472" xyz="0.018 0 0"/>
+  <axis xyz="0 0 1.0"/>
+  <mimic joint="LHand" multiplier="0.872665" offset="0"/>
+  <limit effort="0.144" lower="0.0" upper="0.872665" velocity="12.56"/>
+</joint>
+<link name="LFinger42_link">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </inertial>
+  <visual>
+    <geometry>
+      <mesh filename="meshes/LFinger42_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </visual>
+  <collision>
+    <geometry>
+      <mesh filename="meshes/LFinger42_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </collision>
+</link>
+<joint name="LFinger42" type="revolute">
+  <parent link="LFinger41_link"/>
+  <child link="LFinger42_link"/>
+  <origin rpy="0 0 -1.0472" xyz="0.018 0 0"/>
+  <axis xyz="0 0 1.0"/>
+  <mimic joint="LHand" multiplier="0.872665" offset="0"/>
+  <limit effort="0.144" lower="0.0" upper="0.872665" velocity="12.56"/>
+</joint>
+<link name="LFinger33_link">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </inertial>
+  <visual>
+    <geometry>
+      <mesh filename="meshes/LFinger33_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </visual>
+  <collision>
+    <geometry>
+      <mesh filename="meshes/LFinger33_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </collision>
+</link>
+<joint name="LFinger33" type="revolute">
+  <parent link="LFinger32_link"/>
+  <child link="LFinger33_link"/>
+  <origin rpy="0 0 -1.0472" xyz="0.018 0 0"/>
+  <axis xyz="0 0 1.0"/>
+  <mimic joint="LHand" multiplier="0.872665" offset="0"/>
+  <limit effort="0.144" lower="0.0" upper="0.872665" velocity="12.56"/>
+</joint>
+<link name="LThumb2_link">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </inertial>
+  <visual>
+    <geometry>
+      <mesh filename="meshes/LThumb2_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </visual>
+  <collision>
+    <geometry>
+      <mesh filename="meshes/LThumb2_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </collision>
+</link>
+<joint name="LThumb2" type="revolute">
+  <parent link="LThumb1_link"/>
+  <child link="LThumb2_link"/>
+  <origin rpy="0 0 -1.0472" xyz="0.022 0 0"/>
+  <axis xyz="0 0 1.0"/>
+  <mimic joint="LHand" multiplier="0.872665" offset="0"/>
+  <limit effort="0.144" lower="0.0" upper="0.872665" velocity="12.56"/>
+</joint>
+<link name="LThumb1_link">
+  <inertial>
+    <mass value="2e-03"/>
+    <inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09"/>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </inertial>
+  <visual>
+    <geometry>
+      <mesh filename="meshes/LThumb1_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </visual>
+  <collision>
+    <geometry>
+      <mesh filename="meshes/LThumb1_0.10.stl" scale="0.1 0.1 0.1"/>
+    </geometry>
+    <origin rpy="-1.57 0 0" xyz="0 0 0"/>
+  </collision>
+</link>
+<joint name="LThumb1" type="revolute">
+  <parent link="l_wrist"/>
+  <child link="LThumb1_link"/>
+  <origin rpy="-2.55836 0.80626 0.533978" xyz="0.0482 -0.0357 -0.0199"/>
+  <axis xyz="0 0 1.0"/>
+  <mimic joint="LHand" multiplier="0.872665" offset="0"/>
+  <limit effort="0.144" lower="0.0" upper="0.872665" velocity="12.56"/>
+</joint>
+</robot>
