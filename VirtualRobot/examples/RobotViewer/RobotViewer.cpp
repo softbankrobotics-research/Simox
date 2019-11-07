@@ -36,8 +36,8 @@ int main(int argc, char* argv[])
     VirtualRobot::RuntimeEnvironment::print();
 
     cout << " --- START --- " << endl;
-    std::string filename("robots/Pepper/LGripper.xml");
-    // std::string filename("robots/Pepper/RGripper.xml");
+    // std::string filename("robots/Pepper/LGripper.xml");
+    std::string filename("robots/Pepper/RGripper.xml");
 
     // std::string filename("robots/Pepper/LastVersion/pepperLastVersion.xml");
     // --robot "robots/iCub/iCub.xml"

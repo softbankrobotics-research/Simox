@@ -21,8 +21,8 @@ int main(int argc, char* argv[])
 
     // atlas file
     // std::string urdfFile = ("robots/urdf/atlas_description/urdf/atlas_v3.urdf");
-    std::string urdfFile = ("robots/urdf/Pepper/urdf/pepper_LGripper.urdf");
-    // std::string urdfFile = ("robots/urdf/Pepper/urdf/pepper_RGripper.urdf");
+    // std::string urdfFile = ("robots/urdf/Pepper/urdf/pepper_LGripper.urdf");
+    std::string urdfFile = ("robots/urdf/Pepper/urdf/pepper_RGripper.urdf");
     RuntimeEnvironment::getDataFileAbsolute(urdfFile);
 
     // to ensure that 3d model files can be loaded during converting we need to add the correct data path
