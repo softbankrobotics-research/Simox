@@ -48,7 +48,7 @@
 <joint name="RGripperEef" type="fixed">
   <parent link="r_gripper"/>
   <child link="r_eef"/>
-  <origin rpy="3.14 -0.785 0" xyz="0.025 0 -0.030"/>
+  <origin rpy="3.14 -0.785 0" xyz="0.020 0 -0.005"/>
   <axis xyz="0 0 0"/>
   <limit effort="0.144" lower="0.02" upper="0.98" velocity="12.56"/>
 </joint>
