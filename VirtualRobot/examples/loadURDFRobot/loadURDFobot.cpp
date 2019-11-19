@@ -21,8 +21,9 @@ int main(int argc, char* argv[])
 
     // atlas file
     // std::string urdfFile = ("robots/urdf/atlas_description/urdf/atlas_v3.urdf");
-    // std::string urdfFile = ("robots/urdf/Pepper/urdf/pepper_LGripper.urdf");
-    std::string urdfFile = ("robots/urdf/Pepper/urdf/pepper_RGripper.urdf");
+    // std::string gripperName = "RGripper";
+    std::string gripperName = "LGripper";
+    std::string urdfFile = ("robots/urdf/Pepper/urdf/pepper_" + gripperName + ".urdf");
     RuntimeEnvironment::getDataFileAbsolute(urdfFile);
 
     // to ensure that 3d model files can be loaded during converting we need to add the correct data path
@@ -36,10 +37,10 @@ int main(int argc, char* argv[])
     RobotPtr r = f.loadFromFile(urdfFile);
 
     std::string outPath = boost::filesystem::initial_path().generic_string();
-    cout << "Saving converted file to " << outPath << "/LGripper.xml..." << endl;
+    cout << "Saving converted file to " << outPath << "/" + gripperName + "..." << endl;
 
     // RobotIO::saveXML(r, "urdf_output.xml", outPath);
     // RobotIO::saveXML(r, "pepper_stl.xml", outPath);
    // RobotIO::saveXML(r, "pepper_stl_sans_obj.xml", outPath);
-    RobotIO::saveXML(r, "LGripper.xml", outPath);
+    RobotIO::saveXML(r, gripperName + ".xml", outPath);
 }
