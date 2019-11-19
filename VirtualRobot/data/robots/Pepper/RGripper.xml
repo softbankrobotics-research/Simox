@@ -483,23 +483,23 @@ nodes with same name) -->
 	</RobotNode>
 
 
-	<RobotNode name='RGripperEef'>
+	<RobotNode name='RGripper'>
 		<Transform>
 			<Matrix4x4 units='mm'>
-				<row1 c1='0.707388' c2='-0.00112573' c3='0.706824' c4='20' />
-				<row2 c1='0' c2='-0.999999' c3='-0.00159265' c4='0' />
-				<row3 c1='0.706825' c2='0.00112662' c3='-0.707387' c4='-5' />
+				<row1 c1='0.000796318' c2='0.999998' c3='0.00159265' c4='70' />
+				<row2 c1='1' c2='-0.000796318' c3='-1.26823e-06' c4='0' />
+				<row3 c1='5.82077e-11' c2='0.00159265' c3='-0.999999' c4='-18.0232' />
 				<row4 c1='0' c2='0' c3='0' c4='1' />
 			</Matrix4x4>
 		</Transform>
 		<Joint type='prismatic'>
 			<translationdirection x='0' y='0' z='0'/>
-			<limits lo='0.02' hi='0.98' units='mm'/>
+			<limits lo='-3.14159' hi='3.14159' units='mm'/>
 			<MaxAcceleration value='-1'/>
-			<MaxVelocity value='12.56'/>
-			<MaxTorque value='0.144'/>
+			<MaxVelocity value='-1'/>
+			<MaxTorque value='-1'/>
 		</Joint>
-		<Child name='r_eef'/>
+		<Child name='r_gripper'/>
 	</RobotNode>
 
 
@@ -519,7 +519,7 @@ nodes with same name) -->
 			<MaxVelocity value='12.56'/>
 			<MaxTorque value='0.144'/>
 		</Joint>
-		<Child name='r_gripper'/>
+		<Child name='r_hand'/>
 	</RobotNode>
 
 
@@ -661,7 +661,7 @@ nodes with same name) -->
 	</RobotNode>
 
 
-	<RobotNode name='r_eef'>
+	<RobotNode name='r_gripper'>
 		<Physics>
 			<Mass unit='kg' value='0.002'/>
 			<CoM location='Custom' x='0' y='0' z='0'/>
@@ -674,7 +674,7 @@ nodes with same name) -->
 	</RobotNode>
 
 
-	<RobotNode name='r_gripper'>
+	<RobotNode name='r_hand'>
 		<Physics>
 			<Mass unit='kg' value='0.002'/>
 			<CoM location='Custom' x='0' y='0' z='0'/>
@@ -684,7 +684,6 @@ nodes with same name) -->
 					<row3 c1='0' c2='0' c3='2e-05'/>
 			</InertiaMatrix>
 		</Physics>
-		<Child name='RGripperEef'/>
 	</RobotNode>
 
 
@@ -708,6 +707,7 @@ nodes with same name) -->
 		<Child name='RFinger21'/>
 		<Child name='RFinger31'/>
 		<Child name='RFinger41'/>
+		<Child name='RGripper'/>
 		<Child name='RHand'/>
 		<Child name='RHand/Touch/Back_sensor_fixedjoint'/>
 		<Child name='RThumb1'/>
@@ -715,8 +715,8 @@ nodes with same name) -->
 
     <!-- ADD SPECIFIC ITEM TO CONFIGURE GRASP PLANNING-->
 	
-	<Endeffector name="RGripper" base="r_base_link" tcp="r_eef">
-		<Preshape name="Power Preshape" tcp="r_eef">
+	<Endeffector name="RGripper" base="r_base_link" tcp="r_gripper">
+		<Preshape name="Power Preshape" tcp="r_gripper">
 			<!-- set value to lo value defined below -->
 			<Node name="RFinger11" unit="radian" value="-0.872665"/>
 			<Node name="RFinger12" unit="radian" value="-0.872665"/>
@@ -737,7 +737,7 @@ nodes with same name) -->
 			<Node name="RThumb1" unit="radian" value="-0.872665"/>
 			<Node name="RThumb2" unit="radian" value="-0.872665"/>
 		</Preshape>
-		<Preshape name="Precision Preshape" tcp="r_eef">
+		<Preshape name="Precision Preshape" tcp="r_gripper">
 			<!-- set value to lo value defined below -->
 			<Node name="RFinger11" unit="radian" value="-0.872665"/>
 			<Node name="RFinger12" unit="radian" value="-0.872665"/>
@@ -763,7 +763,6 @@ nodes with same name) -->
 			<Node name="RHandTouchBack_frame"/>
 			<Node name="r_wrist"/>
 			<Node name="r_gripper"/>
-			<Node name="r_eef"/>
 		</Static>
 		<Actor name="RFinger 1">
 				<Node name="RFinger11" considerCollisions="Actors"/>
